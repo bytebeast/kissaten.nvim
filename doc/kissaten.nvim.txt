@@ -1,0 +1,177 @@
+*kissaten.nvim.txt*  A coffee-house colorscheme for programming
+
+==============================================================================
+CONTENTS                                                    *kissaten-contents*
+
+  1. Introduction ................................ |kissaten-introduction|
+  2. Styles ...................................... |kissaten-styles|
+  3. Setup ....................................... |kissaten-setup|
+  4. Configuration ............................... |kissaten-config|
+  5. Overrides ................................... |kissaten-overrides|
+  6. Color roles ................................. |kissaten-roles|
+  7. Plugin integrations ......................... |kissaten-plugins|
+  8. Commands and API ............................ |kissaten-api|
+  9. Extras ...................................... |kissaten-extras|
+
+==============================================================================
+1. INTRODUCTION                                         *kissaten-introduction*
+
+Kissaten combines Tokyonight's crisp cool backgrounds and clear structure
+colors with Catppuccin's softer warm accents and layered surfaces. Every
+syntax color is checked against WCAG AA (4.5:1) in every style, and comments
+are kept at 4:1 or better so they stay readable on any screen.
+
+Requires Neovim 0.9 or newer. Tested on 0.9, 0.10, 0.11 and 0.12.
+
+==============================================================================
+2. STYLES                                                     *kissaten-styles*
+
+  `kissaten-morning`     light   bright paper with deep, AA-contrast inks
+  `kissaten-afternoon`   dark    slate blue, softer mid-tone
+  `kissaten-evening`     dark    cool navy with warm accents (default)
+  `kissaten-midnight`    dark    near-black, for low-light sessions
+
+`:colorscheme kissaten` follows 'background': dark loads `style`, light
+loads `light_style`. Changing 'background' while a kissaten style is active
+switches to the matching variant and remembers the last one used.
+
+==============================================================================
+3. SETUP                                                       *kissaten-setup*
+
+lazy.nvim / LazyVim: >lua
+  return {
+    { "bytebeast/kissaten.nvim", lazy = false, priority = 1000, opts = {} },
+    { "LazyVim/LazyVim", opts = { colorscheme = "kissaten" } },
+  }
+<
+Plain Neovim: >lua
+  require("kissaten").setup({ style = "midnight" })
+  vim.cmd.colorscheme("kissaten")
+<
+Calling `setup()` is optional; defaults are used otherwise.
+
+==============================================================================
+4. CONFIGURATION                                              *kissaten-config*
+
+Defaults: >lua
+  require("kissaten").setup({
+    style = "evening",        -- dark style: afternoon | evening | midnight
+    light_style = "morning",  -- used when background=light
+    transparent = false,      -- don't paint the editor background
+    terminal_colors = true,   -- set g:terminal_color_0..15
+    dim_inactive = false,     -- darken non-current windows
+    contrast = "normal",      -- "high": lift comments, line numbers, UI hints
+    subtle_comments = false,  -- true | 0..1 | { fade = 0.7, docstrings = true }
+    styles = {
+      comments = { italic = true },
+      keywords = { italic = true },
+      functions = {}, variables = {}, parameters = {},
+      types = {}, strings = {}, constants = {},
+      sidebars = "dark",      -- "dark" | "normal" | "transparent"
+      floats = "dark",        -- "dark" | "normal" | "transparent"
+    },
+    no_italic = false, no_bold = false, no_underline = false,
+    bright_borders = false,   -- accent-colored float borders
+    lualine_bold = false,
+    on_palette = function(palette, style) end,
+    on_colors = function(colors) end,
+    on_highlights = function(highlights, colors) end,
+    plugins = { all = nil, auto = true },
+  })
+<
+                                                     *kissaten-subtle-comments*
+`subtle_comments` fades code comments toward the background so they recede
+behind the code. `fade` goes from 0 (off) to 1 and is measured in contrast,
+so a value looks the same in every style: 0.5 gives about 3:1, 0.7 about
+2.5:1, and 1 stops at 1.6:1. `true` means 0.5. Docstrings fade too unless
+`docstrings = false`. TODO badges, inlay hints and the statusline are not
+affected. >lua
+  subtle_comments = 0.5
+  subtle_comments = { fade = 0.7, docstrings = false }
+<
+Invalid values never break your editor: kissaten reports them once with
+|vim.notify()| and falls back to the default for that option.
+
+==============================================================================
+5. OVERRIDES                                               *kissaten-overrides*
+
+There are three layers, applied in order:
+
+`on_palette(palette, style)`    change raw colors before anything is derived
+`on_colors(colors)`             re-point semantic roles (see |kissaten-roles|)
+`on_highlights(hl, colors)`     final say over any highlight group
+
+Changing a role is usually what you want, because every group, language
+and plugin that uses it follows: >lua
+  on_colors = function(c)
+    c.syn.parameter = c.yellow     -- parameters in yellow everywhere
+    c.diag.hint = c.lavender
+  end,
+<
+Per-style tweaks: >lua
+  on_palette = function(p, style)
+    if style == "midnight" then p.bg = "#000000" end
+  end,
+<
+Highlight overrides accept any |nvim_set_hl()| attributes, a `link`, or a
+string as shorthand for a link: >lua
+  on_highlights = function(hl, c)
+    hl.LineNr = { fg = c.overlay0 }
+    hl.CursorLineNr = { fg = c.yellow, bold = true }
+    hl["@variable.member"] = "@property"
+  end,
+<
+==============================================================================
+6. COLOR ROLES                                                 *kissaten-roles*
+
+`require("kissaten").colors()` returns the active colors. Main roles:
+
+  colors.syn.keyword          purple   keywords
+  colors.syn.func             blue     functions and methods
+  colors.syn.func_builtin     cyan     builtin functions
+  colors.syn.type             yellow   types, classes, interfaces (italic)
+  colors.syn.parameter        maroon   parameters
+  colors.syn.property         teal     fields and properties
+  colors.syn.string           green    strings
+  colors.syn.number           orange   numbers, constants, booleans
+  colors.syn.variable_builtin red      self, this, super
+  colors.syn.module           lavender modules and namespaces
+  colors.syn.macro            pink     macros, decorators, escapes
+  colors.syn.operator         sky      operators
+
+Also `colors.ui.*`, `colors.diag.*` (error/warn/info/hint/ok),
+`colors.git.*`, `colors.diff.*`, `colors.rainbow[1..8]` and
+`colors.terminal.*`. See `lua/kissaten/colors.lua` for the full list.
+
+==============================================================================
+7. PLUGIN INTEGRATIONS                                       *kissaten-plugins*
+
+With lazy.nvim (and vim.pack on 0.12+), only the integrations for plugins
+you actually have are loaded. Without a supported plugin manager every
+integration is loaded. Force one on or off by module or repo name: >lua
+  plugins = { all = false, telescope = true, ["fzf-lua"] = false }
+<
+Run |:checkhealth| kissaten to see which integrations are active.
+
+==============================================================================
+8. COMMANDS AND API                                              *kissaten-api*
+
+                                                                    *:Kissaten*
+:Kissaten [style]       switch style (with completion), or reload
+:Kissaten info          same as `:checkhealth kissaten`
+
+`require("kissaten").setup(opts)`      store options
+`require("kissaten").load(opts, style)` apply now, returns colors, groups
+`require("kissaten").colors(style?)`    colors table for your own config
+
+Lualine themes: `kissaten` (follows the active style) and
+`kissaten-<style>`. LazyVim's default `theme = "auto"` picks them up.
+
+==============================================================================
+9. EXTRAS                                                     *kissaten-extras*
+
+Matching themes for Alacritty, delta, fzf, Ghostty, Kitty, lazygit, tmux and
+WezTerm live in `extras/`. Regenerate after changing a palette: >sh
+  nvim --headless -u NONE -l scripts/build_extras.lua
+<
+ vim:tw=78:ts=8:ft=help:norl:

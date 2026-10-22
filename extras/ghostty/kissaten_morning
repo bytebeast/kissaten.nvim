@@ -1,0 +1,28 @@
+# Kissaten Morning for Ghostty
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Copy to ~/.config/ghostty/themes/ and set `theme = <file name>`
+
+palette = 0=#4f5578
+palette = 1=#c8153c
+palette = 2=#32761f
+palette = 3=#8f5f06
+palette = 4=#2a5fe0
+palette = 5=#ab3c87
+palette = 6=#10757a
+palette = 7=#c2c9dc
+palette = 8=#686f8e
+palette = 9=#ac1234
+palette = 10=#285e19
+palette = 11=#724b05
+palette = 12=#1e51cd
+palette = 13=#691eea
+palette = 14=#075d82
+palette = 15=#d4d8e4
+
+background = #eef0f6
+foreground = #353a5c
+cursor-color = #353a5c
+cursor-text = #eef0f6
+selection-background = #cbd6f2
+selection-foreground = #353a5c
+split-divider-color = #d3d8e5

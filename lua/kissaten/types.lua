@@ -1,0 +1,145 @@
+---@meta
+-- Type annotations for lua-language-server. Not loaded at runtime.
+
+---@class kissaten.Palette
+---@field _name kissaten.Style
+---@field _background "dark"|"light"
+---@field crust string deepest background: borders, tabline fill
+---@field mantle string sidebars, floats, statusline
+---@field bg string editor background
+---@field surface0 string cursorline, subtle highlights
+---@field surface1 string menu selection, folds, references
+---@field surface2 string strong surfaces: scrollbar thumbs, match parens
+---@field overlay0 string line numbers, whitespace, indent guides
+---@field comment string comments (>= 4:1 contrast)
+---@field subtext string dimmed text, punctuation
+---@field fg string default text
+---@field red string errors, builtin variables, tags
+---@field maroon string parameters
+---@field orange string numbers, constants, booleans
+---@field yellow string types, classes, warnings
+---@field green string strings, additions
+---@field teal string properties, fields, hints
+---@field cyan string builtin functions, regex
+---@field sky string operators
+---@field blue string functions, methods
+---@field lavender string modules, namespaces
+---@field purple string keywords
+---@field pink string macros, decorators, escapes
+
+---@class kissaten.Colors: kissaten.Palette
+---@field none "NONE"
+---@field style kissaten.Style
+---@field light boolean
+---@field ui kissaten.UiColors
+---@field syn kissaten.SyntaxColors
+---@field diag kissaten.DiagColors
+---@field git kissaten.GitColors
+---@field diff kissaten.DiffColors
+---@field rainbow string[]
+---@field terminal kissaten.TerminalColors
+
+---@class kissaten.UiColors
+---@field bg string
+---@field bg_dim string
+---@field bg_sidebar string
+---@field bg_float string
+---@field bg_popup string
+---@field bg_statusline string
+---@field bg_cursorline string
+---@field bg_visual string
+---@field bg_search string
+---@field bg_cursearch string
+---@field bg_match string
+---@field bg_sel string
+---@field fg string
+---@field fg_dim string
+---@field fg_sidebar string
+---@field fg_gutter string
+---@field fg_gutter_cur string
+---@field nontext string
+---@field whitespace string
+---@field indent string
+---@field indent_scope string
+---@field border string
+---@field border_float string
+---@field title string
+---@field accent string
+---@field pmenu_match string
+
+---@class kissaten.SyntaxColors
+---@field comment string
+---@field keyword string
+---@field keyword_flow string
+---@field keyword_exception string
+---@field keyword_import string
+---@field operator string
+---@field punct string
+---@field punct_special string
+---@field func string
+---@field func_builtin string
+---@field macro string
+---@field type string
+---@field type_builtin string
+---@field constructor string
+---@field variable string
+---@field variable_builtin string
+---@field parameter string
+---@field property string
+---@field module string
+---@field constant string
+---@field number string
+---@field boolean string
+---@field string string
+---@field string_doc string
+---@field string_special string
+---@field regex string
+---@field escape string
+---@field character string
+---@field attribute string
+---@field label string
+---@field tag string
+---@field tag_attribute string
+---@field tag_delimiter string
+---@field preproc string
+---@field special string
+---@field deprecated string
+
+---@class kissaten.DiagColors
+---@field error string
+---@field warn string
+---@field info string
+---@field hint string
+---@field ok string
+
+---@class kissaten.GitColors
+---@field add string
+---@field change string
+---@field delete string
+---@field conflict string
+---@field ignore string
+---@field untracked string
+
+---@class kissaten.DiffColors
+---@field add string
+---@field delete string
+---@field change string
+---@field text string
+
+---@class kissaten.TerminalColors
+---@field black string
+---@field black_bright string
+---@field red string
+---@field red_bright string
+---@field green string
+---@field green_bright string
+---@field yellow string
+---@field yellow_bright string
+---@field blue string
+---@field blue_bright string
+---@field magenta string
+---@field magenta_bright string
+---@field cyan string
+---@field cyan_bright string
+---@field white string
+---@field white_bright string

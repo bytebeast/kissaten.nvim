@@ -1,0 +1,46 @@
+# Kissaten Afternoon for WezTerm
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Copy to ~/.config/wezterm/colors/ and set `config.color_scheme = "Kissaten Afternoon"`
+
+[colors]
+foreground = "#cdd5f6"
+background = "#282b3e"
+cursor_bg = "#cdd5f6"
+cursor_border = "#cdd5f6"
+cursor_fg = "#282b3e"
+selection_bg = "#3c4767"
+selection_fg = "#cdd5f6"
+split = "#3c4159"
+compose_cursor = "#f3a06c"
+scrollbar_thumb = "#4a506b"
+
+ansi = ["#3c4159", "#ef8aa6", "#a9d881", "#e8c47e", "#84a8f8", "#f4b8e4", "#7fd3c4", "#b0b9dd"]
+brights = ["#6a7194", "#f59eb6", "#b6e291", "#efcf90", "#9ab8fc", "#d4b5fa", "#93dbf6", "#cdd5f6"]
+
+[colors.tab_bar]
+background = "#1a1c2a"
+inactive_tab_edge = "#212435"
+
+[colors.tab_bar.active_tab]
+bg_color = "#84a8f8"
+fg_color = "#1a1c2a"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#212435"
+fg_color = "#8890b6"
+
+[colors.tab_bar.inactive_tab_hover]
+bg_color = "#31354b"
+fg_color = "#cdd5f6"
+
+[colors.tab_bar.new_tab]
+bg_color = "#1a1c2a"
+fg_color = "#84a8f8"
+
+[colors.tab_bar.new_tab_hover]
+bg_color = "#31354b"
+fg_color = "#84a8f8"
+
+[metadata]
+name = "Kissaten Afternoon"
+origin_url = "https://github.com/bytebeast/kissaten.nvim"
