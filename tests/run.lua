@@ -55,6 +55,21 @@ end
 local nv = vim.version()
 print(("kissaten.nvim tests (Neovim %d.%d.%d)"):format(nv.major, nv.minor, nv.patch))
 
+--- Run :checkhealth and return the report text. Neovim 0.13+ fills the
+--- report asynchronously, so wait until our section has been written.
+local function checkhealth(name)
+  vim.cmd("checkhealth " .. name)
+  local buf = vim.api.nvim_get_current_buf()
+  local function text()
+    return table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), "\n")
+  end
+  vim.wait(5000, function()
+    local t = text()
+    return t:find("Every syntax role") ~= nil or t:find("below WCAG") ~= nil or t:find("ERROR") ~= nil
+  end, 20)
+  return text()
+end
+
 for _, style in ipairs(styles) do
   test("loads kissaten-" .. style .. " without warnings", function()
     reset()
@@ -208,13 +223,6 @@ test("dim_inactive darkens non-current windows", function()
   eq(hex(hl("NormalNC").bg), require("kissaten").colors("evening").mantle)
 end)
 
-test("dim_inactive darkens non-current windows", function()
-  reset()
-  require("kissaten").setup({ dim_inactive = true })
-  vim.cmd.colorscheme("kissaten-evening")
-  eq(hex(hl("NormalNC").bg), require("kissaten").colors("evening").mantle)
-end)
-
 test("vim.pack is only queried when the user loaded it", function()
   -- run in a fresh Neovim: reading `vim.pack` anywhere imports the module
   local code = [[
@@ -308,8 +316,7 @@ test("subtle_comments: :checkhealth reports it and doesn't flag faded docstrings
   reset()
   require("kissaten").setup({ subtle_comments = { fade = 0.9 } })
   vim.cmd.colorscheme("kissaten-evening")
-  vim.cmd("checkhealth kissaten")
-  local text = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+  local text = checkhealth("kissaten")
   truthy(text:find("subtle_comments: fade 0.90"), "reports the fade")
   truthy(not text:find("string_doc"), "faded docstrings are intentional, not a warning")
   truthy(not text:find("below WCAG") and not text:find("ERROR"), text)
@@ -358,8 +365,7 @@ test("extras generate for every style", function()
 end)
 
 test(":checkhealth kissaten runs", function()
-  vim.cmd("checkhealth kissaten")
-  local text = table.concat(vim.api.nvim_buf_get_lines(0, 0, -1, false), "\n")
+  local text = checkhealth("kissaten")
   truthy(text:find("kissaten.nvim"), "health output")
   truthy(not text:find("ERROR"), "health has errors:\n" .. text)
 end)
