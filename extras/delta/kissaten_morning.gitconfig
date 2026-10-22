@@ -1,0 +1,31 @@
+# Kissaten Morning for delta
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# In ~/.gitconfig:
+#   [include]
+#     path = /path/to/this/file
+#   [delta]
+#     features = kissaten-morning
+
+[delta "kissaten-morning"]
+  dark = true
+  light = true
+  syntax-theme = none
+  file-style = "#2a5fe0" bold
+  file-decoration-style = "#c2c9dc" ul
+  hunk-header-style = file line-number syntax
+  hunk-header-decoration-style = "#c2c9dc" box
+  hunk-header-line-number-style = "#b25000"
+  line-numbers = true
+  line-numbers-left-style = "#c2c9dc"
+  line-numbers-right-style = "#c2c9dc"
+  line-numbers-zero-style = "#686f8e"
+  line-numbers-minus-style = "#c8153c"
+  line-numbers-plus-style = "#32761f"
+  minus-style = syntax "#e6c0cd"
+  minus-emph-style = syntax "#e1a3b5"
+  plus-style = syntax "#c5d5c7"
+  plus-emph-style = syntax "#acc5ab"
+  map-styles = bold purple => syntax "#d3d8e5", bold cyan => syntax "#e2e5ee"
+  blame-palette = "#eef0f6" "#e0e4ee" "#e2e5ee"
+  commit-decoration-style = "#c2c9dc" box ul
+  zero-style = syntax

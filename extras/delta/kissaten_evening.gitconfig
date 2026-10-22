@@ -1,0 +1,31 @@
+# Kissaten Evening for delta
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# In ~/.gitconfig:
+#   [include]
+#     path = /path/to/this/file
+#   [delta]
+#     features = kissaten-evening
+
+[delta "kissaten-evening"]
+  dark = false
+  light = false
+  syntax-theme = none
+  file-style = "#82aaff" bold
+  file-decoration-style = "#3f4463" ul
+  hunk-header-style = file line-number syntax
+  hunk-header-decoration-style = "#3f4463" box
+  hunk-header-line-number-style = "#f7a46f"
+  line-numbers = true
+  line-numbers-left-style = "#3f4463"
+  line-numbers-right-style = "#3f4463"
+  line-numbers-zero-style = "#7f87b0"
+  line-numbers-minus-style = "#f28fad"
+  line-numbers-plus-style = "#b5e08d"
+  minus-style = syntax "#453549"
+  minus-emph-style = syntax "#69485e"
+  plus-style = syntax "#3a4343"
+  plus-emph-style = syntax "#546453"
+  map-styles = bold purple => syntax "#323650", bold cyan => syntax "#272a40"
+  blame-palette = "#1f2133" "#191a2a" "#272a40"
+  commit-decoration-style = "#3f4463" box ul
+  zero-style = syntax

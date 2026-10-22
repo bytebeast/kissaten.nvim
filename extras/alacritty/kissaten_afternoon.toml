@@ -1,0 +1,68 @@
+# Kissaten Afternoon for Alacritty
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# In alacritty.toml:  [general] import = ["~/.config/alacritty/<this file>"]
+
+[colors.primary]
+background = "#282b3e"
+foreground = "#cdd5f6"
+dim_foreground = "#b0b9dd"
+
+[colors.cursor]
+text = "#282b3e"
+cursor = "#cdd5f6"
+
+[colors.vi_mode_cursor]
+text = "#282b3e"
+cursor = "#84a8f8"
+
+[colors.selection]
+text = "CellForeground"
+background = "#3c4767"
+
+[colors.search.matches]
+foreground = "#cdd5f6"
+background = "#524d4c"
+
+[colors.search.focused_match]
+foreground = "#1a1c2a"
+background = "#f3a06c"
+
+[colors.footer_bar]
+foreground = "#cdd5f6"
+background = "#212435"
+
+[colors.hints.start]
+foreground = "#1a1c2a"
+background = "#f4b8e4"
+
+[colors.hints.end]
+foreground = "#1a1c2a"
+background = "#84a8f8"
+
+[colors.normal]
+black = "#3c4159"
+red = "#ef8aa6"
+green = "#a9d881"
+yellow = "#e8c47e"
+blue = "#84a8f8"
+magenta = "#f4b8e4"
+cyan = "#7fd3c4"
+white = "#b0b9dd"
+
+[colors.bright]
+black = "#6a7194"
+red = "#f59eb6"
+green = "#b6e291"
+yellow = "#efcf90"
+blue = "#9ab8fc"
+magenta = "#d4b5fa"
+cyan = "#93dbf6"
+white = "#cdd5f6"
+
+[[colors.indexed_colors]]
+index = 16
+color = "#f3a06c"
+
+[[colors.indexed_colors]]
+index = 17
+color = "#ef8aa6"

@@ -1,0 +1,35 @@
+# Kissaten Evening for lazygit
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Merge into ~/.config/lazygit/config.yml (or point LG_CONFIG_FILE at both files)
+
+gui:
+  nerdFontsVersion: "3"
+  theme:
+    activeBorderColor:
+      - "#82aaff"
+      - bold
+    inactiveBorderColor:
+      - "#3f4463"
+    searchingActiveBorderColor:
+      - "#f7a46f"
+      - bold
+    optionsTextColor:
+      - "#82aaff"
+    selectedLineBgColor:
+      - "#272a40"
+    inactiveViewSelectedLineBgColor:
+      - "#272a40"
+    cherryPickedCommitFgColor:
+      - "#f5bde6"
+    cherryPickedCommitBgColor:
+      - "#323650"
+    markedBaseCommitFgColor:
+      - "#ebcf8c"
+    markedBaseCommitBgColor:
+      - "#323650"
+    unstagedChangesColor:
+      - "#f28fad"
+    defaultFgColor:
+      - "#cad3f5"
+  authorColors:
+    "*": "#b7c1fb"
