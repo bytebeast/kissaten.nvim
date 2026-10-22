@@ -5,6 +5,7 @@
 # kissaten.nvim
 
 **A coffee-house colorscheme for Neovim and LazyVim.**
+
 Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color checked for contrast.
 
 [![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-57A143?style=for-the-badge&logo=neovim&logoColor=white&labelColor=1f2133)](https://neovim.io)
