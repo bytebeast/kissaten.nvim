@@ -19,6 +19,8 @@ Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color 
 
 <sub><i>kissaten (喫茶店): a traditional Japanese coffee house. Dim, cozy, a little retro.</i></sub>
 
+<sub>If you try kissaten and end up using it, please ⭐ <a href="https://github.com/bytebeast/kissaten.nvim">star the repo</a>. It helps others find it.</sub>
+
 </div>
 
 ![kissaten-evening in LazyVim](assets/screenshots/hero.png)
