@@ -14,7 +14,6 @@ Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color 
 [![WCAG AA](https://img.shields.io/badge/syntax%20contrast-WCAG%20AA-b5e08d?style=for-the-badge&labelColor=1f2133)](#why-kissaten)
 <br>
 [![Tests](https://img.shields.io/github/actions/workflow/status/bytebeast/kissaten.nvim/ci.yml?branch=main&style=for-the-badge&label=tests&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/bytebeast/kissaten.nvim?style=for-the-badge&color=f7a46f&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/releases)
 [![Stars](https://img.shields.io/github/stars/bytebeast/kissaten.nvim?style=for-the-badge&color=ebcf8c&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/stargazers)
 [![License](https://img.shields.io/github/license/bytebeast/kissaten.nvim?style=for-the-badge&color=f5bde6&labelColor=1f2133)](LICENSE)
 
