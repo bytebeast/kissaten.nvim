@@ -170,8 +170,13 @@ Lualine themes: `kissaten` (follows the active style) and
 ==============================================================================
 9. EXTRAS                                                     *kissaten-extras*
 
-Matching themes for Alacritty, delta, fzf, Ghostty, Kitty, lazygit, tmux and
-WezTerm live in `extras/`. Regenerate after changing a palette: >sh
+Matching themes for Alacritty, bat, delta, eza, fzf, Ghostty, k9s, Kitty,
+lazygit, tmux, WezTerm and Zettlr live in `extras/`, in all four styles (k9s
+also has `_transparent` skins). Install steps are in the README, with full
+guides for bat, eza, k9s and Zettlr in `extras/<tool>/README.md`;
+`extras/fonts/README.md` recommends coding fonts (the screenshots use
+JetBrains Mono Nerd Font) and shows how to set them up, including ligatures.
+Regenerate after changing a palette: >sh
   nvim --headless -u NONE -l scripts/build_extras.lua
 <
  vim:tw=78:ts=8:ft=help:norl:

@@ -353,13 +353,208 @@ test("lualine themes build for every style", function()
   end
 end)
 
-test("extras generate for every style", function()
+test("extras generate for every style and variant", function()
   local Extras = require("kissaten.extras")
   for name in pairs(Extras.extras) do
     for _, style in ipairs(styles) do
-      local out = Extras.render(name, style)
-      truthy(type(out) == "string" and #out > 50, name .. "/" .. style)
-      truthy(not out:find("%${"), name .. "/" .. style .. " has unreplaced template variables")
+      for _, file in ipairs(Extras.files(name)) do
+        local label = ("%s/%s/%s"):format(name, style, file[2])
+        local out = Extras.render(name, style, file[2])
+        truthy(type(out) == "string" and #out > 50, label)
+        truthy(not out:find("%${"), label .. " has unreplaced template variables")
+      end
+    end
+  end
+end)
+
+-- Minimal YAML reader for the flat, two-space-indented files the eza/k9s
+-- generators emit: returns { ["a.b.c"] = "value" } for every leaf.
+local function yaml_leaves(text)
+  local out, stack = {}, {}
+  for line in text:gmatch("[^\n]+") do
+    if not line:match("^%s*#") and line:match("%S") then
+      local indent, key, rest = line:match("^(%s*)([%w_]+):%s*(.-)%s*$")
+      if key then
+        local depth = #indent / 2
+        for i = #stack, depth + 1, -1 do
+          stack[i] = nil
+        end
+        stack[depth + 1] = key
+        local path = table.concat(stack, ".", 1, depth + 1)
+        if rest ~= "" then
+          out[path] = rest
+        end
+      end
+    end
+  end
+  return out
+end
+
+test("eza: every key exists in eza's UiStylesOverride and every style is explicit", function()
+  -- from eza src/options/config.rs; eza silently ignores unknown keys
+  local S = {}
+  local function add(prefix, keys)
+    for k in keys:gmatch("%S+") do
+      S[prefix .. k] = true
+    end
+  end
+  add("filekinds.", "normal directory symlink pipe block_device char_device socket special executable mount_point")
+  add(
+    "perms.",
+    "user_read user_write user_execute_file user_execute_other group_read group_write group_execute other_read other_write other_execute special_user_file special_other attribute"
+  )
+  add(
+    "size.",
+    "major minor number_byte number_kilo number_mega number_giga number_huge unit_byte unit_kilo unit_mega unit_giga unit_huge"
+  )
+  add("users.", "user_you user_root user_other group_yours group_other group_root")
+  add("links.", "normal multi_link_file")
+  add("git.", "new modified deleted renamed typechange ignored conflicted")
+  add("git_repo.", "branch_main branch_other git_clean git_dirty")
+  add("security_context.", "none")
+  add("security_context.selinux.", "colon user role typ range")
+  add("file_type.", "image video music lossless crypto document compressed temp compiled build source")
+  add(
+    "",
+    "punctuation date inode blocks header octal flags symlink_path control_char broken_symlink broken_path_overlay"
+  )
+  local allowed_attr =
+    { foreground = true, background = true, is_bold = true, is_dimmed = true, is_italic = true, is_underline = true }
+  for _, style in ipairs(styles) do
+    local leaves = yaml_leaves(require("kissaten.extras").render("eza", style))
+    local seen = 0
+    for path, value in pairs(leaves) do
+      if path ~= "colourful" then
+        truthy(S[path], style .. ": unknown eza key " .. path)
+        seen = seen + 1
+        for attr, v in value:gmatch("([%w_]+):%s*([^,}]+)") do
+          truthy(allowed_attr[attr], ("%s: %s has unknown attribute %s"):format(style, path, attr))
+          if attr == "foreground" then
+            truthy(v:match('^"#%x%x%x%x%x%x"$'), ("%s: %s color %s"):format(style, path, v))
+          end
+        end
+        for _, attr in ipairs({ "is_bold", "is_dimmed", "is_italic", "is_underline" }) do
+          truthy(
+            value:find(attr, 1, true),
+            ("%s: %s must set %s (eza keeps its default otherwise)"):format(style, path, attr)
+          )
+        end
+      end
+    end
+    eq(seen, vim.tbl_count(S), style .. ": every eza style key is set")
+  end
+end)
+
+test("k9s: every key exists in k9s's Style structs, colors are valid", function()
+  -- from k9s internal/config/styles.go (yaml tags); k9s ignores unknown keys
+  local K = {}
+  local function add(prefix, keys)
+    for k in keys:gmatch("%S+") do
+      K["k9s." .. prefix .. k] = true
+    end
+  end
+  add("body.", "fgColor bgColor logoColor logoColorMsg logoColorInfo logoColorWarn logoColorError")
+  add("prompt.", "fgColor bgColor suggestColor")
+  add("prompt.border.", "command default")
+  add("help.", "fgColor bgColor sectionColor keyColor numKeyColor")
+  add("frame.title.", "fgColor bgColor highlightColor counterColor filterColor")
+  add("frame.border.", "fgColor focusColor")
+  add("frame.menu.", "fgColor fgStyle keyColor numKeyColor")
+  add("frame.crumbs.", "fgColor bgColor activeColor")
+  add("frame.status.", "newColor modifyColor addColor pendingColor errorColor highlightColor killColor completedColor")
+  add("info.", "sectionColor fgColor cpuColor memColor k9sRevColor")
+  add("views.table.", "fgColor bgColor cursorFgColor cursorBgColor markColor")
+  add("views.table.header.", "fgColor bgColor sorterColor selectedSortColumnColor")
+  add("views.xray.", "fgColor bgColor cursorColor cursorTextColor graphicColor")
+  add(
+    "views.charts.",
+    "bgColor dialBgColor chartBgColor defaultDialColors defaultChartColors resourceColors focusFgColor focusBgColor"
+  )
+  add("views.yaml.", "keyColor valueColor colonColor")
+  add("views.picker.", "mainColor focusColor shortcutColor")
+  add("views.logs.", "fgColor bgColor")
+  add("views.logs.indicator.", "fgColor bgColor toggleOnColor toggleOffColor")
+  add(
+    "dialog.",
+    "fgColor bgColor buttonFgColor buttonBgColor buttonFocusFgColor buttonFocusBgColor labelFgColor fieldFgColor"
+  )
+  local Extras = require("kissaten.extras")
+  for _, style in ipairs(styles) do
+    for _, file in ipairs(Extras.files("k9s")) do
+      local leaves = yaml_leaves(Extras.render("k9s", style, file[2]))
+      for path, value in pairs(leaves) do
+        if not path:find("resourceColors", 1, true) then
+          truthy(K[path], ("%s/%s: unknown k9s key %s"):format(style, file[2], path))
+          local ok = value:match('^"#%x%x%x%x%x%x"$') or value == '"default"'
+          truthy(ok, ("%s/%s: %s = %s"):format(style, file[2], path, value))
+          if file[2] == "default" then
+            truthy(value ~= '"default"', ("%s: %s must be a color in the opaque skin"):format(style, path))
+          end
+        end
+      end
+      if file[2] == "transparent" then
+        eq(leaves["k9s.body.bgColor"], '"default"', style .. ": transparent skin uses the terminal background")
+      end
+    end
+  end
+end)
+
+test("k9s: the selected row stays readable on every row color", function()
+  -- k9s paints the selected row with the row's status color as background
+  -- and cursorFgColor as text (internal/ui/select_table.go)
+  for _, style in ipairs(styles) do
+    local c = require("kissaten").colors(style)
+    local skin = yaml_leaves(require("kissaten.extras").render("k9s", style))
+    local cursor = skin["k9s.views.table.cursorFgColor"]:match("#%x+")
+    for _, k in ipairs({ "fg", "blue", "lavender", "green", "orange", "red", "cyan", "purple" }) do
+      local r = Util.contrast(cursor, c[k])
+      truthy(r >= 4.5, ("%s: selected %s row %.2f:1"):format(style, k, r))
+    end
+  end
+end)
+
+test("bat: valid tmTheme, XML-safe comments, every rule resolves", function()
+  for _, style in ipairs(styles) do
+    local out = require("kissaten.extras").render("bat", style)
+    truthy(out:find('^<%?xml version="1.0"'), style .. ": xml header")
+    for comment in out:gmatch("<!%-%-(.-)%-%->") do
+      truthy(not comment:find("--", 1, true), style .. ": XML comments may not contain a double dash")
+    end
+    local opens = select(2, out:gsub("<dict>", ""))
+    local closes = select(2, out:gsub("</dict>", ""))
+    eq(opens, closes, style .. ": balanced <dict>")
+    for color in out:gmatch("<key>foreground</key>%s*<string>([^<]*)</string>") do
+      truthy(Util.is_hex(color), style .. ": foreground " .. color)
+    end
+    truthy(out:find("<string>kissaten.nvim</string>", 1, true), style .. ": author")
+  end
+end)
+
+test("bat: italics follow `styles` (comments and keywords by default)", function()
+  reset()
+  local out = require("kissaten.extras").render("bat", "evening")
+  local comment_rule = out:match("<string>Comment</string>.-</dict>")
+  truthy(comment_rule:find("italic"), "comments italic by default")
+  require("kissaten").setup({ styles = { comments = { italic = false }, keywords = { bold = true } } })
+  out = require("kissaten.extras").render("bat", "evening")
+  truthy(not out:match("<string>Comment</string>.-</dict>"):find("italic"), "comment italics can be turned off")
+  truthy(out:match("<string>Keyword</string>.-</dict>"):find("bold"), "keyword bold follows styles")
+  reset()
+end)
+
+test("zettlr: CSS is balanced and every rule is scoped to one Zettlr mode", function()
+  for _, style in ipairs(styles) do
+    local css = require("kissaten.extras").render("zettlr", style):gsub("/%*.-%*/", "")
+    eq(select(2, css:gsub("{", "")), select(2, css:gsub("}", "")), style .. ": balanced braces")
+    local mode = style == "morning" and "html body:not(.dark)" or "html body.dark"
+    for selectors in css:gmatch("([^{}]+){") do
+      for sel in selectors:gmatch("[^,]+") do
+        sel = vim.trim(sel)
+        truthy(sel:sub(1, #mode) == mode, ("%s: unscoped selector %q"):format(style, sel))
+        if style ~= "morning" then
+          truthy(not sel:find("body:not(.dark)", 1, true), style .. ": dark file leaks into light mode")
+        end
+      end
     end
   end
 end)

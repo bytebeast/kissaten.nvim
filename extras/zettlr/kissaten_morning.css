@@ -1,0 +1,141 @@
+/*
+ * Kissaten Morning for Zettlr (applies in light mode (dark mode off))
+ * upstream: https://github.com/bytebeast/kissaten.nvim
+ *
+ * Install: Zettlr -> Assets Manager -> Custom CSS, paste this file, save.
+ * To follow Zettlr's dark mode, paste a light and a dark file together, e.g.
+ *   cat kissaten_morning.css kissaten_evening.css
+ * Themes the editor, file manager, sidebar, menu bar, toolbar, tabs and
+ * status bar.
+ */
+
+/* ── Editor colors (Zettlr's documented variables) ─────────────────────── */
+html body:not(.dark) .cm-editor {
+  --zettlr-editor-scroller-color: #353a5c;
+  --zettlr-editor-scroller-bg: #eef0f6;
+  --zettlr-editor-primary-color: #2a5fe0;
+  --zettlr-editor-secondary-color: #32761f;
+  --zettlr-editor-selection-color: #cbd6f2;
+  --zettlr-editor-highlight-color: #d6ccba;
+  --zettlr-editor-code-color: #10757a;
+  --zettlr-editor-code-bg: #e2e5ee;
+  --zettlr-editor-citation-color: #b25000;
+  --zettlr-editor-citation-bg: #e7ddd8;
+  --zettlr-editor-escape-color: #ab3c87;
+  --zettlr-editor-accent-color: #d4d8e4;
+  --zettlr-editor-accent-bg: #5f62a3;
+  --zettlr-editor-error-color: #c8153c;
+}
+
+/* Zettlr's accent (selected files, toggles, focus) normally follows your OS
+   accent color. Delete these two lines to keep that behavior. */
+html body:not(.dark) { --system-accent-color: #2a5fe0; --system-accent-color-contrast: #d4d8e4; }
+
+html body:not(.dark) .main-editor-wrapper { background-color: #eef0f6; }
+html body:not(.dark) .cm-editor .cm-gutters { background-color: #eef0f6; color: #8f96b1; border-right-color: #e2e5ee; }
+html body:not(.dark) .cm-editor .cm-activeLineGutter { color: #b25000; }
+html body:not(.dark) .cm-editor .code-block-line-background { background-color: #e0e4ee; }
+html body:not(.dark) .cm-editor .inline-code-background { background-color: #e2e5ee; }
+html body:not(.dark) .cm-editor .cm-quote { color: #4f5578; }
+html body:not(.dark) .cm-editor .cm-code-mark { color: #8f96b1; }
+html body:not(.dark) .cm-editor .cm-zkn-tag { color: #2a5fe0; background-color: #d6dff3; border-radius: 3px; }
+html body:not(.dark) .cm-editor .cm-zkn-link { color: #10757a; }
+
+/* Headings: same colors as kissaten's markdown headings in Neovim */
+html body:not(.dark) .cm-editor .cm-header-1 { color: #2a5fe0; }
+html body:not(.dark) .cm-editor .cm-header-2 { color: #8f5f06; }
+html body:not(.dark) .cm-editor .cm-header-3 { color: #32761f; }
+html body:not(.dark) .cm-editor .cm-header-4 { color: #10757a; }
+html body:not(.dark) .cm-editor .cm-header-5 { color: #7c3aed; }
+html body:not(.dark) .cm-editor .cm-header-6 { color: #b25000; }
+
+/* ── Code block syntax highlighting (same roles as in Neovim) ────────────── */
+html body:not(.dark) .cm-editor .cm-comment,
+html body:not(.dark) .cm-editor .cm-line-comment,
+html body:not(.dark) .cm-editor .cm-block-comment { color: #686f8e; font-style: italic; }
+html body:not(.dark) .cm-editor .cm-doc-comment,
+html body:not(.dark) .cm-editor .cm-doc-string { color: #48734b; font-style: italic; }
+html body:not(.dark) .cm-editor .cm-keyword,
+html body:not(.dark) .cm-editor .cm-control-keyword,
+html body:not(.dark) .cm-editor .cm-definition-keyword,
+html body:not(.dark) .cm-editor .cm-operator-keyword,
+html body:not(.dark) .cm-editor .cm-modifier { color: #7c3aed; font-style: italic; }
+html body:not(.dark) .cm-editor .cm-module-keyword { color: #ab3c87; font-style: italic; }
+html body:not(.dark) .cm-editor .cm-string { color: #32761f; }
+html body:not(.dark) .cm-editor .cm-character { color: #32761f; }
+html body:not(.dark) .cm-editor .cm-escape { color: #ab3c87; }
+html body:not(.dark) .cm-editor .cm-regexp { color: #09729f; }
+html body:not(.dark) .cm-editor .cm-number,
+html body:not(.dark) .cm-editor .cm-integer,
+html body:not(.dark) .cm-editor .cm-float,
+html body:not(.dark) .cm-editor .cm-unit { color: #b25000; }
+html body:not(.dark) .cm-editor .cm-bool,
+html body:not(.dark) .cm-editor .cm-null,
+html body:not(.dark) .cm-editor .cm-atom { color: #b25000; }
+html body:not(.dark) .cm-editor .cm-literal,
+html body:not(.dark) .cm-editor .cm-color { color: #b25000; }
+html body:not(.dark) .cm-editor .cm-type-name,
+html body:not(.dark) .cm-editor .cm-class-name { color: #8f5f06; }
+html body:not(.dark) .cm-editor .cm-namespace { color: #5f62a3; }
+html body:not(.dark) .cm-editor .cm-variable-name { color: #353a5c; }
+html body:not(.dark) .cm-editor .cm-self { color: #c8153c; }
+html body:not(.dark) .cm-editor .cm-property-name { color: #10757a; }
+html body:not(.dark) .cm-editor .cm-macro-name { color: #ab3c87; }
+html body:not(.dark) .cm-editor .cm-annotation,
+html body:not(.dark) .cm-editor .cm-meta { color: #ab3c87; }
+html body:not(.dark) .cm-editor .cm-operator,
+html body:not(.dark) .cm-editor .cm-arithmetic-operator,
+html body:not(.dark) .cm-editor .cm-logic-operator,
+html body:not(.dark) .cm-editor .cm-bitwise-operator,
+html body:not(.dark) .cm-editor .cm-compare-operator,
+html body:not(.dark) .cm-editor .cm-update-operator,
+html body:not(.dark) .cm-editor .cm-definition-operator,
+html body:not(.dark) .cm-editor .cm-type-operator,
+html body:not(.dark) .cm-editor .cm-control-operator,
+html body:not(.dark) .cm-editor .cm-deref-operator { color: #3a6f8f; }
+html body:not(.dark) .cm-editor .cm-punctuation,
+html body:not(.dark) .cm-editor .cm-separator,
+html body:not(.dark) .cm-editor .cm-bracket,
+html body:not(.dark) .cm-editor .cm-brace,
+html body:not(.dark) .cm-editor .cm-paren,
+html body:not(.dark) .cm-editor .cm-square-bracket { color: #4f5578; }
+html body:not(.dark) .cm-editor .cm-tag-name { color: #c8153c; }
+html body:not(.dark) .cm-editor .cm-angle-bracket { color: #8f96b1; }
+html body:not(.dark) .cm-editor .cm-attribute-name { color: #10757a; font-style: italic; }
+html body:not(.dark) .cm-editor .cm-attribute-value { color: #32761f; }
+html body:not(.dark) .cm-editor .cm-inserted { color: #32761f; }
+html body:not(.dark) .cm-editor .cm-deleted { color: #c8153c; }
+html body:not(.dark) .cm-editor .cm-changed { color: #8f5f06; }
+html body:not(.dark) .cm-editor .cm-invalid { color: #c8153c; text-decoration: underline wavy #c8153c; }
+
+/* ── File manager and sidebar ─────────────────────────────────────────── */
+/* Zettlr paints these per platform (body.linux / .darwin / .win32); the id
+   selector outranks all of them. */
+html body:not(.dark) #file-manager,
+html body:not(.dark) #sidebar { background-color: #e0e4ee; color: #4f5578; }
+html body:not(.dark) #file-manager #file-tree,
+html body:not(.dark) #file-manager #file-list,
+html body:not(.dark) #file-manager .tree-item.directory:not(.collapsed),
+html body:not(.dark) #file-manager div.list-item-wrapper,
+html body:not(.dark) #file-manager div.list-item,
+html body:not(.dark) #file-manager div.list-item div.filename div.date { background-color: #e0e4ee; }
+html body:not(.dark) #file-manager div.list-item { border-bottom-color: #e2e5ee; }
+html body:not(.dark):not(#kissaten) #file-manager input.file-manager-filter-input { background-color: #e2e5ee; color: #353a5c; border-color: #d3d8e5; }
+html body:not(.dark):not(#kissaten) #file-manager input.file-manager-filter-input::placeholder { color: #686f8e; }
+
+/* ── Window chrome ────────────────────────────────────────────────────── */
+/* `:not(#kissaten)` matches every element but counts as an id, so these
+   outrank Zettlr's chrome rules (Vue scoped attributes, per-platform classes
+   like body.linux.dark) without assuming any particular page structure. */
+html body:not(.dark):not(#kissaten) div#window-content { background-color: #e0e4ee; }
+html body:not(.dark):not(#kissaten) #menubar { background-color: #d4d8e4; color: #4f5578; }
+html body:not(.dark):not(#kissaten) div#toolbar { background-color: #e0e4ee; color: #4f5578; }
+html body:not(.dark):not(#kissaten) div#toolbar button { color: #4f5578; border-color: #c2c9dc; }
+html body:not(.dark):not(#kissaten) div#toolbar button:hover,
+html body:not(.dark):not(#kissaten) div#toolbar button.active { background-color: #d3d8e5; color: #353a5c; }
+html body:not(.dark):not(#kissaten) div.tab-container { background-color: #d4d8e4; }
+html body:not(.dark):not(#kissaten) div.tab-container div[role="tab"] { background-color: #d4d8e4; color: #686f8e; border-color: #e2e5ee; }
+html body:not(.dark):not(#kissaten) div.tab-container div[role="tab"]:hover { background-color: #e2e5ee; color: #4f5578; }
+html body:not(.dark):not(#kissaten) div.tab-container div[role="tab"].active { background-color: #eef0f6; color: #353a5c; border-bottom-color: #2a5fe0; }
+html body:not(.dark) .cm-editor .cm-panels,
+html body:not(.dark) .cm-editor .cm-statusbar { background-color: #e0e4ee; color: #4f5578; }

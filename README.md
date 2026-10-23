@@ -14,6 +14,7 @@ Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color 
 [![WCAG AA](https://img.shields.io/badge/syntax%20contrast-WCAG%20AA-b5e08d?style=for-the-badge&labelColor=1f2133)](#why-kissaten)
 <br>
 [![Tests](https://img.shields.io/github/actions/workflow/status/bytebeast/kissaten.nvim/ci.yml?branch=main&style=for-the-badge&label=tests&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/bytebeast/kissaten.nvim?style=for-the-badge&color=f7a46f&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/releases)
 [![Stars](https://img.shields.io/github/stars/bytebeast/kissaten.nvim?style=for-the-badge&color=ebcf8c&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/stargazers)
 [![License](https://img.shields.io/github/license/bytebeast/kissaten.nvim?style=for-the-badge&color=f5bde6&labelColor=1f2133)](LICENSE)
 
@@ -130,7 +131,9 @@ Each style has 10 base tones (`crust` to `fg`) and 12 accents. The accents have 
 
 ## Installation
 
-Requires Neovim **0.9+** with a true-color terminal.
+Requires Neovim **0.9+** with a true-color terminal and a [Nerd Font](https://www.nerdfonts.com) for icons.
+
+> **Font:** the screenshots use **JetBrains Mono Nerd Font** (`brew install --cask font-jetbrains-mono-nerd-font`). See the **[font guide](extras/fonts/README.md)** for other good coding fonts, how to set them up in Ghostty, iTerm2, Kitty, WezTerm, Alacritty, Windows Terminal, VS Code and Neovide, and how to turn ligatures on or off.
 
 ### LazyVim
 
@@ -490,18 +493,26 @@ LazyVim's default set (snacks, blink.cmp, bufferline, lualine, noice, which-key,
 
 ## Extras
 
-Matching themes for your terminal and tools live in [`extras/`](extras), generated from the same palettes:
+Matching themes for your terminal and tools live in [`extras/`](extras), generated from the same palettes and checked against each tool's own configuration format:
 
 | Tool | Files | How to use |
 | --- | --- | --- |
 | [Alacritty](https://alacritty.org) | `extras/alacritty/*.toml` | `[general] import = ["…/kissaten_evening.toml"]` |
+| [bat](https://github.com/sharkdp/bat) | `extras/bat/*.tmTheme` | copy to `"$(bat --config-dir)/themes"`, run `bat cache --build`, then `--theme="kissaten_evening"` ([setup](extras/bat/README.md)) |
 | [delta](https://github.com/dandavison/delta) | `extras/delta/*.gitconfig` | `[include] path = …` then `features = kissaten-evening` |
+| [eza](https://eza.rocks) | `extras/eza/*.yml` | save as `~/.config/eza/theme.yml` ([setup](extras/eza/README.md)) |
 | [fzf](https://github.com/junegunn/fzf) | `extras/fzf/*.sh` | `source …/kissaten_evening.sh` in your shell rc |
 | [Ghostty](https://ghostty.org) | `extras/ghostty/*` | copy to `~/.config/ghostty/themes/`, then `theme = kissaten_evening` |
+| [k9s](https://k9scli.io) | `extras/k9s/*.yaml` | copy to k9s's `skins/` dir, then `k9s.ui.skin: kissaten_evening` ([setup](extras/k9s/README.md)) |
 | [Kitty](https://sw.kovidgoyal.net/kitty/) | `extras/kitty/*.conf` | `include …/kissaten_evening.conf` |
 | [lazygit](https://github.com/jesseduffield/lazygit) | `extras/lazygit/*.yml` | merge into `config.yml` |
 | [tmux](https://github.com/tmux/tmux) | `extras/tmux/*.tmux` | `source-file …/kissaten_evening.tmux` |
 | [WezTerm](https://wezterm.org) | `extras/wezterm/*.toml` | copy to `~/.config/wezterm/colors/`, then `color_scheme = "Kissaten Evening"` |
+| [Zettlr](https://www.zettlr.com) | `extras/zettlr/*.css` | paste into Custom CSS ([setup](extras/zettlr/README.md)) |
+
+Looking for a font to go with the theme? See the **[font guide](extras/fonts/README.md)**.
+
+Every file comes in all four styles (`kissaten_morning`, `kissaten_afternoon`, `kissaten_evening`, `kissaten_midnight`); the table uses `evening`. bat, eza, k9s and Zettlr have their own setup guides, linked in the table.
 
 ## Commands, API and health
 
@@ -557,8 +568,10 @@ Kissaten stands on the shoulders of these projects. Thank you.
 - **[catppuccin/nvim](https://github.com/catppuccin/nvim)** (MIT). The warm accents (peach, maroon, pink, lavender), the crust/mantle/base/surface/overlay naming, and plugin detection through `vim.pack`.
 - **[rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)** (MIT). The palette-to-semantic-roles layer that makes recoloring a single role possible.
 - **[rose-pine/neovim](https://github.com/rose-pine/neovim)** and **[EdenEast/nightfox.nvim](https://github.com/EdenEast/nightfox.nvim)**. Reference for highlight coverage and option design.
+- **[catppuccin/bat](https://github.com/catppuccin/bat)**, **[catppuccin/eza](https://github.com/catppuccin/eza)**, **[catppuccin/k9s](https://github.com/catppuccin/k9s)** (MIT) and Tokyonight's eza and tmTheme extras. Reference for what each tool's theme covers and how to install it. Kissaten's versions are checked key by key against the tools' own sources ([eza](https://github.com/eza-community/eza), [k9s](https://github.com/derailed/k9s)) and build bat's theme from the Neovim syntax roles.
+- **[Zettlr](https://github.com/Zettlr/Zettlr)**. Its [Custom CSS guide](https://docs.zettlr.com/en/guides/custom-css/) and editor variables are the basis of the Zettlr theme.
 - **[LazyVim](https://www.lazyvim.org)**. The distribution kissaten is tuned and screenshotted against.
-- **[JetBrains Mono](https://www.jetbrains.com/lp/mono/)** via **[Nerd Fonts](https://www.nerdfonts.com)**. The font in the screenshots.
+- **[JetBrains Mono](https://github.com/JetBrains/JetBrainsMono)** via **[Nerd Fonts](https://github.com/ryanoasis/nerd-fonts)**. The font in the screenshots. The [font guide](extras/fonts/README.md) credits every recommended font.
 
 Kissaten's code is an original implementation. No source files were copied from the projects above; highlight group *names* follow each plugin's public API.
 
