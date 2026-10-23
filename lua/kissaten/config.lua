@@ -3,14 +3,14 @@ local M = {}
 
 M.version = "1.0.0" -- x-release-please-version
 
-M.styles = { "morning", "afternoon", "evening", "midnight" }
+M.styles = { "morning", "afternoon", "evening", "midnight", "graveyard" }
 
----@alias kissaten.Style "morning"|"afternoon"|"evening"|"midnight"
+---@alias kissaten.Style "morning"|"afternoon"|"evening"|"midnight"|"graveyard"
 ---@alias kissaten.Background "dark"|"normal"|"transparent"
 
 ---@class kissaten.Config
 M.defaults = {
-  --- Dark style used by `:colorscheme kissaten`: afternoon | evening | midnight
+  --- Dark style used by `:colorscheme kissaten`: afternoon | evening | midnight | graveyard
   ---@type kissaten.Style
   style = "evening",
   --- Style used when `vim.o.background == "light"`

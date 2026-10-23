@@ -4,7 +4,7 @@ local Util = require("kissaten.util")
 local M = {}
 
 local function badge(color, bg)
-  return { fg = color, bg = Util.blend(color, bg, 0.14), bold = true }
+  return { fg = color, bg = Util.tint(color, bg, 0.14), bold = true }
 end
 
 ---@type kissaten.HighlightsFn

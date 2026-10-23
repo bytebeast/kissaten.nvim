@@ -9,7 +9,7 @@ M.url = "https://github.com/mfussenegger/nvim-dap"
 function M.get(c)
   -- stylua: ignore
   return {
-    DapStoppedLine           = { bg = Util.blend(c.yellow, c.bg, 0.14) },
+    DapStoppedLine           = { bg = Util.tint(c.yellow, c.bg, 0.14) },
     DapBreakpoint            = { fg = c.red },
     DapBreakpointCondition   = { fg = c.yellow },
     DapBreakpointRejected    = { fg = c.overlay0 },

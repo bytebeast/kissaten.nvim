@@ -102,7 +102,7 @@ function M.get(c, opts)
     MiniPickIconDirectory = "Directory",
     MiniPickIconFile      = { fg = c.subtext },
     MiniPickMatchCurrent  = { bg = ui.bg_sel },
-    MiniPickMatchMarked   = { bg = Util.blend(c.purple, c.bg, 0.2) },
+    MiniPickMatchMarked   = { bg = Util.tint(c.purple, c.bg, 0.2) },
     MiniPickMatchRanges   = { fg = c.blue, bold = true },
     MiniPickNormal        = "NormalFloat",
     MiniPickPreviewLine   = { bg = ui.bg_sel },

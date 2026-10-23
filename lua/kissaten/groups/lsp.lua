@@ -56,7 +56,7 @@ end
 function M.get(c)
   local d = c.diag
   local function vt(color)
-    return { fg = color, bg = Util.blend(color, c.bg, c.light and 0.1 or 0.08) }
+    return { fg = color, bg = Util.tint(color, c.bg, c.light and 0.1 or 0.08) }
   end
 
   -- stylua: ignore

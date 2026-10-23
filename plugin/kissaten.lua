@@ -3,7 +3,7 @@ if vim.g.loaded_kissaten then
 end
 vim.g.loaded_kissaten = true
 
--- :Kissaten [morning|afternoon|evening|midnight|info]
+-- :Kissaten [morning|afternoon|evening|midnight|graveyard|info]
 vim.api.nvim_create_user_command("Kissaten", function(args)
   local arg = args.args
   if arg == "" then

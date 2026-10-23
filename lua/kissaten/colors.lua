@@ -47,6 +47,7 @@ function M.setup(opts)
 
   local light = p._background == "light"
   Util.bg, Util.fg = p.bg, p.fg
+  Util.tint_scale = p._tint or 1
 
   ---@class kissaten.Colors: kissaten.Palette
   local c = p
@@ -76,8 +77,8 @@ function M.setup(opts)
     bg_popup = c.mantle, -- completion menus always get a solid background
     bg_statusline = opts.transparent and c.none or c.mantle,
     bg_cursorline = c.surface0,
-    bg_visual = Util.blend(c.blue, c.bg, light and 0.18 or 0.22),
-    bg_search = Util.blend(c.yellow, c.bg, light and 0.25 or 0.22),
+    bg_visual = Util.tint(c.blue, c.bg, light and 0.18 or 0.22),
+    bg_search = Util.tint(c.yellow, c.bg, light and 0.25 or 0.22),
     bg_cursearch = c.orange,
     bg_match = c.surface2,
     bg_sel = c.surface1, -- selected item in menus/lists
@@ -178,10 +179,10 @@ function M.setup(opts)
   local diff_alpha = light and 0.22 or 0.18
   ---@class kissaten.DiffColors
   c.diff = {
-    add = Util.blend(c.green, c.bg, diff_alpha),
-    delete = Util.blend(c.red, c.bg, diff_alpha),
-    change = Util.blend(c.blue, c.bg, light and 0.14 or 0.12),
-    text = Util.blend(c.blue, c.bg, light and 0.3 or 0.32),
+    add = Util.tint(c.green, c.bg, diff_alpha),
+    delete = Util.tint(c.red, c.bg, diff_alpha),
+    change = Util.tint(c.blue, c.bg, light and 0.14 or 0.12),
+    text = Util.tint(c.blue, c.bg, light and 0.3 or 0.32),
   }
 
   -- Rainbow order is chosen so neighbours never share a hue family.

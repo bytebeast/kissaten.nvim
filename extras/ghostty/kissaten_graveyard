@@ -1,0 +1,28 @@
+# Kissaten Graveyard for Ghostty
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Copy to ~/.config/ghostty/themes/ and set `theme = <file name>`
+
+palette = 0=#23253b
+palette = 1=#ea83a0
+palette = 2=#9dd081
+palette = 3=#ddbc66
+palette = 4=#739aee
+palette = 5=#ebb9dd
+palette = 6=#69d1c1
+palette = 7=#a1a9cd
+palette = 8=#51577b
+palette = 9=#f196af
+palette = 10=#aadb90
+palette = 11=#e6c777
+palette = 12=#86a9f4
+palette = 13=#c2a6f4
+palette = 14=#89d1fa
+palette = 15=#bfc7e6
+
+background = #0a0a0d
+foreground = #bfc7e6
+cursor-color = #bfc7e6
+cursor-text = #0a0a0d
+selection-background = #252e46
+selection-foreground = #bfc7e6
+split-divider-color = #23253b

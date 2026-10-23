@@ -30,6 +30,7 @@ Requires Neovim 0.9 or newer. Tested on 0.9, 0.10, 0.11 and 0.12.
   `kissaten-afternoon`   dark    slate blue, softer mid-tone
   `kissaten-evening`     dark    cool navy with warm accents (default)
   `kissaten-midnight`    dark    near-black, for low-light sessions
+  `kissaten-graveyard`   dark    black, for OLED screens and dark rooms
 
 `:colorscheme kissaten` follows 'background': dark loads `style`, light
 loads `light_style`. Changing 'background' while a kissaten style is active
@@ -55,7 +56,7 @@ Calling `setup()` is optional; defaults are used otherwise.
 
 Defaults: >lua
   require("kissaten").setup({
-    style = "evening",        -- dark style: afternoon | evening | midnight
+    style = "evening",        -- afternoon|evening|midnight|graveyard
     light_style = "morning",  -- used when background=light
     transparent = false,      -- don't paint the editor background
     terminal_colors = true,   -- set g:terminal_color_0..15
@@ -110,9 +111,14 @@ and plugin that uses it follows: >lua
 <
 Per-style tweaks: >lua
   on_palette = function(p, style)
-    if style == "midnight" then p.bg = "#000000" end
+    if style == "graveyard" then p.bg = "#000000" end
   end,
 <
+Palettes can also set `_tint` (default 1): how strongly accents tint
+backgrounds such as selection, search, diff and diagnostics. `graveyard`
+uses 1.15 so these stay as visible on black as they are in midnight; raise
+it if you make your own background darker.
+
 Highlight overrides accept any |nvim_set_hl()| attributes, a `link`, or a
 string as shorthand for a link: >lua
   on_highlights = function(hl, c)
@@ -171,7 +177,7 @@ Lualine themes: `kissaten` (follows the active style) and
 9. EXTRAS                                                     *kissaten-extras*
 
 Matching themes for Alacritty, bat, delta, eza, fzf, Ghostty, k9s, Kitty,
-lazygit, tmux, WezTerm and Zettlr live in `extras/`, in all four styles (k9s
+lazygit, tmux, WezTerm and Zettlr live in `extras/`, in all five styles (k9s
 also has `_transparent` skins). Install steps are in the README, with full
 guides for bat, eza, k9s and Zettlr in `extras/<tool>/README.md`;
 `extras/fonts/README.md` recommends coding fonts (the screenshots use

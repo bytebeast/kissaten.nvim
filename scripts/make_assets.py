@@ -5,7 +5,7 @@ usage: make_assets.py --shots DIR [--out assets] [--font-dir DIR]
 
 Produces:
   assets/screenshots/*.png     copies of the framed screenshots
-  assets/styles.png            2x2 grid of the four styles
+  assets/styles.png            grid of every style (rows of 3, last row centered)
   assets/palette.png           swatch sheet generated from lua/kissaten/palettes
   assets/social-preview.png    1280x640 GitHub social preview (< 1 MB)
 """
@@ -19,7 +19,7 @@ import subprocess
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STYLES = ["morning", "afternoon", "evening", "midnight"]
+STYLES = ["morning", "afternoon", "evening", "midnight", "graveyard"]
 ACCENTS = ["red", "maroon", "orange", "yellow", "green", "teal", "cyan", "sky", "blue", "lavender", "purple", "pink"]
 BASES = ["crust", "mantle", "bg", "surface0", "surface1", "surface2", "overlay0", "comment", "subtext", "fg"]
 
@@ -59,14 +59,22 @@ def rounded(img, radius):
     return out
 
 
+def rows_layout(n, per_row):
+    """Split n items into rows of `per_row`; the caller centers the last row."""
+    return [list(range(i, min(i + per_row, n))) for i in range(0, n, per_row)]
+
+
 def styles_grid(shots, out):
     imgs = [Image.open(os.path.join(shots, f"style-{s}.png")).convert("RGB") for s in STYLES]
     w, h = imgs[0].size
     sw, sh = w // 2, h // 2
-    gap = 0
-    grid = Image.new("RGB", (sw * 2 + gap, sh * 2 + gap), (14, 14, 20))
-    for i, im in enumerate(imgs):
-        grid.paste(im.resize((sw, sh), Image.LANCZOS), ((i % 2) * (sw + gap), (i // 2) * (sh + gap)))
+    rows = rows_layout(len(imgs), 3)
+    cols = max(len(r) for r in rows)
+    grid = Image.new("RGB", (sw * cols, sh * len(rows)), (14, 14, 20))
+    for ri, row in enumerate(rows):
+        x0 = (cols - len(row)) * sw // 2
+        for ci, i in enumerate(row):
+            grid.paste(imgs[i].resize((sw, sh), Image.LANCZOS), (x0 + ci * sw, ri * sh))
     grid.save(out, optimize=True)
 
 
@@ -123,12 +131,13 @@ def social_preview(shots, font, out):
 
     # style chips
     x, y = x0 + 2, y0 + 210
+    chip = font("Regular", 17)
     for style in STYLES:
         sp = palette(style)
-        w = d.textlength(style, font=small) + 28
-        d.rounded_rectangle([x, y, x + w, y + 38], radius=19, fill=rgb(sp["bg"]), outline=rgb(sp["surface2"]))
-        d.text((x + 14, y + 7), style, font=small, fill=rgb(sp["fg"]))
-        x += w + 10
+        w = d.textlength(style, font=chip) + 24
+        d.rounded_rectangle([x, y, x + w, y + 36], radius=18, fill=rgb(sp["bg"]), outline=rgb(sp["surface2"]))
+        d.text((x + 12, y + 7), style, font=chip, fill=rgb(sp["fg"]))
+        x += w + 8
 
     # accent dots
     x, y = x0 + 6, y0 + 280
@@ -185,6 +194,7 @@ STYLE_NOTES = {
     "afternoon": "dark · slate blue mid-tone",
     "evening": "dark · cool navy, warm accents · default",
     "midnight": "dark · near-black, low light",
+    "graveyard": "dark · black, for OLED and dark rooms",
 }
 
 # (label, accessor, derived?) per section; accessor reads the exported data
@@ -257,11 +267,18 @@ def palette_cards(data, font, out):
 
     cards = [card(s) for s in STYLES]
     gap = 28
-    W = cards[0].width * 2 + gap
-    H = max(cards[0].height, cards[1].height) + gap + max(cards[2].height, cards[3].height)
+    rows = rows_layout(len(cards), 2)
+    cw = cards[0].width
+    W = cw * 2 + gap
+    heights = [max(cards[i].height for i in row) for row in rows]
+    H = sum(heights) + gap * (len(rows) - 1)
     sheet = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    for i, c in enumerate(cards):
-        sheet.paste(c, ((i % 2) * (c.width + gap), (i // 2) * (cards[0].height + gap)), c)
+    y = 0
+    for row, rh in zip(rows, heights):
+        x0 = (W - (len(row) * cw + (len(row) - 1) * gap)) // 2
+        for ci, i in enumerate(row):
+            sheet.paste(cards[i], (x0 + ci * (cw + gap), y), cards[i])
+        y += rh + gap
     sheet.save(out, optimize=True)
     return sheet.size
 
