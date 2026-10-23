@@ -1,0 +1,125 @@
+# Kissaten Afternoon (transparent) for k9s
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Copy to the k9s skins directory, then set `k9s.ui.skin: kissaten_afternoon_transparent`
+# in k9s's config.yaml.
+#   Linux:  ~/.config/k9s/skins/
+#   macOS:  ~/Library/Application Support/k9s/skins/
+#   or run `k9s info` to print the skins directory k9s actually uses
+
+k9s:
+  body:
+    fgColor: "#cdd5f6"
+    bgColor: "default"
+    logoColor: "#c6a0f6"
+    logoColorMsg: "#cdd5f6"
+    logoColorInfo: "#84a8f8"
+    logoColorWarn: "#e8c47e"
+    logoColorError: "#ef8aa6"
+  prompt:
+    fgColor: "#cdd5f6"
+    bgColor: "default"
+    suggestColor: "#8890b6"
+    border:
+      command: "#84a8f8"
+      default: "#7fd3c4"
+  help:
+    fgColor: "#cdd5f6"
+    bgColor: "default"
+    sectionColor: "#a9d881"
+    keyColor: "#84a8f8"
+    numKeyColor: "#f3a06c"
+  frame:
+    title:
+      fgColor: "#84a8f8"
+      bgColor: "default"
+      highlightColor: "#f4b8e4"
+      counterColor: "#e8c47e"
+      filterColor: "#a9d881"
+    border:
+      fgColor: "#4a506b"
+      focusColor: "#84a8f8"
+    menu:
+      fgColor: "#b0b9dd"
+      keyColor: "#84a8f8"
+      numKeyColor: "#f3a06c"
+    crumbs:
+      fgColor: "#1a1c2a"
+      bgColor: "#b5bff8"
+      activeColor: "#84a8f8"
+    status:
+      newColor: "#84a8f8"
+      modifyColor: "#b5bff8"
+      addColor: "#a9d881"
+      pendingColor: "#f3a06c"
+      errorColor: "#ef8aa6"
+      highlightColor: "#7fd1f0"
+      killColor: "#c6a0f6"
+      completedColor: "#8890b6"
+  info:
+    fgColor: "#f3a06c"
+    sectionColor: "#cdd5f6"
+    cpuColor: "#c6a0f6"
+    memColor: "#e8c47e"
+    k9sRevColor: "#a9d881"
+  views:
+    table:
+      fgColor: "#cdd5f6"
+      bgColor: "default"
+      cursorFgColor: "#1a1c2a"
+      cursorBgColor: "#cdd5f6"
+      markColor: "#f4b8e4"
+      header:
+        fgColor: "#e8c47e"
+        bgColor: "default"
+        sorterColor: "#7fd1f0"
+        selectedSortColumnColor: "#f3a06c"
+    xray:
+      fgColor: "#cdd5f6"
+      bgColor: "default"
+      cursorColor: "#84a8f8"
+      cursorTextColor: "#1a1c2a"
+      graphicColor: "#c6a0f6"
+    charts:
+      bgColor: "default"
+      chartBgColor: "default"
+      dialBgColor: "default"
+      focusFgColor: "#cdd5f6"
+      focusBgColor: "#3c4159"
+      defaultDialColors:
+        - "#a9d881"
+        - "#ef8aa6"
+      defaultChartColors:
+        - "#a9d881"
+        - "#ef8aa6"
+      resourceColors:
+        cpu:
+          - "#c6a0f6"
+          - "#84a8f8"
+        mem:
+          - "#e8c47e"
+          - "#f3a06c"
+    yaml:
+      keyColor: "#7fd3c4"
+      valueColor: "#cdd5f6"
+      colonColor: "#b0b9dd"
+    picker:
+      mainColor: "#cdd5f6"
+      focusColor: "#84a8f8"
+      shortcutColor: "#f3a06c"
+    logs:
+      fgColor: "#cdd5f6"
+      bgColor: "default"
+      indicator:
+        fgColor: "#b5bff8"
+        bgColor: "default"
+        toggleOnColor: "#a9d881"
+        toggleOffColor: "#8890b6"
+  dialog:
+    fgColor: "#cdd5f6"
+    bgColor: "default"
+    buttonFgColor: "#cdd5f6"
+    buttonBgColor: "#3c4159"
+    buttonFocusFgColor: "#1a1c2a"
+    buttonFocusBgColor: "#84a8f8"
+    labelFgColor: "#f3a06c"
+    fieldFgColor: "#cdd5f6"

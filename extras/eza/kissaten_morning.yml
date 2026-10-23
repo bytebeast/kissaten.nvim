@@ -1,0 +1,113 @@
+# Kissaten Morning for eza
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Save as theme.yml in eza's config directory:
+#   Linux:  ~/.config/eza/theme.yml
+#   macOS:  ~/Library/Application Support/eza/theme.yml
+#   or anywhere, with EZA_CONFIG_DIR pointing at the folder that holds it
+
+colourful: true
+
+filekinds:
+  normal: { foreground: "#353a5c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  directory: { foreground: "#2a5fe0", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  symlink: { foreground: "#09729f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  pipe: { foreground: "#4f5578", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  block_device: { foreground: "#8f5f06", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  char_device: { foreground: "#8f5f06", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  socket: { foreground: "#4f5578", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  special: { foreground: "#ab3c87", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  executable: { foreground: "#32761f", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  mount_point: { foreground: "#10757a", is_underline: true, is_bold: false, is_dimmed: false, is_italic: false }
+
+# read / write / execute keep one color each, so a column reads at a glance
+perms:
+  user_read: { foreground: "#8f5f06", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  user_write: { foreground: "#c8153c", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  user_execute_file: { foreground: "#32761f", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  user_execute_other: { foreground: "#32761f", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  group_read: { foreground: "#8f5f06", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  group_write: { foreground: "#c8153c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  group_execute: { foreground: "#32761f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  other_read: { foreground: "#8f5f06", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  other_write: { foreground: "#c8153c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  other_execute: { foreground: "#32761f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  special_user_file: { foreground: "#ab3c87", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  special_other: { foreground: "#ab3c87", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  attribute: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+# bigger files get warmer: bytes -> kilo -> mega -> giga -> huge
+size:
+  major: { foreground: "#4f5578", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  minor: { foreground: "#3a6f8f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  number_byte: { foreground: "#353a5c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  number_kilo: { foreground: "#3a6f8f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  number_mega: { foreground: "#2a5fe0", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  number_giga: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  number_huge: { foreground: "#b25000", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  unit_byte: { foreground: "#5c6283", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  unit_kilo: { foreground: "#3a6f8f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  unit_mega: { foreground: "#2a5fe0", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  unit_giga: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  unit_huge: { foreground: "#b25000", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+users:
+  user_you: { foreground: "#353a5c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  user_root: { foreground: "#c8153c", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  user_other: { foreground: "#9d4f45", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  group_yours: { foreground: "#4f5578", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  group_other: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  group_root: { foreground: "#c8153c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+links:
+  normal: { foreground: "#09729f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  multi_link_file: { foreground: "#b25000", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+git:
+  new: { foreground: "#32761f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  modified: { foreground: "#8f5f06", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  deleted: { foreground: "#c8153c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  renamed: { foreground: "#10757a", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  typechange: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  ignored: { foreground: "#8f96b1", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  conflicted: { foreground: "#b25000", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+
+git_repo:
+  branch_main: { foreground: "#4f5578", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  branch_other: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  git_clean: { foreground: "#32761f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  git_dirty: { foreground: "#8f5f06", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+security_context:
+  none: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  selinux:
+    colon: { foreground: "#8f96b1", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+    user: { foreground: "#4f5578", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+    role: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+    typ: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+    range: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+file_type:
+  image: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  video: { foreground: "#ab3c87", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  music: { foreground: "#10757a", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  lossless: { foreground: "#10757a", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+  crypto: { foreground: "#b25000", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  document: { foreground: "#353a5c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  compressed: { foreground: "#c8153c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  temp: { foreground: "#686f8e", is_italic: true, is_bold: false, is_dimmed: false, is_underline: false }
+  compiled: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+  build: { foreground: "#8f5f06", is_underline: true, is_bold: false, is_dimmed: false, is_italic: false }
+  source: { foreground: "#353a5c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+punctuation: { foreground: "#8f96b1", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+date: { foreground: "#5f62a3", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+inode: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+blocks: { foreground: "#686f8e", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+header: { foreground: "#353a5c", is_bold: true, is_underline: true, is_dimmed: false, is_italic: false }
+octal: { foreground: "#10757a", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+flags: { foreground: "#7c3aed", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+
+symlink_path: { foreground: "#09729f", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+control_char: { foreground: "#c8153c", is_bold: false, is_dimmed: false, is_italic: false, is_underline: false }
+broken_symlink: { foreground: "#c8153c", is_bold: true, is_dimmed: false, is_italic: false, is_underline: false }
+broken_path_overlay: { foreground: "#8f96b1", is_underline: true, is_bold: false, is_dimmed: false, is_italic: false }
