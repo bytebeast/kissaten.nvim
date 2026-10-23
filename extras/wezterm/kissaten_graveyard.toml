@@ -1,0 +1,46 @@
+# Kissaten Graveyard for WezTerm
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# Copy to ~/.config/wezterm/colors/ and set `config.color_scheme = "Kissaten Graveyard"`
+
+[colors]
+foreground = "#bfc7e6"
+background = "#0a0a0d"
+cursor_bg = "#bfc7e6"
+cursor_border = "#bfc7e6"
+cursor_fg = "#0a0a0d"
+selection_bg = "#252e46"
+selection_fg = "#bfc7e6"
+split = "#23253b"
+compose_cursor = "#f09a62"
+scrollbar_thumb = "#30344f"
+
+ansi = ["#23253b", "#ea83a0", "#9dd081", "#ddbc66", "#739aee", "#ebb9dd", "#69d1c1", "#a1a9cd"]
+brights = ["#51577b", "#f196af", "#aadb90", "#e6c777", "#86a9f4", "#c2a6f4", "#89d1fa", "#bfc7e6"]
+
+[colors.tab_bar]
+background = "#000000"
+inactive_tab_edge = "#050507"
+
+[colors.tab_bar.active_tab]
+bg_color = "#739aee"
+fg_color = "#000000"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#050507"
+fg_color = "#7479a1"
+
+[colors.tab_bar.inactive_tab_hover]
+bg_color = "#171827"
+fg_color = "#bfc7e6"
+
+[colors.tab_bar.new_tab]
+bg_color = "#000000"
+fg_color = "#739aee"
+
+[colors.tab_bar.new_tab_hover]
+bg_color = "#171827"
+fg_color = "#739aee"
+
+[metadata]
+name = "Kissaten Graveyard"
+origin_url = "https://github.com/bytebeast/kissaten.nvim"

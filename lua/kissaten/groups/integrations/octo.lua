@@ -7,7 +7,7 @@ M.url = "https://github.com/pwntester/octo.nvim"
 ---@type kissaten.HighlightsFn
 function M.get(c)
   local function pill(color)
-    return { fg = color, bg = Util.blend(color, c.bg, 0.14), bold = true }
+    return { fg = color, bg = Util.tint(color, c.bg, 0.14), bold = true }
   end
   -- stylua: ignore
   return {

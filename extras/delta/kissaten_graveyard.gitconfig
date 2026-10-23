@@ -1,0 +1,31 @@
+# Kissaten Graveyard for delta
+# upstream: https://github.com/bytebeast/kissaten.nvim
+# In ~/.gitconfig:
+#   [include]
+#     path = /path/to/this/file
+#   [delta]
+#     features = kissaten-graveyard
+
+[delta "kissaten-graveyard"]
+  dark = false
+  light = false
+  syntax-theme = none
+  file-style = "#739aee" bold
+  file-decoration-style = "#30344f" ul
+  hunk-header-style = file line-number syntax
+  hunk-header-decoration-style = "#30344f" box
+  hunk-header-line-number-style = "#f09a62"
+  line-numbers = true
+  line-numbers-left-style = "#30344f"
+  line-numbers-right-style = "#30344f"
+  line-numbers-zero-style = "#7479a1"
+  line-numbers-minus-style = "#ea83a0"
+  line-numbers-plus-style = "#9dd081"
+  minus-style = syntax "#38232b"
+  minus-emph-style = syntax "#583440"
+  plus-style = syntax "#283325"
+  plus-emph-style = syntax "#3d4f36"
+  map-styles = bold purple => syntax "#23253b", bold cyan => syntax "#171827"
+  blame-palette = "#0a0a0d" "#050507" "#171827"
+  commit-decoration-style = "#30344f" box ul
+  zero-style = syntax

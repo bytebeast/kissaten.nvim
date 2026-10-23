@@ -31,7 +31,7 @@ function M.get(c)
   for i = 1, 6 do
     local color = c.rainbow[i]
     hl["RenderMarkdownH" .. i] = { fg = color, bold = true }
-    hl["RenderMarkdownH" .. i .. "Bg"] = { bg = Util.blend(color, c.bg, 0.12) }
+    hl["RenderMarkdownH" .. i .. "Bg"] = { bg = Util.tint(color, c.bg, 0.12) }
   end
   return hl
 end

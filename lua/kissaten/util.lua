@@ -42,6 +42,20 @@ end
 M.bg = "#000000"
 M.fg = "#ffffff"
 
+-- Set by kissaten.colors from the palette's `_tint` (default 1).
+M.tint_scale = 1
+
+--- Mix an accent into a background to make a tinted background (selection,
+--- diff, diagnostic and badge backgrounds). Scaled by the palette's `_tint`,
+--- so a near-black palette can mix in a little more color and keep these
+--- tints as visible as they are on a lighter background.
+---@param color string
+---@param bg string
+---@param amount number 0..1
+function M.tint(color, bg, amount)
+  return M.blend(color, bg, math.min(1, amount * M.tint_scale))
+end
+
 --- Tint a color toward the active background (`amount` of the color is kept).
 function M.blend_bg(hex, amount, bg)
   return M.blend(hex, bg or M.bg, amount)

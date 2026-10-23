@@ -40,7 +40,7 @@ function M.get(c, opts)
     SnacksPickerPathHidden    = { fg = c.overlay0 },
     SnacksPickerPathIgnored   = { fg = c.overlay0, italic = true },
     SnacksPickerTotals        = { fg = c.comment },
-    SnacksPickerToggle        = { fg = c.blue, bg = Util.blend(c.blue, c.bg, 0.12) },
+    SnacksPickerToggle        = { fg = c.blue, bg = Util.tint(c.blue, c.bg, 0.12) },
     SnacksPickerSpinner       = { fg = c.orange },
     SnacksPickerPickWin       = { fg = c.crust, bg = c.blue, bold = true },
     SnacksPickerPickWinCurrent = { fg = c.crust, bg = c.pink, bold = true },
@@ -83,7 +83,7 @@ function M.get(c, opts)
     SnacksWinKeySep           = { fg = c.overlay0 },
     SnacksWinKeyDesc          = { fg = c.subtext },
     SnacksFooterKey           = { fg = c.crust, bg = c.blue },
-    SnacksFooterDesc          = { fg = c.blue, bg = Util.blend(c.blue, c.bg, 0.12) },
+    SnacksFooterDesc          = { fg = c.blue, bg = Util.tint(c.blue, c.bg, 0.12) },
     SnacksZenIcon             = { fg = c.purple },
     SnacksScratchKey          = { fg = c.orange },
     SnacksScratchDesc         = { fg = c.subtext },
@@ -92,10 +92,10 @@ function M.get(c, opts)
     SnacksImageMath           = { fg = c.cyan },
 
     -- profiler
-    SnacksProfilerIconInfo    = { fg = c.blue, bg = Util.blend(c.blue, c.bg, 0.25) },
-    SnacksProfilerBadgeInfo   = { fg = c.blue, bg = Util.blend(c.blue, c.bg, 0.1) },
-    SnacksProfilerIconTrace   = { fg = c.comment, bg = Util.blend(c.overlay0, c.bg, 0.25) },
-    SnacksProfilerBadgeTrace  = { fg = c.comment, bg = Util.blend(c.overlay0, c.bg, 0.1) },
+    SnacksProfilerIconInfo    = { fg = c.blue, bg = Util.tint(c.blue, c.bg, 0.25) },
+    SnacksProfilerBadgeInfo   = { fg = c.blue, bg = Util.tint(c.blue, c.bg, 0.1) },
+    SnacksProfilerIconTrace   = { fg = c.comment, bg = Util.tint(c.overlay0, c.bg, 0.25) },
+    SnacksProfilerBadgeTrace  = { fg = c.comment, bg = Util.tint(c.overlay0, c.bg, 0.1) },
   }
 
   for name, color in pairs({

@@ -70,6 +70,8 @@ Ratios against each theme's own `Normal` background, read from the live highligh
 | Darkest | **kissaten-midnight** | 7.1 | 4.7 | **2.8** |
 | | tokyonight-night | 5.1 | 2.8 | 1.7 |
 | | catppuccin-mocha | **7.8** | **5.8** | 1.8 |
+| Black | **kissaten-graveyard** | 7.1 | 4.7 | **2.8** |
+| | *(neither has a black style)* | | | |
 
 Roles measured: keyword, function, string, type, parameter, property, number and operator. Catppuccin deliberately keeps brighter comments in its dark flavors. If you prefer that, set `contrast = "high"`, which lifts kissaten's comments to 6:1 or better.
 
@@ -77,7 +79,7 @@ Roles measured: keyword, function, string, type, parameter, property, number and
 
 ## Styles
 
-![The four kissaten styles](assets/styles.png)
+![The five kissaten styles](assets/styles.png)
 
 | Style | Background | Character |
 | --- | --- | --- |
@@ -85,6 +87,7 @@ Roles measured: keyword, function, string, type, parameter, property, number and
 | `kissaten-afternoon` | dark | Slate blue, a softer mid-tone (storm/frappé territory) |
 | `kissaten-evening` | dark | Cool navy with warm café accents. **Default** |
 | `kissaten-midnight` | dark | Near-black ink for low-light sessions |
+| `kissaten-graveyard` | dark | Black, for OLED screens and dark rooms. Midnight's colors, matched to the same contrast |
 
 `:colorscheme kissaten` follows `'background'`: dark loads your `style`, light loads `light_style`. Flip `'background'` and kissaten switches to the matching variant and remembers which one you used last.
 
@@ -106,7 +109,7 @@ All screenshots are real LazyVim sessions (vtsls and pyright for LSP, treesitter
 <details>
 <summary><b>Full palette cards: every swatch with its hex, derived UI colors and syntax roles</b></summary>
 
-![kissaten palette cards for all four styles](assets/palette-cards.png)
+![kissaten palette cards for all five styles](assets/palette-cards.png)
 
 Swatches marked *derived* aren't in the palette files. Kissaten computes them from the palette (selection, search, diff backgrounds, and the `subtle_comments` fades), so they follow any palette change automatically. The syntax tiles are drawn in the real role colors that the plugin computes.
 </details>
@@ -145,7 +148,7 @@ return {
     priority = 1000,
     -- version = "*", -- uncomment to stay on tagged releases
     opts = {
-      -- Styles: "morning" (light) | "afternoon" | "evening" | "midnight"
+      -- Styles: "morning" (light) | "afternoon" | "evening" | "midnight" | "graveyard" (black)
       style = "evening", -- dark style used by `colorscheme kissaten`
       light_style = "morning", -- used when vim.o.background == "light"
 
@@ -196,7 +199,7 @@ return {
     "LazyVim/LazyVim",
     opts = {
       -- "kissaten" follows vim.o.background; or pin one:
-      -- "kissaten-morning" | "kissaten-afternoon" | "kissaten-evening" | "kissaten-midnight"
+      -- "kissaten-morning" | "kissaten-afternoon" | "kissaten-evening" | "kissaten-midnight" | "kissaten-graveyard"
       colorscheme = "kissaten",
     },
   },
@@ -232,7 +235,7 @@ These are the defaults. You only need to pass what you want to change.
 
 ```lua
 require("kissaten").setup({
-  style = "evening",          -- dark style: "afternoon" | "evening" | "midnight"
+  style = "evening",          -- dark style: "afternoon" | "evening" | "midnight" | "graveyard"
   light_style = "morning",    -- used when vim.o.background == "light"
   transparent = false,        -- don't paint the editor background
   terminal_colors = true,     -- set vim.g.terminal_color_0..15 for :terminal
@@ -311,6 +314,8 @@ opts = {
   end,
 }
 ```
+
+For black, use `kissaten-graveyard` instead. It already re-tunes the text colors and tints for a black background. If you darken a style yourself, also raise `p._tint` (default `1`, graveyard uses `1.15`) so selection, search and diff backgrounds stay visible.
 </details>
 
 <details>
@@ -348,7 +353,7 @@ opts = {
 
 ![subtle_comments off, 0.5 and 0.7 in evening and morning](assets/subtle-comments.png)
 
-`fade` runs from `0` (off) to `1`. It's measured in contrast rather than opacity, so the same value looks the same in every style, from `morning` to `midnight`, and `1` stops at 1.6:1 so comments never disappear:
+`fade` runs from `0` (off) to `1`. It's measured in contrast rather than opacity, so the same value looks the same in every style, from `morning` to `graveyard`, and `1` stops at 1.6:1 so comments never disappear:
 
 | `fade` | Comment contrast (all styles) |
 | --- | --- |
@@ -511,7 +516,7 @@ Matching themes for your terminal and tools live in [`extras/`](extras), generat
 
 Looking for a font to go with the theme? See the **[font guide](extras/fonts/README.md)**.
 
-Every file comes in all four styles (`kissaten_morning`, `kissaten_afternoon`, `kissaten_evening`, `kissaten_midnight`); the table uses `evening`. bat, eza, k9s and Zettlr have their own setup guides, linked in the table.
+Every file comes in all five styles (`kissaten_morning`, `kissaten_afternoon`, `kissaten_evening`, `kissaten_midnight`, `kissaten_graveyard`); the table uses `evening`. bat, eza, k9s and Zettlr have their own setup guides, linked in the table.
 
 ## Commands, API and health
 

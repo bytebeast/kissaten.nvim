@@ -73,8 +73,8 @@ function M.get(c, opts)
     ComplMatchIns         = { fg = c.comment },
     ComplHint             = { fg = c.comment },
     ComplHintMore         = { fg = c.comment },
-    SnippetTabstop        = { bg = Util.blend(c.lavender, c.bg, 0.15) },
-    SnippetTabstopActive  = { bg = Util.blend(c.lavender, c.bg, 0.25) },
+    SnippetTabstop        = { bg = Util.tint(c.lavender, c.bg, 0.15) },
+    SnippetTabstopActive  = { bg = Util.tint(c.lavender, c.bg, 0.25) },
     WildMenu              = { bg = ui.bg_sel },
 
     StatusLine            = { fg = ui.fg_sidebar, bg = ui.bg_statusline },
@@ -103,7 +103,7 @@ function M.get(c, opts)
     DiffChange            = { bg = c.diff.change },
     DiffDelete            = { fg = Util.blend(c.red, c.bg, 0.6), bg = c.diff.delete },
     DiffText              = { bg = c.diff.text },
-    DiffTextAdd           = { bg = Util.blend(c.green, c.bg, 0.32) },
+    DiffTextAdd           = { bg = Util.tint(c.green, c.bg, 0.32) },
     Added                 = { fg = c.git.add },
     Changed               = { fg = c.git.change },
     Removed               = { fg = c.git.delete },
@@ -128,8 +128,8 @@ function M.get(c, opts)
     qfLineNr              = { fg = c.comment },
     helpCommand           = { fg = c.blue, bg = c.surface0 },
     helpExample           = { fg = c.comment },
-    debugPC               = { bg = Util.blend(c.blue, c.bg, 0.15) },
-    debugBreakpoint       = { fg = d.error, bg = Util.blend(d.error, c.bg, 0.15) },
+    debugPC               = { bg = Util.tint(c.blue, c.bg, 0.15) },
+    debugBreakpoint       = { fg = d.error, bg = Util.tint(d.error, c.bg, 0.15) },
   }
 end
 
