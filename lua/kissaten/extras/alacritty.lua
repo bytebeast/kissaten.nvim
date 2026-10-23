@@ -30,7 +30,7 @@ foreground = "${fg}"
 background = "${ui.bg_search}"
 
 [colors.search.focused_match]
-foreground = "${crust}"
+foreground = "${ui.on_badge}"
 background = "${orange}"
 
 [colors.footer_bar]
@@ -38,11 +38,11 @@ foreground = "${fg}"
 background = "${mantle}"
 
 [colors.hints.start]
-foreground = "${crust}"
+foreground = "${ui.on_badge}"
 background = "${pink}"
 
 [colors.hints.end]
-foreground = "${crust}"
+foreground = "${ui.on_badge}"
 background = "${blue}"
 
 [colors.normal]

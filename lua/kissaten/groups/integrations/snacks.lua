@@ -23,14 +23,14 @@ function M.get(c, opts)
     -- picker (LazyVim default)
     SnacksPicker              = "NormalFloat",
     SnacksPickerBorder        = "FloatBorder",
-    SnacksPickerTitle         = { fg = c.crust, bg = c.blue, bold = true },
+    SnacksPickerTitle         = { fg = c.ui.on_badge, bg = ui.accent, bold = true },
     SnacksPickerInputBorder   = { fg = c.orange, bg = ui.bg_float },
-    SnacksPickerInputTitle    = { fg = c.crust, bg = c.orange, bold = true },
-    SnacksPickerBoxTitle      = { fg = c.crust, bg = c.blue, bold = true },
-    SnacksPickerPreviewTitle  = { fg = c.crust, bg = c.green, bold = true },
-    SnacksPickerListTitle     = { fg = c.crust, bg = c.blue, bold = true },
+    SnacksPickerInputTitle    = { fg = c.ui.on_badge, bg = c.orange, bold = true },
+    SnacksPickerBoxTitle      = { fg = c.ui.on_badge, bg = ui.accent, bold = true },
+    SnacksPickerPreviewTitle  = { fg = c.ui.on_badge, bg = c.green, bold = true },
+    SnacksPickerListTitle     = { fg = c.ui.on_badge, bg = ui.accent, bold = true },
     SnacksPickerPrompt        = { fg = c.orange },
-    SnacksPickerMatch         = { fg = c.blue, bold = true },
+    SnacksPickerMatch         = { fg = ui.accent, bold = true },
     SnacksPickerSelected      = { fg = c.pink },
     SnacksPickerUnselected    = { fg = c.overlay0 },
     SnacksPickerCursorLine    = { bg = ui.bg_sel },
@@ -40,10 +40,10 @@ function M.get(c, opts)
     SnacksPickerPathHidden    = { fg = c.overlay0 },
     SnacksPickerPathIgnored   = { fg = c.overlay0, italic = true },
     SnacksPickerTotals        = { fg = c.comment },
-    SnacksPickerToggle        = { fg = c.blue, bg = Util.tint(c.blue, c.bg, 0.12) },
+    SnacksPickerToggle        = { fg = ui.accent, bg = Util.tint(ui.accent, c.bg, 0.12) },
     SnacksPickerSpinner       = { fg = c.orange },
-    SnacksPickerPickWin       = { fg = c.crust, bg = c.blue, bold = true },
-    SnacksPickerPickWinCurrent = { fg = c.crust, bg = c.pink, bold = true },
+    SnacksPickerPickWin       = { fg = c.ui.on_badge, bg = ui.accent, bold = true },
+    SnacksPickerPickWinCurrent = { fg = c.ui.on_badge, bg = c.pink, bold = true },
     SnacksPickerTree          = { fg = ui.indent },
     SnacksPickerGitStatusAdded     = { fg = c.git.add },
     SnacksPickerGitStatusModified  = { fg = c.git.change },
@@ -56,7 +56,7 @@ function M.get(c, opts)
 
     -- dashboard
     SnacksDashboardNormal     = { fg = c.fg },
-    SnacksDashboardHeader     = { fg = c.blue },
+    SnacksDashboardHeader     = { fg = ui.accent },
     SnacksDashboardTitle      = { fg = c.purple, bold = true },
     SnacksDashboardIcon       = { fg = c.cyan },
     SnacksDashboardDesc       = { fg = c.fg },
@@ -76,14 +76,14 @@ function M.get(c, opts)
     SnacksNormal              = "NormalFloat",
     SnacksWinBar              = "Title",
     SnacksBackdrop            = { bg = c.crust },
-    SnacksInputIcon           = { fg = c.blue },
+    SnacksInputIcon           = { fg = ui.accent },
     SnacksInputBorder         = { fg = c.yellow, bg = ui.bg_float },
     SnacksInputTitle          = { fg = c.yellow, bg = ui.bg_float, bold = true },
     SnacksWinKey              = { fg = c.orange },
     SnacksWinKeySep           = { fg = c.overlay0 },
     SnacksWinKeyDesc          = { fg = c.subtext },
-    SnacksFooterKey           = { fg = c.crust, bg = c.blue },
-    SnacksFooterDesc          = { fg = c.blue, bg = Util.tint(c.blue, c.bg, 0.12) },
+    SnacksFooterKey           = { fg = c.ui.on_badge, bg = ui.accent },
+    SnacksFooterDesc          = { fg = ui.accent, bg = Util.tint(ui.accent, c.bg, 0.12) },
     SnacksZenIcon             = { fg = c.purple },
     SnacksScratchKey          = { fg = c.orange },
     SnacksScratchDesc         = { fg = c.subtext },
@@ -112,11 +112,23 @@ function M.get(c, opts)
     hl["SnacksNotifierTitle" .. name] = l.title
     hl["SnacksNotifierFooter" .. name] = l.footer
   end
+  if opts.borderless then
+    local p = ui.picker
+    -- snacks derives <Part>, <Part>Border, <Part>Title for each picker part
+    for part, bg in pairs({ Input = p.prompt, List = p.list, Preview = p.preview, Box = p.list, [""] = p.list }) do
+      hl["SnacksPicker" .. part] = { fg = c.fg, bg = bg }
+      hl["SnacksPicker" .. part .. "Border"] = { fg = bg, bg = bg }
+    end
+    hl.SnacksPickerPrompt = { fg = c.orange, bg = p.prompt }
+    hl.SnacksPickerListCursorLine = { bg = p.sel }
+    -- the picker box title goes through snacks' generic title group
+    hl.SnacksTitle = { fg = ui.on_badge, bg = ui.accent, bold = true }
+  end
   hl.SnacksNotifierHistory = "NormalFloat"
-  hl.SnacksNotifierHistoryTitle = { fg = c.blue, bold = true }
+  hl.SnacksNotifierHistoryTitle = { fg = ui.accent, bold = true }
   hl.SnacksNotifierHistoryDateTime = { fg = c.comment }
 
-  for i, color in ipairs(c.rainbow) do
+  for i, color in ipairs(c.scopes) do -- follows the `rainbow` option
     hl["SnacksIndent" .. i] = { fg = Util.blend(color, c.bg, 0.4), nocombine = true }
   end
   return hl

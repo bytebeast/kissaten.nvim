@@ -20,17 +20,17 @@ active_border_color ${blue}
 inactive_border_color ${surface1}
 bell_border_color ${yellow}
 
-active_tab_foreground ${crust}
+active_tab_foreground ${ui.on_badge}
 active_tab_background ${blue}
 inactive_tab_foreground ${comment}
 inactive_tab_background ${mantle}
 tab_bar_background ${crust}
 
-mark1_foreground ${crust}
+mark1_foreground ${ui.on_badge}
 mark1_background ${blue}
-mark2_foreground ${crust}
+mark2_foreground ${ui.on_badge}
 mark2_background ${purple}
-mark3_foreground ${crust}
+mark3_foreground ${ui.on_badge}
 mark3_background ${teal}
 
 color0  ${terminal.black}

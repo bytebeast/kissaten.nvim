@@ -8,6 +8,7 @@ Produces:
   assets/styles.png            grid of every style (rows of 3, last row centered)
   assets/palette.png           swatch sheet generated from lua/kissaten/palettes
   assets/social-preview.png    1280x640 GitHub social preview (< 1 MB)
+  assets/colorblind.png        default vs `colorblind`, as each deficiency sees them
 """
 import argparse
 import os
@@ -283,6 +284,76 @@ def palette_cards(data, font, out):
     return sheet.size
 
 
+# Color vision deficiency simulation (Machado, Oliveira & Fernandes 2009,
+# severity 1.0), the same model the test suite uses.
+CVD = {
+    "deutan": [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.011820, 0.042940, 0.968881]],
+    "tritan": [[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602], [0.004733, 0.691367, 0.303900]],
+}
+
+
+def simulate(h, kind):
+    def lin(v):
+        v /= 255
+        return v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+
+    def enc(v):
+        v = min(1, max(0, v))
+        return round(255 * (12.92 * v if v <= 0.0031308 else 1.055 * v ** (1 / 2.4) - 0.055))
+
+    x = [lin(c) for c in rgb(h)]
+    m = CVD[kind]
+    return "#" + "".join(f"{enc(sum(m[i][j] * x[j] for j in range(3))):02x}" for i in range(3))
+
+
+def colorblind_card(data, font, out, style="evening"):
+    """Default colors vs `colorblind`, both as seen with the deficiency."""
+    d_ = data[style]
+    pal = d_["palette"]
+    W, pad, row_h = 1500, 36, 132
+    rows = [
+        ("red-green", "deutan", "deuteranopia"),
+        ("blue-yellow", "tritan", "tritanopia"),
+    ]
+    H = pad * 2 + 54 + len(rows) * (2 * row_h + 64)
+    img = Image.new("RGB", (W, H), rgb(pal["crust"]))
+    d = ImageDraw.Draw(img)
+    head, label, code, small = font("Bold", 24), font("Bold", 16), font("Regular", 17, nl=True), font("Regular", 14)
+    d.text((pad, pad - 6), "colorblind - what each color vision type sees", font=head, fill=rgb(pal["fg"]))
+    y = pad + 54
+    for mode, kind, name in rows:
+        d.text((pad, y), f'{mode}  ·  simulated {name}', font=label, fill=rgb(pal["subtext"]))
+        y += 32
+        for title, roles in (("default", d_), (f'colorblind = "{mode}"', d_["colorblind"][mode])):
+            sim = lambda h: rgb(simulate(h, kind))
+            d.rounded_rectangle([pad, y, W - pad, y + row_h - 14], radius=12, fill=sim(pal["bg"]))
+            d.text((pad + 18, y + 10), title, font=small, fill=sim(pal["comment"]))
+            # git signs + diff lines
+            x0, ly = pad + 18, y + 36
+            for i, (key, sign, text) in enumerate((("add", "+", "added line"), ("change", "~", "changed line"), ("delete", "-", "deleted line"))):
+                yy = ly + i * 27
+                diff_key = {"add": "add", "change": "change", "delete": "delete"}[key]
+                d.rectangle([x0 + 24, yy - 2, x0 + 330, yy + 22], fill=sim(roles["diff"][diff_key]))
+                d.rectangle([x0, yy - 2, x0 + 5, yy + 22], fill=sim(roles["git"][key]))
+                d.text((x0 + 34, yy), f"{sign} {text}", font=code, fill=sim(pal["fg"]))
+            # diagnostics
+            dx = x0 + 380
+            for i, key in enumerate(("error", "warn", "info", "hint", "ok")):
+                cx = dx + i * 205
+                c = roles["diag"][key]
+                d.rectangle([cx, ly + 10, cx + 190, ly + 44], fill=sim(Image_blend(c, pal["bg"], 0.12)))
+                d.text((cx + 12, ly + 16), "● " + key, font=code, fill=sim(c))
+                d.line([cx + 12, ly + 64, cx + 120, ly + 64], fill=sim(c), width=3)
+            y += row_h
+        y += 32
+    img.save(out, optimize=True)
+
+
+def Image_blend(fg, bg, a):
+    f, b = rgb(fg), rgb(bg)
+    return "#" + "".join(f"{round(a * x + (1 - a) * y):02x}" for x, y in zip(f, b))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--shots", required=True)
@@ -301,6 +372,7 @@ def main():
     size = palette_cards(export_colors(), font, os.path.join(a.out, "palette-cards.png"))
     print(f"palette cards: {size[0]}x{size[1]}")
     social_preview(a.shots, font, os.path.join(a.out, "social-preview.png"))
+    colorblind_card(export_colors(), font, os.path.join(a.out, "colorblind.png"))
     if subtle_grid(a.shots, font, os.path.join(a.out, "subtle-comments.png")):
         print("subtle comments comparison written")
     for f in sorted(os.listdir(os.path.join(a.out, "screenshots"))):

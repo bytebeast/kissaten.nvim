@@ -11,7 +11,7 @@ function M.get(c, opts)
   local ui = c.ui
   local fbg = ui.bg_float
   local function mode(color)
-    return { fg = c.crust, bg = color, bold = true }
+    return { fg = c.ui.on_badge, bg = color, bold = true }
   end
 
   -- stylua: ignore
@@ -31,7 +31,7 @@ function M.get(c, opts)
     MiniAnimateNormalFloat = "NormalFloat",
 
     MiniClueBorder     = "FloatBorder",
-    MiniClueDescGroup  = { fg = c.blue },
+    MiniClueDescGroup  = { fg = c.ui.accent },
     MiniClueDescSingle = { fg = c.fg },
     MiniClueNextKey    = { fg = c.cyan, bold = true },
     MiniClueNextKeyWithPostkeys = { fg = c.red, bold = true },
@@ -49,9 +49,9 @@ function M.get(c, opts)
     MiniDepsMsgBreaking   = "DiagnosticWarn",
     MiniDepsPlaceholder   = "Comment",
     MiniDepsTitle         = "Title",
-    MiniDepsTitleError    = { fg = c.crust, bg = c.diag.error },
+    MiniDepsTitleError    = { fg = c.ui.on_badge, bg = c.diag.error },
     MiniDepsTitleSame     = "Comment",
-    MiniDepsTitleUpdate   = { fg = c.crust, bg = c.diag.ok },
+    MiniDepsTitleUpdate   = { fg = c.ui.on_badge, bg = c.diag.ok },
 
     MiniDiffSignAdd       = { fg = c.git.add },
     MiniDiffSignChange    = { fg = c.git.change },
@@ -68,17 +68,17 @@ function M.get(c, opts)
     MiniFilesFile         = { fg = c.fg },
     MiniFilesNormal       = "NormalFloat",
     MiniFilesTitle        = { fg = c.comment, bg = fbg },
-    MiniFilesTitleFocused = { fg = c.blue, bg = fbg, bold = true },
+    MiniFilesTitleFocused = { fg = c.ui.accent, bg = fbg, bold = true },
 
-    MiniHipatternsFixme   = { fg = c.crust, bg = c.diag.error, bold = true },
-    MiniHipatternsHack    = { fg = c.crust, bg = c.diag.warn, bold = true },
-    MiniHipatternsNote    = { fg = c.crust, bg = c.diag.hint, bold = true },
-    MiniHipatternsTodo    = { fg = c.crust, bg = c.blue, bold = true },
+    MiniHipatternsFixme   = { fg = c.ui.on_badge, bg = c.diag.error, bold = true },
+    MiniHipatternsHack    = { fg = c.ui.on_badge, bg = c.diag.warn, bold = true },
+    MiniHipatternsNote    = { fg = c.ui.on_badge, bg = c.diag.hint, bold = true },
+    MiniHipatternsTodo    = { fg = c.ui.on_badge, bg = c.blue, bold = true },
 
     MiniIndentscopeSymbol = { fg = ui.indent_scope, nocombine = true },
     MiniIndentscopePrefix = { nocombine = true },
 
-    MiniJump              = { fg = c.crust, bg = c.pink },
+    MiniJump              = { fg = c.ui.on_badge, bg = c.pink },
     MiniJump2dDim         = { fg = c.overlay0 },
     MiniJump2dSpot        = { fg = c.pink, bold = true, nocombine = true },
     MiniJump2dSpotAhead   = { fg = c.teal, bg = c.mantle, nocombine = true },
@@ -98,12 +98,12 @@ function M.get(c, opts)
     MiniPickBorder        = "FloatBorder",
     MiniPickBorderBusy    = { fg = c.orange, bg = fbg },
     MiniPickBorderText    = { fg = c.purple, bg = fbg, bold = true },
-    MiniPickHeader        = { fg = c.blue, bold = true },
+    MiniPickHeader        = { fg = c.ui.accent, bold = true },
     MiniPickIconDirectory = "Directory",
     MiniPickIconFile      = { fg = c.subtext },
     MiniPickMatchCurrent  = { bg = ui.bg_sel },
     MiniPickMatchMarked   = { bg = Util.tint(c.purple, c.bg, 0.2) },
-    MiniPickMatchRanges   = { fg = c.blue, bold = true },
+    MiniPickMatchRanges   = { fg = c.ui.accent, bold = true },
     MiniPickNormal        = "NormalFloat",
     MiniPickPreviewLine   = { bg = ui.bg_sel },
     MiniPickPreviewRegion = "IncSearch",
@@ -113,7 +113,7 @@ function M.get(c, opts)
 
     MiniStarterCurrent    = { nocombine = true },
     MiniStarterFooter     = { fg = c.comment, italic = true },
-    MiniStarterHeader     = { fg = c.blue },
+    MiniStarterHeader     = { fg = c.ui.accent },
     MiniStarterInactive   = { fg = c.overlay0 },
     MiniStarterItem       = { fg = c.fg },
     MiniStarterItemBullet = { fg = c.overlay0 },
@@ -125,12 +125,12 @@ function M.get(c, opts)
     MiniStatuslineFileinfo    = { fg = c.subtext, bg = c.surface1 },
     MiniStatuslineFilename    = { fg = c.subtext, bg = c.mantle },
     MiniStatuslineInactive    = { fg = c.comment, bg = c.mantle },
-    MiniStatuslineModeCommand = mode(c.orange),
-    MiniStatuslineModeInsert  = mode(c.green),
-    MiniStatuslineModeNormal  = mode(c.blue),
-    MiniStatuslineModeOther   = mode(c.teal),
-    MiniStatuslineModeReplace = mode(c.red),
-    MiniStatuslineModeVisual  = mode(c.purple),
+    MiniStatuslineModeCommand = mode(c.ui.modes.command),
+    MiniStatuslineModeInsert  = mode(c.ui.modes.insert),
+    MiniStatuslineModeNormal  = mode(c.ui.modes.normal),
+    MiniStatuslineModeOther   = mode(c.ui.modes.terminal),
+    MiniStatuslineModeReplace = mode(c.ui.modes.replace),
+    MiniStatuslineModeVisual  = mode(c.ui.modes.visual),
 
     MiniSurround          = "IncSearch",
 
@@ -140,7 +140,7 @@ function M.get(c, opts)
     MiniTablineModifiedCurrent = { fg = c.orange, bg = c.surface1, bold = true },
     MiniTablineModifiedHidden  = { fg = Util.blend(c.orange, c.bg, 0.6), bg = c.mantle },
     MiniTablineModifiedVisible = { fg = c.orange, bg = c.mantle },
-    MiniTablineTabpagesection  = { fg = c.crust, bg = c.blue, bold = true },
+    MiniTablineTabpagesection  = { fg = c.ui.on_badge, bg = c.ui.accent, bold = true },
     MiniTablineVisible    = { fg = c.subtext, bg = c.mantle },
 
     MiniTestEmphasis      = { bold = true },

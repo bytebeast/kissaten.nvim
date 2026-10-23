@@ -62,10 +62,22 @@ Defaults: >lua
     terminal_colors = true,   -- set g:terminal_color_0..15
     dim_inactive = false,     -- darken non-current windows
     contrast = "normal",      -- "high": lift comments, line numbers, UI hints
-    subtle_comments = false,  -- true | 0..1 | { fade = 0.7, docstrings = true }
+    subtle_comments = false,  -- true | 0..1 | { fade, docstrings }
+    colorblind = false,       -- false | "red-green" | "blue-yellow"
+    saturation = 1,           -- 0 (greys) .. 1 (full color), contrast kept
+    accent = "blue",          -- UI accent: any palette accent name
+    rainbow = "vivid",        -- "vivid" | "dimmed" | "mono"
+    borderless = false,       -- pickers framed by shade, not lines
+    diagnostics = {
+      underline = "undercurl", -- "undercurl" | "underline" | false
+      virtual_text = "tinted", -- "tinted" | "plain"
+    },
+    inlay_hints = "tinted",   -- "tinted" | "plain"
     styles = {
       comments = { italic = true },
       keywords = { italic = true },
+      -- conditionals = {}, loops = {},  -- unset: same as keywords
+      virtual_text = {}, inlay_hints = { italic = true },
       functions = {}, variables = {}, parameters = {},
       types = {}, strings = {}, constants = {},
       sidebars = "dark",      -- "dark" | "normal" | "transparent"
@@ -90,6 +102,77 @@ affected. >lua
   subtle_comments = 0.5
   subtle_comments = { fade = 0.7, docstrings = false }
 <
+                                                          *kissaten-colorblind*
+`colorblind` remaps the colors that carry meaning on their own, diff and git
+status and diagnostics, so they stay distinct with color vision deficiency.
+`"red-green"` covers protanopia and deuteranopia, `"blue-yellow"`
+tritanopia. The colors were chosen by simulating each deficiency (Machado
+et al. 2009) on every style; the test suite re-checks them. Syntax colors
+don't change. >lua
+  colorblind = "red-green"
+<
+                       added/changed/deleted   error/warn/ok/info/hint
+  default              green/yellow/red        red/yellow/green/sky/teal
+  "red-green"          blue/teal/orange        red/yellow/blue/lavender/sky
+                                               (morning: pink/orange/blue/
+                                               cyan/maroon)
+  "blue-yellow"        blue/yellow/red         red/yellow/blue/teal/lavender
+
+                                                          *kissaten-saturation*
+`saturation` scales color intensity from 0 (greys) to 1 (full color) in
+OKLab, then restores each color's contrast against the background, so every
+syntax color still meets WCAG AA and the contrast hierarchy is unchanged.
+Diff, git and diagnostic colors and the statusline modes keep at least 70%
+of their color (all of it with `colorblind`), so they never merge.
+
+                                                              *kissaten-accent*
+`accent` picks the UI accent: float and picker titles, match highlights, the
+normal-mode statusline, the selected tab and buffer, dashboard headers and
+the command-line popup. Any of "blue", "lavender", "purple", "pink", "red",
+"maroon", "orange", "yellow", "green", "teal", "cyan", "sky". Code colors
+don't change. A statusline mode that shares the accent's color (insert is
+green, visual purple, replace red, command orange, terminal teal) switches
+to blue.
+
+                                                             *kissaten-rainbow*
+`rainbow` styles rainbow-delimiters and snacks' rainbow indent scopes:
+"vivid" (palette colors), "dimmed" (70% of their contrast, never below 3:1)
+or "mono" (greys, brightest outermost). Markdown headings keep their colors.
+
+                                                          *kissaten-borderless*
+`borderless = true` removes the border lines of Telescope, snacks and fzf-lua
+pickers. Prompt, list and preview are told apart by background shade, and
+titles become badges. Panels stay solid even with `transparent`.
+
+                                                         *kissaten-diagnostics*
+`diagnostics.underline` marks problems with "undercurl" (default),
+"underline" (for terminals that draw undercurl poorly) or `false` (signs and
+virtual text only). `diagnostics.virtual_text` and `inlay_hints` are
+"tinted" (subtle colored background) or "plain". Their text attributes come
+from `styles.virtual_text` and `styles.inlay_hints`.
+
+`styles.conditionals` (if/else/switch) and `styles.loops` (for/while) follow
+`styles.keywords` until you set them. Options merge with the defaults, so to
+turn off an attribute that's on by default, set it to `false`, for example
+`styles = { comments = { italic = false } }`.
+
+                                                           *kissaten-combining*
+Every option combines with every other (the test suite checks each pair on
+every style). Where two touch the same thing:
+
+  saturation + colorblind   status colors keep full color
+  saturation + on_palette   your palette colors are muted too
+  colorblind + on_colors    on_colors wins
+  accent + statusline       a mode sharing the accent's color turns blue
+  accent + colorblind       allowed; avoid an accent that is also a status
+                            color (e.g. orange with "red-green")
+  borderless + bright_borders  pickers stay borderless; other floats get
+                            bright borders
+  borderless + transparent  picker panels stay solid
+  contrast "high" + subtle_comments  fade starts from the lifted contrast
+  no_italic/no_bold/no_underline  beat styles.* and diagnostics.underline
+  transparent + "tinted"    tints still draw; use "plain" to see through
+
 Invalid values never break your editor: kissaten reports them once with
 |vim.notify()| and falls back to the default for that option.
 
@@ -145,8 +228,10 @@ string as shorthand for a link: >lua
   colors.syn.macro            pink     macros, decorators, escapes
   colors.syn.operator         sky      operators
 
-Also `colors.ui.*`, `colors.diag.*` (error/warn/info/hint/ok),
-`colors.git.*`, `colors.diff.*`, `colors.rainbow[1..8]` and
+Also `colors.ui.*` (including `ui.accent` and `ui.on_badge`, the text color
+for colored badges), `colors.diag.*` (error/warn/info/hint/ok),
+`colors.git.*`, `colors.diff.*`, `colors.rainbow[1..8]` (headings),
+`colors.brackets.*` and `colors.scopes[1..8]` (follow `rainbow`) and
 `colors.terminal.*`. See `lua/kissaten/colors.lua` for the full list.
 
 ==============================================================================

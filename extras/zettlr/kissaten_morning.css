@@ -22,14 +22,14 @@ html body:not(.dark) .cm-editor {
   --zettlr-editor-citation-color: #b25000;
   --zettlr-editor-citation-bg: #e7ddd8;
   --zettlr-editor-escape-color: #ab3c87;
-  --zettlr-editor-accent-color: #d4d8e4;
+  --zettlr-editor-accent-color: #eef0f6;
   --zettlr-editor-accent-bg: #5f62a3;
   --zettlr-editor-error-color: #c8153c;
 }
 
 /* Zettlr's accent (selected files, toggles, focus) normally follows your OS
    accent color. Delete these two lines to keep that behavior. */
-html body:not(.dark) { --system-accent-color: #2a5fe0; --system-accent-color-contrast: #d4d8e4; }
+html body:not(.dark) { --system-accent-color: #2a5fe0; --system-accent-color-contrast: #eef0f6; }
 
 html body:not(.dark) .main-editor-wrapper { background-color: #eef0f6; }
 html body:not(.dark) .cm-editor .cm-gutters { background-color: #eef0f6; color: #8f96b1; border-right-color: #e2e5ee; }

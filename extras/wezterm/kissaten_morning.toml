@@ -23,7 +23,7 @@ inactive_tab_edge = "#e0e4ee"
 
 [colors.tab_bar.active_tab]
 bg_color = "#2a5fe0"
-fg_color = "#d4d8e4"
+fg_color = "#eef0f6"
 
 [colors.tab_bar.inactive_tab]
 bg_color = "#e0e4ee"

@@ -53,10 +53,20 @@ function M.kind_groups(hl, pattern)
 end
 
 ---@type kissaten.HighlightsFn
-function M.get(c)
+function M.get(c, opts)
   local d = c.diag
+  local tinted = opts.diagnostics.virtual_text == "tinted"
   local function vt(color)
-    return { fg = color, bg = Util.tint(color, c.bg, c.light and 0.1 or 0.08) }
+    local bg = tinted and Util.tint(color, c.bg, c.light and 0.1 or 0.08) or nil
+    return { fg = color, bg = bg, style = opts.styles.virtual_text }
+  end
+  -- `diagnostics.underline`: "undercurl" | "underline" | false
+  local line = opts.diagnostics.underline
+  local function under(color)
+    if not line then
+      return {}
+    end
+    return { [line] = true, sp = color }
   end
 
   -- stylua: ignore
@@ -75,11 +85,11 @@ function M.get(c)
     DiagnosticVirtualLinesWarn = { fg = d.warn },
     DiagnosticVirtualLinesInfo = { fg = d.info },
     DiagnosticVirtualLinesHint = { fg = d.hint },
-    DiagnosticUnderlineError   = { undercurl = true, sp = d.error },
-    DiagnosticUnderlineWarn    = { undercurl = true, sp = d.warn },
-    DiagnosticUnderlineInfo    = { undercurl = true, sp = d.info },
-    DiagnosticUnderlineHint    = { undercurl = true, sp = d.hint },
-    DiagnosticUnderlineOk      = { undercurl = true, sp = d.ok },
+    DiagnosticUnderlineError   = under(d.error),
+    DiagnosticUnderlineWarn    = under(d.warn),
+    DiagnosticUnderlineInfo    = under(d.info),
+    DiagnosticUnderlineHint    = under(d.hint),
+    DiagnosticUnderlineOk      = under(d.ok),
     DiagnosticFloatingError    = { fg = d.error },
     DiagnosticFloatingWarn     = { fg = d.warn },
     DiagnosticFloatingInfo     = { fg = d.info },
@@ -97,7 +107,7 @@ function M.get(c)
     LspReferenceRead           = { bg = c.surface1 },
     LspReferenceWrite          = { bg = c.surface1, underline = true, sp = c.orange },
     LspReferenceTarget         = { bg = c.surface1, bold = true },
-    LspInlayHint               = { fg = c.comment, bg = Util.blend(c.surface0, c.bg, 0.6), italic = true },
+    LspInlayHint               = { fg = c.comment, bg = opts.inlay_hints == "tinted" and Util.blend(c.surface0, c.bg, 0.6) or nil, style = opts.styles.inlay_hints },
     LspCodeLens                = { fg = c.comment, italic = true },
     LspCodeLensSeparator       = { fg = c.overlay0 },
     LspSignatureActiveParameter = { fg = c.orange, bg = c.surface1, bold = true },

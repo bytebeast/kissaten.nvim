@@ -68,6 +68,23 @@ function M.check()
     )
   end
 
+  -- non-default look options, so a report shows what's shaping the colors
+  local d = require("kissaten.config").defaults
+  local active = {}
+  for _, key in ipairs({ "colorblind", "saturation", "accent", "rainbow", "borderless", "inlay_hints" }) do
+    if opts[key] ~= d[key] then
+      active[#active + 1] = ("%s = %s"):format(key, vim.inspect(opts[key]))
+    end
+  end
+  for _, key in ipairs({ "underline", "virtual_text" }) do
+    if opts.diagnostics[key] ~= d.diagnostics[key] then
+      active[#active + 1] = ("diagnostics.%s = %s"):format(key, vim.inspect(opts.diagnostics[key]))
+    end
+  end
+  if #active > 0 then
+    h.info("Options: " .. table.concat(active, ", "))
+  end
+
   local low = {}
   local bg = colors.bg
   for role, value in pairs(colors.syn) do

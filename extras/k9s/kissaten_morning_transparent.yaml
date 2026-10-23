@@ -43,7 +43,7 @@ k9s:
       keyColor: "#2a5fe0"
       numKeyColor: "#b25000"
     crumbs:
-      fgColor: "#d4d8e4"
+      fgColor: "#eef0f6"
       bgColor: "#5f62a3"
       activeColor: "#2a5fe0"
     status:
@@ -119,7 +119,7 @@ k9s:
     bgColor: "default"
     buttonFgColor: "#353a5c"
     buttonBgColor: "#d3d8e5"
-    buttonFocusFgColor: "#d4d8e4"
+    buttonFocusFgColor: "#eef0f6"
     buttonFocusBgColor: "#2a5fe0"
     labelFgColor: "#b25000"
     fieldFgColor: "#353a5c"

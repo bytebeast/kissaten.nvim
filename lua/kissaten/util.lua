@@ -163,6 +163,87 @@ function M.reduce_contrast(hex, bg, ratio)
   return M.blend(hex, bg, hi)
 end
 
+-- ── OKLab ──────────────────────────────────────────────────────────────
+-- A perceptual color space: L is lightness as the eye sees it, a/b carry hue
+-- and chroma. Changing chroma here keeps a color's perceived lightness, which
+-- HSL can't do (an HSL-desaturated yellow looks darker, a blue lighter).
+
+local function to_linear(v)
+  v = v / 255
+  return v <= 0.04045 and v / 12.92 or ((v + 0.055) / 1.055) ^ 2.4
+end
+
+local function from_linear(v)
+  v = math.min(1, math.max(0, v))
+  return 255 * (v <= 0.0031308 and 12.92 * v or 1.055 * v ^ (1 / 2.4) - 0.055)
+end
+
+local function cbrt(x)
+  return x < 0 and -((-x) ^ (1 / 3)) or x ^ (1 / 3)
+end
+
+---@return number L, number a, number b
+function M.to_oklab(hex)
+  local r, g, b = M.rgb(hex)
+  r, g, b = to_linear(r), to_linear(g), to_linear(b)
+  local l = cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
+  local m = cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
+  local s = cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)
+  return 0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s
+end
+
+---@return string
+function M.from_oklab(L, a, b)
+  local l = (L + 0.3963377774 * a + 0.2158037573 * b) ^ 3
+  local m = (L - 0.1055613458 * a - 0.0638541728 * b) ^ 3
+  local s = (L - 0.0894841775 * a - 1.2914855480 * b) ^ 3
+  return M.hex(
+    from_linear(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+    from_linear(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+    from_linear(-0.0041960863 * l - 0.7034186147 * m + 1.7076127010 * s)
+  )
+end
+
+--- Scale a color's chroma (0 = grey, 1 = unchanged), keeping its lightness.
+function M.desaturate(hex, amount)
+  if not M.is_hex(hex) or amount >= 1 then
+    return hex
+  end
+  local L, a, b = M.to_oklab(hex)
+  amount = math.max(0, amount)
+  return M.from_oklab(L, a * amount, b * amount)
+end
+
+--- Adjust only the lightness of `hex` until its contrast against `bg` is
+--- `ratio` (hue and chroma stay). Used to keep contrast exact after colors
+--- change, e.g. after desaturating.
+function M.match_contrast(hex, bg, ratio)
+  if not (M.is_hex(hex) and M.is_hex(bg)) then
+    return hex
+  end
+  local _, a, b = M.to_oklab(hex)
+  local lighter = M.luminance(hex) >= M.luminance(bg)
+  local lo, hi = 0, 1
+  if lighter then
+    lo = M.to_oklab(bg)
+  else
+    hi = M.to_oklab(bg)
+  end
+  for _ = 1, 20 do -- 2^-20 of the lightness range: far below one hex step
+    local mid = (lo + hi) / 2
+    local c = M.contrast(M.from_oklab(mid, a, b), bg)
+    -- moving away from bg raises contrast
+    if (c < ratio) == lighter then
+      lo = mid
+    else
+      hi = mid
+    end
+  end
+  return M.from_oklab(lighter and hi or lo, a, b)
+end
+
 --- Resolve lazily-evaluated table values (lets on_colors users use functions).
 function M.resolve(groups)
   for name, hl in pairs(groups) do

@@ -24,8 +24,8 @@ function M.get(c, opts)
     Function       = { fg = s.func, style = st.functions },
 
     Statement      = { fg = s.keyword, style = st.keywords },
-    Conditional    = { fg = s.keyword_flow, style = st.keywords },
-    Repeat         = { fg = s.keyword_flow, style = st.keywords },
+    Conditional    = { fg = s.keyword_flow, style = st.conditionals or st.keywords },
+    Repeat         = { fg = s.keyword_flow, style = st.loops or st.keywords },
     Label          = { fg = s.label },
     Operator       = { fg = s.operator },
     Keyword        = { fg = s.keyword, style = st.keywords },
@@ -53,7 +53,7 @@ function M.get(c, opts)
     Italic         = { italic = true },
     Ignore         = { fg = c.overlay0 },
     Error          = { fg = c.diag.error },
-    Todo           = { fg = c.crust, bg = c.yellow, bold = true },
+    Todo           = { fg = c.ui.on_badge, bg = c.yellow, bold = true },
 
     -- a few filetypes whose legacy syntax is still common
     htmlH1         = { fg = c.rainbow[1], bold = true },

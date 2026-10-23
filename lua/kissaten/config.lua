@@ -37,10 +37,55 @@ M.defaults = {
   ---@type boolean|number|{fade?: number, docstrings?: boolean}
   subtle_comments = false,
 
+  --- Color vision support. Remaps the colors that carry meaning on their own
+  --- (diff and git status, diagnostics) to pairs that stay distinct:
+  ---   false          -> off
+  ---   "red-green"    -> protanopia / deuteranopia (the common kinds)
+  ---   "blue-yellow"  -> tritanopia
+  ---@type false|"red-green"|"blue-yellow"
+  colorblind = false,
+
+  --- Color intensity, from 0 (greys) to 1 (full color). Lightness and
+  --- contrast are kept, so every syntax color still meets WCAG AA.
+  saturation = 1,
+
+  --- UI accent: titles, picker matches, the normal-mode statusline, the
+  --- selected tab. Any palette accent name: "blue" | "lavender" | "purple" |
+  --- "pink" | "red" | "maroon" | "orange" | "yellow" | "green" | "teal" |
+  --- "cyan" | "sky"
+  accent = "blue",
+
+  --- Rainbow delimiters and rainbow indent scopes:
+  ---   "vivid"   full palette colors
+  ---   "dimmed"  softer, so brackets don't compete with code
+  ---   "mono"    shades of grey from bright to dim by nesting depth
+  ---@type "vivid"|"dimmed"|"mono"
+  rainbow = "vivid",
+
+  --- Pickers (Telescope, snacks, fzf-lua) without border lines: prompt,
+  --- list and preview are told apart by background shade and title badges.
+  borderless = false,
+
+  diagnostics = {
+    --- How problems are marked in code: "undercurl" | "underline" | false
+    underline = "undercurl",
+    --- Virtual text: "tinted" (colored background) | "plain"
+    virtual_text = "tinted",
+  },
+  --- Inlay hints: "tinted" (subtle background) | "plain"
+  ---@type "tinted"|"plain"
+  inlay_hints = "tinted",
+
   --- Per-category text attributes; any `nvim_set_hl` attribute works.
+  --- `conditionals` (if/else/switch) and `loops` (for/while) follow
+  --- `keywords` unless you set them.
   styles = {
     comments = { italic = true },
     keywords = { italic = true },
+    -- conditionals = { bold = true },
+    -- loops = { bold = true },
+    virtual_text = {}, -- diagnostic virtual text, e.g. { italic = true }
+    inlay_hints = { italic = true },
     functions = {},
     variables = {},
     parameters = {},
@@ -88,6 +133,64 @@ M.defaults = {
 ---@type kissaten.Config?
 M.options = nil
 
+--- Palette colors that can serve as the UI `accent`.
+M.accents =
+  { "blue", "lavender", "purple", "pink", "red", "maroon", "orange", "yellow", "green", "teal", "cyan", "sky" }
+
+local function one_of(list)
+  return function(v)
+    return vim.tbl_contains(list, v)
+  end
+end
+
+local function is_table(v)
+  return type(v) == "table"
+end
+
+local function table_or_nil(v)
+  return v == nil or type(v) == "table"
+end
+
+--- Options checked by a simple rule: { dotted path, test, what's expected }.
+--- An invalid value is reported once and replaced by its default.
+-- stylua: ignore
+local rules = {
+  { "colorblind", function(v) return v == false or v == "red-green" or v == "blue-yellow" end, 'false, "red-green" or "blue-yellow"' },
+  { "saturation", function(v) return type(v) == "number" and v == v and v >= 0 and v <= 1 end, "a number from 0 to 1" },
+  { "accent", one_of(M.accents), "a palette accent (" .. table.concat(M.accents, ", ") .. ")" },
+  { "rainbow", one_of({ "vivid", "dimmed", "mono" }), '"vivid", "dimmed" or "mono"' },
+  { "borderless", function(v) return type(v) == "boolean" end, "boolean" },
+  { "diagnostics", is_table, "table" },
+  { "diagnostics.underline", function(v) return v == false or v == "undercurl" or v == "underline" end, '"undercurl", "underline" or false' },
+  { "diagnostics.virtual_text", one_of({ "tinted", "plain" }), '"tinted" or "plain"' },
+  { "inlay_hints", one_of({ "tinted", "plain" }), '"tinted" or "plain"' },
+  { "styles.conditionals", table_or_nil, "table of highlight attributes" },
+  { "styles.loops", table_or_nil, "table of highlight attributes" },
+  { "styles.virtual_text", is_table, "table of highlight attributes" },
+  { "styles.inlay_hints", is_table, "table of highlight attributes" },
+}
+
+local function get(t, path)
+  for key in path:gmatch("[^.]+") do
+    if type(t) ~= "table" then
+      return nil
+    end
+    t = t[key]
+  end
+  return t
+end
+
+local function set(t, path, value)
+  local keys = vim.split(path, ".", { plain = true })
+  for i = 1, #keys - 1 do
+    if type(t[keys[i]]) ~= "table" then
+      t[keys[i]] = {}
+    end
+    t = t[keys[i]]
+  end
+  t[keys[#keys]] = vim.deepcopy(value)
+end
+
 local function check(errors, name, ok, expected)
   if not ok then
     errors[#errors + 1] = ("%s: expected %s"):format(name, expected)
@@ -131,6 +234,13 @@ local function validate(opts)
     M.subtle_comments(opts) ~= nil or opts.subtle_comments == false or opts.subtle_comments == nil,
     "false, true, a number from 0 to 1, or { fade = 0..1, docstrings = boolean }"
   )
+  for _, rule in ipairs(rules) do
+    -- a non-table parent (e.g. `diagnostics = "x"`) is reported once, by its own rule
+    local parent = rule[1]:match("^(.+)%.[^.]+$")
+    if not parent or type(get(opts, parent)) == "table" then
+      check(e, rule[1], rule[2](get(opts, rule[1])), rule[3])
+    end
+  end
   if #e > 0 then
     require("kissaten.util").notify("invalid configuration (using defaults for these):\n  " .. table.concat(e, "\n  "))
   end
@@ -183,6 +293,11 @@ local function sanitize(opts)
   end
   if opts.subtle_comments ~= nil and opts.subtle_comments ~= false and not M.subtle_comments(opts) then
     opts.subtle_comments = d.subtle_comments
+  end
+  for _, rule in ipairs(rules) do
+    if not rule[2](get(opts, rule[1])) then
+      set(opts, rule[1], get(d, rule[1]))
+    end
   end
   return opts
 end

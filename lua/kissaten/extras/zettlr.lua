@@ -51,14 +51,14 @@ ${_mode} .cm-editor {
   --zettlr-editor-citation-color: ${orange};
   --zettlr-editor-citation-bg: ${_cite_bg};
   --zettlr-editor-escape-color: ${pink};
-  --zettlr-editor-accent-color: ${crust};
+  --zettlr-editor-accent-color: ${ui.on_badge};
   --zettlr-editor-accent-bg: ${lavender};
   --zettlr-editor-error-color: ${red};
 }
 
 /* Zettlr's accent (selected files, toggles, focus) normally follows your OS
    accent color. Delete these two lines to keep that behavior. */
-${_mode} { --system-accent-color: ${blue}; --system-accent-color-contrast: ${crust}; }
+${_mode} { --system-accent-color: ${blue}; --system-accent-color-contrast: ${ui.on_badge}; }
 
 ${_mode} .main-editor-wrapper { background-color: ${bg}; }
 ${_mode} .cm-editor .cm-gutters { background-color: ${bg}; color: ${ui.fg_gutter}; border-right-color: ${surface0}; }

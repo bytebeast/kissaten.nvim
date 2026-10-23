@@ -33,6 +33,11 @@ for _, style in ipairs(Config.styles) do
       ["0.5"] = colors({ subtle_comments = 0.5 }).syn.comment,
       ["0.7"] = colors({ subtle_comments = 0.7 }).syn.comment,
     },
+    colorblind = {},
   }
+  for _, mode in ipairs({ "red-green", "blue-yellow" }) do
+    local cb = colors({ colorblind = mode })
+    out[style].colorblind[mode] = { git = strip(cb.git), diag = strip(cb.diag), diff = strip(cb.diff) }
+  end
 end
 io.write(vim.json.encode(out), "\n")

@@ -41,7 +41,7 @@ function M.get(c)
     NeogitChangeCopied         = { fg = c.cyan, bold = true },
     NeogitChangeNewFile        = { fg = g.add, bold = true },
     NeogitChangeUnmerged       = { fg = g.conflict, bold = true },
-    NeogitPopupSectionTitle    = { fg = c.blue, bold = true },
+    NeogitPopupSectionTitle    = { fg = c.ui.accent, bold = true },
     NeogitPopupActionKey       = { fg = c.orange },
     NeogitPopupOptionKey       = { fg = c.orange },
     NeogitPopupSwitchKey       = { fg = c.orange },

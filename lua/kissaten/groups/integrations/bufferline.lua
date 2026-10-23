@@ -7,7 +7,7 @@ M.url = "https://github.com/akinsho/bufferline.nvim"
 function M.get(c)
   -- stylua: ignore
   return {
-    BufferLineIndicatorSelected = { fg = c.blue },
+    BufferLineIndicatorSelected = { fg = c.ui.accent },
     BufferLineModifiedSelected  = { fg = c.green },
     BufferLineDuplicateSelected = { fg = c.comment, italic = true },
   }

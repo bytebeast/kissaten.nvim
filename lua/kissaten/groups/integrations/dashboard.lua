@@ -6,7 +6,7 @@ M.url = "https://github.com/nvimdev/dashboard-nvim"
 function M.get(c)
   -- stylua: ignore
   return {
-    DashboardHeader          = { fg = c.blue },
+    DashboardHeader          = { fg = c.ui.accent },
     DashboardFooter          = { fg = c.comment, italic = true },
     DashboardDesc            = { fg = c.fg },
     DashboardKey             = { fg = c.orange, bold = true },

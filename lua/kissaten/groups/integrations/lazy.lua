@@ -7,10 +7,10 @@ function M.get(c)
   -- stylua: ignore
   return {
     LazyNormal          = { fg = c.fg, bg = c.ui.bg_float },
-    LazyH1              = { fg = c.crust, bg = c.blue, bold = true },
-    LazyH2              = { fg = c.blue, bold = true },
+    LazyH1              = { fg = c.ui.on_badge, bg = c.ui.accent, bold = true },
+    LazyH2              = { fg = c.ui.accent, bold = true },
     LazyButton          = { fg = c.subtext, bg = c.surface0 },
-    LazyButtonActive    = { fg = c.crust, bg = c.orange, bold = true },
+    LazyButtonActive    = { fg = c.ui.on_badge, bg = c.orange, bold = true },
     LazySpecial         = { fg = c.cyan },
     LazyReasonPlugin    = { fg = c.purple },
     LazyReasonEvent     = { fg = c.yellow },
@@ -28,7 +28,7 @@ function M.get(c)
     LazyProp            = { fg = c.comment },
     LazyValue           = { fg = c.green },
     LazyUrl             = { fg = c.teal, underline = true },
-    LazyProgressDone    = { fg = c.blue, bold = true },
+    LazyProgressDone    = { fg = c.ui.accent, bold = true },
     LazyProgressTodo    = { fg = c.surface2 },
   }
 end
