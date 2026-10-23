@@ -47,6 +47,7 @@ Tokyonight and Catppuccin are both excellent, and kissaten borrows from each on 
 - **Readable comments and line numbers.** Tokyonight's comments sit at 2.4 to 3.1:1 contrast. Kissaten keeps comments at 4.3:1 or better and line numbers at 2.6 to 2.9:1, so they're quieter than code but never invisible.
 - **A light style that actually passes.** Every syntax role in `kissaten-morning` meets WCAG AA (4.5:1). Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
 - **Color carries meaning.** Structure (keywords, functions, operators) is cool. Data (strings, numbers, types) is warm. Parameters get their own hue, distinct from both numbers and builtin variables (checked with CIEDE2000), so `f(x, 42, self)` reads as three different things at a glance.
+- **Color vision support.** `colorblind = "red-green"` or `"blue-yellow"` remaps the colors that carry meaning on their own (diff and git status, diagnostics) to pairs chosen by simulating each type of color blindness on every style. With the default colors, deuteranopes see "added" and "changed" as the same yellow; in red-green mode they're blue and teal.
 - **Semantic layers instead of 1,600 hex codes.** Palette, then roles (`colors.syn.parameter`, `colors.diag.warn`, ...), then highlight groups. Change one role and every language and plugin follows.
 - **No cache, nothing to go stale.** Building all 1,600+ groups takes about 1 ms, so kissaten rebuilds them on every load and your changes always show up. Applying the theme in a real LazyVim startup takes about 7–8 ms, most of it Neovim itself setting the highlights. (A bytecode cache was tried and measured. It saved about 1 ms and added stale-cache edge cases, so it was left out.)
 - **Robust.** Typos in your config produce a warning and a fallback, never a broken editor. CI tests every release on Neovim 0.9, 0.10, 0.11, stable and nightly.
@@ -166,11 +167,37 @@ return {
       --   { fade = 0.7, docstrings = false }  fade comments, keep docstrings
       subtle_comments = false,
 
+      -- Color vision: false | "red-green" (protan/deutan) | "blue-yellow" (tritan)
+      colorblind = false,
+      -- Color intensity: 1 = full color, 0.5 = muted, 0 = greys (contrast is kept;
+      -- diff/git/diagnostic colors keep at least 70%, all of it with colorblind)
+      saturation = 1,
+      -- UI accent for titles, matches, normal mode, selected tab:
+      -- "blue" | "lavender" | "purple" | "pink" | "red" | "maroon" | "orange"
+      -- | "yellow" | "green" | "teal" | "cyan" | "sky"
+      -- (a statusline mode that shares the accent's color switches to blue)
+      accent = "blue",
+      -- Rainbow brackets and indent scopes: "vivid" | "dimmed" | "mono" (greys)
+      rainbow = "vivid",
+      borderless = false, -- true: pickers without border lines, framed by shade
+      -- (how options combine: README "Combining options")
+
+      diagnostics = {
+        underline = "undercurl", -- "undercurl" | "underline" | false
+        virtual_text = "tinted", -- "tinted" (colored background) | "plain"
+      },
+      inlay_hints = "tinted", -- "tinted" | "plain"
+
       -- Text attributes per category. Use any of:
       -- italic, bold, underline, undercurl, strikethrough, reverse
+      -- (options merge with the defaults: use italic = false to turn one off)
       styles = {
         comments = { italic = true },
         keywords = { italic = true },
+        -- conditionals = { bold = true }, -- if/else/switch (default: same as keywords)
+        -- loops = { bold = true }, -- for/while (default: same as keywords)
+        virtual_text = {}, -- diagnostic virtual text, e.g. { italic = true }
+        inlay_hints = { italic = true },
         functions = {}, -- e.g. { bold = true }
         variables = {},
         parameters = {}, -- e.g. { italic = true }
@@ -187,7 +214,7 @@ return {
       no_bold = false,
       no_underline = false,
 
-      bright_borders = false, -- true: accent-colored float borders
+      bright_borders = false, -- true: accent-colored float borders (not borderless pickers)
       lualine_bold = false, -- true: bold mode section in the statusline
 
       -- Recolor anything (see README "Overrides and recipes"):
@@ -242,11 +269,26 @@ require("kissaten").setup({
   dim_inactive = false,       -- darken non-current windows
   contrast = "normal",        -- "high" lifts comments, line numbers and UI hints
   subtle_comments = false,    -- fade comments behind code: true | 0..1 | { fade = 0.7, docstrings = true }
+  colorblind = false,         -- false | "red-green" | "blue-yellow"
+  saturation = 1,             -- 0 (greys) .. 1 (full color); contrast is kept
+  accent = "blue",            -- UI accent: any palette accent name
+  rainbow = "vivid",          -- brackets and indent scopes: "vivid" | "dimmed" | "mono"
+  borderless = false,         -- pickers framed by shade instead of border lines
+
+  diagnostics = {
+    underline = "undercurl",  -- "undercurl" | "underline" | false
+    virtual_text = "tinted",  -- "tinted" | "plain"
+  },
+  inlay_hints = "tinted",     -- "tinted" | "plain"
 
   styles = {
     -- any nvim_set_hl attributes: italic, bold, underline, ...
     comments = { italic = true },
     keywords = { italic = true },
+    -- conditionals = {},     -- if/else/switch; unset = same as keywords
+    -- loops = {},            -- for/while; unset = same as keywords
+    virtual_text = {},        -- diagnostic virtual text
+    inlay_hints = { italic = true },
     functions = {},
     variables = {},
     parameters = {},
@@ -277,6 +319,24 @@ require("kissaten").setup({
 })
 ```
 
+### Combining options
+
+Every option can be combined with every other. The test suite loads each pair on every style and checks that WCAG AA, badge contrast, colorblind separation and distinct statusline modes all still hold. Where two options touch the same thing, this is who wins:
+
+| Combination | What happens |
+| --- | --- |
+| `saturation` + `colorblind` | Syntax gets muted. Diff, git and diagnostic colors keep full color, because colorblind mode depends on their hue. |
+| `saturation` (alone) | Status colors (diff, git, diagnostics) and statusline modes keep at least 70% of their color, so error, warn and ok never turn the same grey. Everything else follows `saturation` down to 0. |
+| `saturation` + `on_palette` | Colors you set in `on_palette` are muted too (the palette hook runs first). Use `on_colors` for a color that should stay vivid. |
+| `colorblind` + `on_colors` | `on_colors` runs last, so your role changes win. |
+| `accent` + statusline modes | Normal mode uses the accent. A mode that would share its color (insert is green, visual purple, replace red, command orange, terminal teal) switches to blue, so no two modes look alike. |
+| `accent` + `colorblind` | Allowed, but an accent that's also a status color can blur the two meanings, e.g. `accent = "orange"` with `"red-green"`, where deleted lines are orange. |
+| `borderless` + `bright_borders` | Pickers stay borderless. `bright_borders` still styles every other float (hover, completion docs, LSP info). |
+| `borderless` + `transparent` | Picker panels stay solid. Without lines, the shade is all that frames them. |
+| `contrast = "high"` + `subtle_comments` | They compose: comments fade starting from the lifted contrast (`0.5` gives about 3.8:1 instead of 3.1:1). |
+| `no_italic` / `no_bold` / `no_underline` | Global kill switches. They beat `styles.*` and `diagnostics.underline`. |
+| `transparent` + tinted virtual text / inlay hints | The tints are still drawn as small colored backgrounds; set `"plain"` for a fully see-through look. |
+
 ## Overrides and recipes
 
 Overrides happen in three layers. Prefer the highest layer that does the job, because lower layers have to be repeated for every group.
@@ -284,7 +344,7 @@ Overrides happen in three layers. Prefer the highest layer that does the job, be
 | Hook | You get | Use it to |
 | --- | --- | --- |
 | `on_palette(palette, style)` | raw palette for one style | change a base color, such as a darker background for one style |
-| `on_colors(colors)` | semantic roles: `colors.syn`, `colors.ui`, `colors.diag`, `colors.git`, `colors.diff` | change what a color *means* everywhere |
+| `on_colors(colors)` | semantic roles: `colors.syn`, `colors.ui`, `colors.diag`, `colors.git`, `colors.diff`, `colors.brackets` | change what a color *means* everywhere |
 | `on_highlights(hl, colors)` | every highlight group | tweak individual groups |
 
 <details open>
@@ -365,6 +425,103 @@ opts = {
 Only code comments and (by default) docstrings fade. TODO/FIXME/NOTE badges, inlay hints, ghost text and the statusline keep their normal contrast. `on_colors` can still set `c.syn.comment` to anything you like.
 </details>
 
+<details open>
+<summary><b>Colorblind mode</b></summary>
+
+```lua
+opts = {
+  colorblind = "red-green",     -- protanopia / deuteranopia (about 1 in 12 men)
+  -- colorblind = "blue-yellow", -- tritanopia
+}
+```
+
+![default colors vs colorblind mode, as seen with deuteranopia and tritanopia](assets/colorblind.png)
+
+Only colors that carry meaning *on their own* change: diff and git status (gutter signs, diff lines, file trees, neogit, grug-far, ...) and diagnostics (signs, underlines, virtual text, neotest, mason, ...). Syntax colors stay as they are, since code is also read by shape, position and italics.
+
+The colors were chosen by simulating each deficiency (Machado et al. 2009, full severity) on all five styles and picking the palette colors that stay furthest apart. That's the same approach as GitHub's colorblind themes, and it lands on similar choices: added and ok become blue, and in red-green mode deleted becomes orange. The light style gets its own diagnostic colors because its deeper inks need them. Diff backgrounds also mix in 25% more color. The test suite re-runs the simulation and fails if any pair gets too close.
+
+| | added / changed / deleted | error / warn / ok / info / hint |
+| --- | --- | --- |
+| default | green / yellow / red | red / yellow / green / sky / teal |
+| `"red-green"` | blue / teal / orange | red / yellow / blue / lavender / sky (`morning`: pink / orange / blue / cyan / maroon) |
+| `"blue-yellow"` | blue / yellow / red | red / yellow / blue / teal / lavender |
+
+Under `"blue-yellow"`, error vs. warn and changed vs. deleted differ more by lightness than by hue, because tritanopia leaves few hues to choose from. GitHub's tritanopia theme makes the same trade. `on_colors` still has the last word if you want to tune a role.
+</details>
+
+<details>
+<summary><b>Saturation: a calmer, more muted look</b></summary>
+
+```lua
+opts = {
+  saturation = 0.6, -- 1 = full color, 0 = greys
+}
+```
+
+Color intensity is scaled in OKLab, a color space where lightness is perceptual. Then each color's original contrast against the background is restored exactly. So `0.6` looks muted, not darker or washed out, every syntax color still meets WCAG AA, and comments keep their place in the hierarchy. At `0` the theme is greyscale, told apart by lightness alone. HSL-based desaturation, which some themes use, can't do this: it darkens yellows and brightens blues as it removes color.
+
+Colors that carry meaning by hue keep more of it: diff, git and diagnostic colors and the statusline modes never drop below 70% (and keep all of it with `colorblind`), so error, warn and ok stay apart even at `0`.
+</details>
+
+<details>
+<summary><b>Accent color</b></summary>
+
+```lua
+opts = { accent = "pink" } -- any palette accent: "lavender", "teal", "orange", ...
+```
+
+Moves the UI accent (float and picker titles, match highlights, the normal-mode statusline, the selected tab and buffer, dashboard headers, the command-line popup) to another palette color. Code colors don't change: functions and directories stay blue. Text on accent badges keeps at least 4.5:1 for every accent on every style. If the accent is a mode's color (`"green"` is insert mode's), that mode switches to blue so the two never look the same.
+</details>
+
+<details>
+<summary><b>Rainbow brackets: vivid, dimmed or mono</b></summary>
+
+```lua
+opts = {
+  rainbow = "dimmed", -- softer colors (70% of their contrast, never below 3:1)
+  -- rainbow = "mono", -- greys from bright (outermost) to dim (innermost)
+}
+```
+
+Applies to [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim) and snacks' rainbow indent scopes. Markdown headings keep their colors.
+</details>
+
+<details>
+<summary><b>Diagnostics and inlay hints</b></summary>
+
+```lua
+opts = {
+  diagnostics = {
+    underline = "underline", -- "undercurl" (default) | "underline" | false
+    virtual_text = "plain",  -- "tinted" (default, colored background) | "plain"
+  },
+  inlay_hints = "plain",     -- "tinted" (default) | "plain"
+  styles = {
+    virtual_text = { italic = true },
+    inlay_hints = { italic = false },
+  },
+}
+```
+
+Plain underlines help in terminals that draw undercurl poorly (or not at all, as in some tmux setups). `underline = false` leaves only signs and virtual text.
+</details>
+
+<details>
+<summary><b>Bold control flow</b></summary>
+
+```lua
+opts = {
+  styles = {
+    conditionals = { bold = true }, -- if / else / switch / case
+    loops = { bold = true },        -- for / while / repeat
+  },
+}
+```
+
+Unset, both follow `styles.keywords`. Setting one replaces the keyword style for that category: `{ bold = true }` here means bold and not italic. Options merge with the defaults, so to turn off an attribute that's on by default, set it to `false` (for example, `comments = { italic = false }`).
+</details>
+
 <details>
 <summary><b>Override specific highlight groups</b></summary>
 
@@ -385,16 +542,12 @@ opts = {
 <summary><b>Borderless pickers</b></summary>
 
 ```lua
-opts = {
-  on_highlights = function(hl, c)
-    local bg = c.mantle
-    hl.SnacksPickerBorder = { fg = bg, bg = bg }
-    hl.SnacksPickerInputBorder = { fg = bg, bg = bg }
-    hl.TelescopeBorder = { fg = bg, bg = bg }
-    hl.TelescopePromptBorder = { fg = bg, bg = bg }
-  end,
-}
+opts = { borderless = true }
 ```
+
+![borderless snacks picker in kissaten-evening](assets/screenshots/borderless.png)
+
+Telescope, snacks and fzf-lua lose their border lines. The prompt, list and preview are told apart by background shade instead (prompt a step lighter than the editor, list on the float shade, preview the deepest), and titles become colored badges. On `midnight` and `graveyard`, where there's no room below the background, the prompt and list are lifted above it instead. The panels stay solid even with `transparent = true`, since without lines the shade is all that frames them.
 </details>
 
 <details>
@@ -402,7 +555,7 @@ opts = {
 
 ```lua
 local c = require("kissaten").colors() -- active style, or pass "midnight"
-vim.api.nvim_set_hl(0, "MyTodoBadge", { fg = c.crust, bg = c.syn.keyword, bold = true })
+vim.api.nvim_set_hl(0, "MyTodoBadge", { fg = c.ui.on_badge, bg = c.syn.keyword, bold = true })
 
 -- e.g. a lualine component
 { function() return " brewing" end, color = { fg = c.orange } }

@@ -24,7 +24,7 @@ foreground = "#353a5c"
 background = "#d6ccba"
 
 [colors.search.focused_match]
-foreground = "#d4d8e4"
+foreground = "#eef0f6"
 background = "#b25000"
 
 [colors.footer_bar]
@@ -32,11 +32,11 @@ foreground = "#353a5c"
 background = "#e0e4ee"
 
 [colors.hints.start]
-foreground = "#d4d8e4"
+foreground = "#eef0f6"
 background = "#ab3c87"
 
 [colors.hints.end]
-foreground = "#d4d8e4"
+foreground = "#eef0f6"
 background = "#2a5fe0"
 
 [colors.normal]

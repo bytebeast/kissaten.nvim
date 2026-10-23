@@ -64,7 +64,7 @@ k9s:
       keyColor: "${blue}"
       numKeyColor: "${orange}"
     crumbs:
-      fgColor: "${crust}"
+      fgColor: "${ui.on_badge}"
       bgColor: "${lavender}"
       activeColor: "${blue}"
     status:
@@ -140,7 +140,7 @@ k9s:
     bgColor: "${_bg_alt}"
     buttonFgColor: "${fg}"
     buttonBgColor: "${surface1}"
-    buttonFocusFgColor: "${crust}"
+    buttonFocusFgColor: "${ui.on_badge}"
     buttonFocusBgColor: "${blue}"
     labelFgColor: "${orange}"
     fieldFgColor: "${fg}"

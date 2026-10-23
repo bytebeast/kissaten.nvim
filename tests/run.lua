@@ -559,6 +559,504 @@ test("zettlr: CSS is balanced and every rule is scoped to one Zettlr mode", func
   end
 end)
 
+-- ── Options added in 1.0: colorblind, saturation, accent, rainbow, ───────
+-- ── borderless, diagnostics, inlay hints, conditionals/loops ─────────────
+
+local function colors(style, opts)
+  reset()
+  warnings = {}
+  require("kissaten").setup(opts or {})
+  return require("kissaten").colors(style)
+end
+
+local function load(style, opts)
+  reset()
+  warnings = {}
+  require("kissaten").setup(opts or {})
+  vim.cmd.colorscheme("kissaten-" .. style)
+end
+
+--- Color vision deficiency simulation (Machado, Oliveira & Fernandes 2009,
+--- severity 1.0) and OKLab distance x100, to check colors stay apart.
+local CVD = {
+  protan = { { 0.152286, 1.052583, -0.204868 }, { 0.114503, 0.786281, 0.099216 }, { -0.003882, -0.048116, 1.051998 } },
+  deutan = { { 0.367322, 0.860646, -0.227968 }, { 0.280085, 0.672501, 0.047413 }, { -0.011820, 0.042940, 0.968881 } },
+  tritan = { { 1.255528, -0.076749, -0.178779 }, { -0.078411, 0.930809, 0.147602 }, { 0.004733, 0.691367, 0.303900 } },
+}
+local function simulate(color, kind)
+  if kind == "normal" then
+    return color
+  end
+  local function lin(v)
+    v = v / 255
+    return v <= 0.04045 and v / 12.92 or ((v + 0.055) / 1.055) ^ 2.4
+  end
+  local function enc(v)
+    v = math.min(1, math.max(0, v))
+    return 255 * (v <= 0.0031308 and 12.92 * v or 1.055 * v ^ (1 / 2.4) - 0.055)
+  end
+  local r, g, b = Util.rgb(color)
+  local x = { lin(r), lin(g), lin(b) }
+  local m = CVD[kind]
+  local o = {}
+  for i = 1, 3 do
+    o[i] = enc(m[i][1] * x[1] + m[i][2] * x[2] + m[i][3] * x[3])
+  end
+  return Util.hex(o[1], o[2], o[3])
+end
+local function distance(a, b)
+  local l1, a1, b1 = Util.to_oklab(a)
+  local l2, a2, b2 = Util.to_oklab(b)
+  return 100 * math.sqrt((l1 - l2) ^ 2 + (a1 - a2) ^ 2 + (b1 - b2) ^ 2)
+end
+--- Smallest simulated distance between any two of `list` under `kinds`.
+local function separation(list, kinds)
+  local worst, where = math.huge, ""
+  for _, kind in ipairs(kinds) do
+    for i = 1, #list do
+      for j = i + 1, #list do
+        local d = distance(simulate(list[i][2], kind), simulate(list[j][2], kind))
+        if d < worst then
+          worst, where = d, ("%s: %s/%s"):format(kind, list[i][1], list[j][1])
+        end
+      end
+    end
+  end
+  return worst, where
+end
+local function pick(t, keys, prefix)
+  local out = {}
+  for _, k in ipairs(keys) do
+    out[#out + 1] = { (prefix or "") .. k, t[k] }
+  end
+  return out
+end
+
+test("helpers: OKLab round-trips and the CVD model sees red/green collapse", function()
+  for _, h in ipairs({ "#000000", "#ffffff", "#82aaff", "#c8153c", "#1f2133", "#f7a46f" }) do
+    eq(Util.from_oklab(Util.to_oklab(h)), h, "round trip " .. h)
+  end
+  -- sanity check of the simulation itself: pure red vs green is obvious to
+  -- normal vision and nearly gone for deuteranopia
+  truthy(distance("#d03030", "#30a030") > 15, "normal vision tells them apart")
+  truthy(distance(simulate("#d03030", "deutan"), simulate("#30a030", "deutan")) < 10, "deutan sees them close")
+end)
+
+test("colorblind: default colors collapse under red-green CVD (why the option exists)", function()
+  local c = colors("evening")
+  local worst = separation(pick(c.git, { "add", "change", "delete" }), { "deutan" })
+  truthy(worst < 3, ("default git signs should collide for deutan, got %.1f"):format(worst))
+end)
+
+test("colorblind: diff, git and diagnostic colors stay apart in every style", function()
+  -- thresholds: what the chosen mappings reach at their weakest (see
+  -- colors.lua), with a little headroom. 3 is about the smallest
+  -- difference you can see side by side.
+  local modes = {
+    ["red-green"] = { kinds = { "normal", "protan", "deutan" }, signs = 10, diag = 6, diff = 4.5 },
+    ["blue-yellow"] = { kinds = { "normal", "tritan" }, signs = 10, diag = 8, diff = 4.5 },
+  }
+  for mode, want in pairs(modes) do
+    for _, style in ipairs(styles) do
+      local c = colors(style, { colorblind = mode })
+      local where = ("%s/%s"):format(mode, style)
+      local s, w = separation(pick(c.git, { "add", "change", "delete" }), want.kinds)
+      truthy(s >= want.signs, ("%s git signs %.1f (%s)"):format(where, s, w))
+      local d
+      d, w = separation(pick(c.diag, { "error", "warn", "ok" }), want.kinds)
+      truthy(d >= want.diag, ("%s error/warn/ok %.1f (%s)"):format(where, d, w))
+      -- info and hint must not look like error or warn
+      for _, soft in ipairs({ "info", "hint" }) do
+        for _, hard in ipairs({ "error", "warn" }) do
+          d, w = separation({ { soft, c.diag[soft] }, { hard, c.diag[hard] } }, want.kinds)
+          truthy(d >= want.diag, ("%s %s vs %s %.1f (%s)"):format(where, soft, hard, d, w))
+        end
+      end
+      local f
+      f, w = separation(pick(c.diff, { "add", "delete" }), want.kinds)
+      truthy(f >= want.diff, ("%s diff add/delete %.1f (%s)"):format(where, f, w))
+      -- every remapped color is still a readable palette accent
+      for _, role in ipairs({ "error", "warn", "info", "hint", "ok" }) do
+        truthy(Util.contrast(c.diag[role], c.bg) >= 4.5, where .. " diag." .. role .. " contrast")
+      end
+    end
+  end
+end)
+
+test("colorblind: highlight groups and plugins follow the remapped roles", function()
+  load("evening", { colorblind = "red-green" })
+  local c = require("kissaten").colors()
+  eq(hex(hl("GitSignsAdd").fg), c.git.add, "gitsigns add")
+  eq(c.git.add, c.blue, "red-green: added is blue (as in GitHub's colorblind themes)")
+  eq(c.git.delete, c.orange, "red-green: deleted is orange")
+  eq(hex(hl("DiffAdd").bg), c.diff.add, "DiffAdd")
+  eq(hex(hl("DiagnosticError").fg), c.diag.error, "diagnostic error")
+  eq(hex(hl("GrugFarResultsMatchAdded").bg), c.git.add, "grug-far uses the git role")
+  eq(hex(hl("GrugFarResultsMatchRemoved").bg), c.git.delete, "grug-far removed")
+  eq(hex(hl("MasonError").fg), c.diag.error, "mason uses the diagnostic role")
+  eq(hex(hl("OctoStateOpen").fg), c.diag.ok, "octo open pill")
+  eq(hex(hl("NeotestPassed").fg), c.diag.ok, "neotest passed")
+  -- syntax keeps its colors: strings are still green
+  eq(c.syn.string, c.green, "syntax untouched")
+  -- on_colors still has the last word
+  load("evening", {
+    colorblind = "red-green",
+    on_colors = function(cc)
+      cc.git.add = cc.teal
+    end,
+  })
+  eq(hex(hl("GitSignsAdd").fg), require("kissaten").colors().teal, "on_colors wins over colorblind")
+  load("morning", { colorblind = "blue-yellow" })
+  c = require("kissaten").colors()
+  eq(c.diag.ok, c.blue, "blue-yellow: ok is blue")
+  eq(c.git.change, c.yellow, "blue-yellow: changed is yellow")
+end)
+
+test("saturation: greys at 0, contrast and AA kept at every level", function()
+  local base = colors("evening")
+  local grey = colors("evening", { saturation = 0 })
+  for _, k in ipairs({ "red", "green", "blue", "yellow", "purple", "bg" }) do
+    local _, a, b = Util.to_oklab(grey[k])
+    truthy(math.sqrt(a * a + b * b) < 0.01, k .. " is grey at saturation 0")
+  end
+  for _, style in ipairs(styles) do
+    local plain = colors(style)
+    for _, amount in ipairs({ 0, 0.4, 0.8 }) do
+      local c = colors(style, { saturation = amount })
+      for key, color in pairs(require("kissaten.colors").palette(style)) do
+        if key ~= "bg" and Util.is_hex(color) then
+          local want = Util.contrast(plain[key], plain.bg)
+          local got = Util.contrast(c[key], c.bg)
+          -- exact up to hex rounding
+          truthy(
+            math.abs(got - want) / want < 0.02,
+            ("%s %s @%s: contrast %.2f vs %.2f"):format(style, key, amount, got, want)
+          )
+        end
+      end
+      for role, color in pairs(c.syn) do
+        if role ~= "comment" and role ~= "deprecated" and role ~= "tag_delimiter" and role ~= "string_doc" then
+          truthy(Util.contrast(color, c.bg) >= 4.4, ("%s syn.%s @%s below AA"):format(style, role, amount))
+        end
+      end
+    end
+  end
+  eq(colors("evening", { saturation = 1 }).blue, base.blue, "1 = unchanged")
+  colors("evening", { saturation = 1.5 })
+  truthy(#warnings == 1 and warnings[1].msg:find("saturation"), "out-of-range saturation warns")
+  eq(require("kissaten.config").options.saturation, 1, "and falls back to 1")
+end)
+
+test("accent: every accent works on every style, badges stay readable", function()
+  for _, style in ipairs(styles) do
+    for _, accent in ipairs(require("kissaten.config").accents) do
+      local c = colors(style, { accent = accent })
+      eq(c.ui.accent, c[accent], style .. " accent " .. accent)
+      eq(c.ui.title, c[accent], "titles follow")
+      truthy(
+        Util.contrast(c.ui.on_badge, c.ui.accent) >= 4.5,
+        ("%s/%s: badge text %.2f"):format(style, accent, Util.contrast(c.ui.on_badge, c.ui.accent))
+      )
+    end
+  end
+  load("evening", { accent = "pink" })
+  local c = require("kissaten").colors()
+  eq(hex(hl("TelescopeTitle").bg), c.pink, "picker title badge")
+  eq(hex(hl("SnacksPickerMatch").fg), c.pink, "picker matches")
+  eq(hex(hl("TabLineSel").bg), c.pink, "selected tab")
+  eq(hex(hl("FloatTitle").fg), c.pink, "float titles")
+  eq(require("lualine.themes.kissaten").normal.a.bg, c.pink, "lualine normal mode")
+  eq(hex(hl("Function").fg), c.blue, "functions stay blue")
+  eq(hex(hl("Directory").fg), c.blue, "directories stay blue")
+  colors("evening", { accent = "chartreuse" })
+  truthy(#warnings == 1 and warnings[1].msg:find("accent"), "unknown accent warns")
+end)
+
+test("badges: text on every colored badge meets 4.5:1 in every style", function()
+  for _, style in ipairs(styles) do
+    load(style)
+    local c = require("kissaten").colors()
+    local on, accents = c.ui.on_badge, {}
+    for _, a in ipairs(require("kissaten.config").accents) do
+      accents[c[a]] = true
+    end
+    local n = 0
+    for name, h in pairs(vim.api.nvim_get_hl(0, {})) do
+      if h.fg and h.bg and hex(h.fg) == on and accents[hex(h.bg)] then
+        n = n + 1
+        local ratio = Util.contrast(hex(h.fg), hex(h.bg))
+        truthy(ratio >= 4.5, ("%s %s: %.2f"):format(style, name, ratio))
+      end
+    end
+    truthy(n > 30, style .. ": found the badges")
+  end
+end)
+
+test("rainbow: vivid, dimmed and mono brackets", function()
+  for _, style in ipairs(styles) do
+    local vivid = colors(style)
+    eq(vivid.brackets.red, vivid.red, "vivid uses the palette")
+    eq(vivid.scopes, vivid.rainbow, "vivid scopes")
+    local dimmed = colors(style, { rainbow = "dimmed" })
+    for name, color in pairs(dimmed.brackets) do
+      local before, after = Util.contrast(vivid.brackets[name], vivid.bg), Util.contrast(color, dimmed.bg)
+      truthy(after < before or before <= 3, style .. " dimmed " .. name .. " is softer")
+      truthy(after >= 2.95, ("%s dimmed %s readable (%.2f)"):format(style, name, after))
+    end
+    local mono = colors(style, { rainbow = "mono" })
+    local order = require("kissaten.colors").BRACKET_ORDER
+    local last = math.huge
+    for _, name in ipairs(order) do
+      local ratio = Util.contrast(mono.brackets[name], mono.bg)
+      truthy(ratio <= last + 1e-6, style .. " mono gets dimmer with depth")
+      truthy(ratio >= 4, ("%s mono %s readable (%.2f)"):format(style, name, ratio))
+      last = ratio
+    end
+    eq(mono.rainbow, vivid.rainbow, "headings keep their colors")
+  end
+  load("evening", { rainbow = "mono" })
+  local c = require("kissaten").colors()
+  eq(hex(hl("RainbowDelimiterRed").fg), c.brackets.red, "rainbow-delimiters follows")
+  eq(hex(hl("SnacksIndent1").fg), Util.blend(c.scopes[1], c.bg, 0.4), "snacks rainbow indent follows")
+end)
+
+test("extras: badge text (tmux, kitty, wezterm, k9s) meets 4.5:1 on every style", function()
+  local E = require("kissaten.extras")
+  for _, style in ipairs(styles) do
+    local tmux = E.render("tmux", style)
+    local n = 0
+    for fg, bg in tmux:gmatch("#%[fg=(#%x+),bg=(#%x+),bold%]") do
+      n = n + 1
+      truthy(Util.contrast(fg, bg) >= 4.5, ("%s tmux badge %s on %s"):format(style, fg, bg))
+    end
+    truthy(n >= 2, style .. ": found tmux badges")
+    local kitty = E.render("kitty", style)
+    local fg, bg = kitty:match("active_tab_foreground (#%x+)"), kitty:match("active_tab_background (#%x+)")
+    truthy(Util.contrast(fg, bg) >= 4.5, style .. " kitty active tab")
+    local wez = E.render("wezterm", style)
+    bg, fg = wez:match('%[colors%.tab_bar%.active_tab%]\nbg_color = "(#%x+)"\nfg_color = "(#%x+)"')
+    truthy(Util.contrast(fg, bg) >= 4.5, style .. " wezterm active tab")
+    local k9s = E.render("k9s", style)
+    fg, bg = k9s:match('crumbs:\n%s+fgColor: "(#%x+)"\n%s+bgColor: "(#%x+)"')
+    truthy(Util.contrast(fg, bg) >= 4.5, style .. " k9s crumbs")
+  end
+end)
+
+test("borderless: picker borders vanish, panels stay distinct", function()
+  local function c_bg(style)
+    return require("kissaten").colors(style).bg
+  end
+  local function c_mantle(style)
+    return require("kissaten").colors(style).mantle
+  end
+  for _, style in ipairs(styles) do
+    load(style, { borderless = true })
+    local p = require("kissaten").colors().ui.picker
+    for _, g in ipairs({
+      "TelescopeBorder",
+      "TelescopePromptBorder",
+      "TelescopeResultsBorder",
+      "TelescopePreviewBorder",
+      "SnacksPickerBorder",
+      "SnacksPickerInputBorder",
+      "SnacksPickerListBorder",
+      "SnacksPickerPreviewBorder",
+      "SnacksPickerBoxBorder",
+      "FzfLuaBorder",
+      "FzfLuaPreviewBorder",
+    }) do
+      local h = hl(g)
+      truthy(h.fg and h.fg == h.bg, style .. ": " .. g .. " is invisible")
+    end
+    eq(hex(hl("SnacksPickerInput").bg), p.prompt, "snacks prompt panel")
+    eq(hex(hl("TelescopePreviewNormal").bg), p.preview, "telescope preview panel")
+    truthy(Util.contrast(p.prompt, p.list) >= 1.15, style .. ": prompt stands out from the list")
+    truthy(Util.contrast(p.sel, p.list) >= 1.1, style .. ": selection stands out in the list")
+    truthy(p.sel ~= p.prompt, style .. ": selection doesn't match the prompt")
+    truthy(
+      Util.contrast(p.list, c_bg(style)) >= 1.05 or p.list ~= c_mantle(style),
+      style .. ": list visible against the editor"
+    )
+    truthy(hl("TelescopePromptTitle").bg ~= hl("TelescopePromptNormal").bg, style .. ": titles stay badges")
+  end
+  load("evening", { borderless = true, transparent = true })
+  truthy(hl("SnacksPickerList").bg ~= nil, "panels stay solid with transparent")
+  load("evening")
+  truthy(hl("TelescopeBorder").fg ~= hl("TelescopeBorder").bg, "off by default")
+end)
+
+test("diagnostics and inlay hints: underline, virtual text and styles", function()
+  load("evening")
+  truthy(hl("DiagnosticUnderlineError").undercurl, "undercurl by default")
+  truthy(hl("DiagnosticVirtualTextError").bg, "tinted virtual text by default")
+  truthy(hl("LspInlayHint").bg and hl("LspInlayHint").italic, "inlay hints tinted and italic")
+  load("evening", { diagnostics = { underline = "underline" } })
+  local u = hl("DiagnosticUnderlineWarn")
+  truthy(u.underline and not u.undercurl and u.sp, "plain underline keeps its color")
+  truthy(hl("DiagnosticVirtualTextError").bg, "virtual_text untouched by underline change")
+  load("evening", { diagnostics = { underline = false, virtual_text = "plain" }, inlay_hints = "plain" })
+  u = hl("DiagnosticUnderlineError")
+  truthy(not u.underline and not u.undercurl, "no underline")
+  eq(hl("DiagnosticVirtualTextError").bg, nil, "plain virtual text")
+  truthy(hl("DiagnosticVirtualTextError").fg, "keeps its color")
+  eq(hl("LspInlayHint").bg, nil, "plain inlay hints")
+  -- options merge with the defaults, so turning an attribute off is explicit
+  load("evening", { styles = { virtual_text = { italic = true }, inlay_hints = { italic = false } } })
+  truthy(hl("DiagnosticVirtualTextHint").italic, "styles.virtual_text")
+  truthy(not hl("LspInlayHint").italic, "styles.inlay_hints italic = false")
+  load("evening", { styles = { virtual_text = { italic = true } }, no_italic = true })
+  truthy(not hl("DiagnosticVirtualTextHint").italic, "no_italic still wins")
+  load("evening", { diagnostics = "loud" })
+  truthy(#warnings == 1 and warnings[1].msg:find("diagnostics"), "bad diagnostics warns once")
+  truthy(hl("DiagnosticUnderlineError").undercurl, "and falls back to defaults")
+  load("evening", { diagnostics = { underline = "squiggle" } })
+  truthy(#warnings == 1 and warnings[1].msg:find("diagnostics.underline"), "bad nested value warns")
+end)
+
+test("styles: conditionals and loops follow keywords unless set", function()
+  load("evening")
+  truthy(hl("Conditional").italic and hl("Repeat").italic, "inherit keywords (italic)")
+  load("evening", { styles = { conditionals = { bold = true } } })
+  truthy(hl("Conditional").bold and not hl("Conditional").italic, "conditionals replaces the keyword style")
+  truthy(hl("Repeat").italic and not hl("Repeat").bold, "loops still follow keywords")
+  truthy(hl("Keyword").italic and not hl("Keyword").bold, "other keywords untouched")
+  load("evening", { styles = { loops = { underline = true } } })
+  truthy(hl("@keyword.repeat").underline or hl("Repeat").underline, "loops applied")
+end)
+
+test("saturation never merges status colors (alone or with colorblind)", function()
+  for _, style in ipairs(styles) do
+    for _, amount in ipairs({ 0, 0.3, 0.6 }) do
+      local c = colors(style, { saturation = amount })
+      local d, w = separation(pick(c.diag, { "error", "warn", "ok" }), { "normal" })
+      truthy(d >= 5, ("%s @%s error/warn/ok %.1f (%s)"):format(style, amount, d, w))
+      d, w = separation(pick(c.git, { "add", "change", "delete" }), { "normal" })
+      truthy(d >= 5, ("%s @%s git %.1f (%s)"):format(style, amount, d, w))
+      eq(Util.contrast(c.diag.error, c.bg) >= 4.4, true, style .. " error stays readable")
+      for mode, kinds in pairs({ ["red-green"] = { "protan", "deutan" }, ["blue-yellow"] = { "tritan" } }) do
+        local cb = colors(style, { saturation = amount, colorblind = mode })
+        d, w = separation(pick(cb.git, { "add", "change", "delete" }), kinds)
+        truthy(d >= 10, ("%s @%s %s git %.1f (%s)"):format(style, amount, mode, d, w))
+      end
+    end
+  end
+  -- syntax still follows saturation all the way down
+  local _, a, b = Util.to_oklab(colors("evening", { saturation = 0 }).syn.string)
+  truthy(math.sqrt(a * a + b * b) < 0.01, "syntax is grey at 0")
+end)
+
+test("accent: statusline modes never share a color", function()
+  for _, accent in ipairs(require("kissaten.config").accents) do
+    local m = colors("evening", { accent = accent }).ui.modes
+    eq(m.normal, colors("evening", { accent = accent })[accent], "normal = accent")
+    local seen = {}
+    for mode, color in pairs(m) do
+      truthy(not seen[color], ("accent %s: %s and %s share %s"):format(accent, mode, tostring(seen[color]), color))
+      seen[color] = mode
+    end
+  end
+  load("evening", { accent = "green" })
+  local t = require("lualine.themes.kissaten")
+  truthy(t.normal.a.bg ~= t.insert.a.bg, "lualine normal vs insert")
+  truthy(hl("MiniStatuslineModeNormal").bg ~= hl("MiniStatuslineModeInsert").bg, "mini.statusline")
+end)
+
+test("options: every pair of options works together on every style", function()
+  -- one representative value per option; each pair must load cleanly and
+  -- keep the theme's guarantees
+  local variants = {
+    { colorblind = "red-green" },
+    { colorblind = "blue-yellow" },
+    { saturation = 0 },
+    { saturation = 0.5 },
+    { accent = "green" },
+    { accent = "yellow" },
+    { rainbow = "mono" },
+    { rainbow = "dimmed" },
+    { borderless = true },
+    { diagnostics = { underline = false, virtual_text = "plain" }, inlay_hints = "plain" },
+    { contrast = "high" },
+    { subtle_comments = 0.7 },
+    { transparent = true },
+    { no_italic = true, no_underline = true },
+    { bright_borders = true },
+    { styles = { conditionals = { bold = true }, loops = { bold = true } } },
+  }
+  local skip = { comment = true, deprecated = true, tag_delimiter = true, string_doc = true }
+  local pairs_run = 0
+  for i = 1, #variants do
+    for j = i + 1, #variants do
+      local opts = vim.tbl_deep_extend("force", {}, variants[i], variants[j])
+      if
+        not (variants[i].colorblind and variants[j].colorblind)
+        and not (variants[i].saturation and variants[j].saturation)
+        and not (variants[i].accent and variants[j].accent)
+        and not (variants[i].rainbow and variants[j].rainbow)
+      then
+        pairs_run = pairs_run + 1
+        for _, style in ipairs(styles) do
+          local c = colors(style, opts)
+          local where = style .. " " .. vim.inspect(opts, { newline = " ", indent = "" })
+          eq(#warnings, 0, where .. ": warnings")
+          for role, color in pairs(c.syn) do
+            if not skip[role] then
+              truthy(Util.contrast(color, c.bg) >= 4.4, where .. ": syn." .. role .. " below AA")
+            end
+          end
+          truthy(Util.contrast(c.ui.on_badge, c.ui.accent) >= 4.5, where .. ": badge text")
+          local seen = {}
+          for mode, color in pairs(c.ui.modes) do
+            truthy(not seen[color], where .. ": modes " .. mode .. "/" .. tostring(seen[color]))
+            seen[color] = mode
+          end
+          if opts.colorblind then
+            local kinds = opts.colorblind == "red-green" and { "protan", "deutan" } or { "tritan" }
+            local d = separation(pick(c.git, { "add", "change", "delete" }), kinds)
+            truthy(d >= 10, where .. (": colorblind git %.1f"):format(d))
+          end
+        end
+      end
+    end
+  end
+  truthy(pairs_run > 100, "ran " .. pairs_run .. " pairs")
+  -- and with highlight groups applied, for the options that touch groups
+  load("morning", { borderless = true, bright_borders = true, transparent = true, no_underline = true })
+  eq(hl("SnacksPickerBorder").fg, hl("SnacksPickerBorder").bg, "borderless beats bright_borders in pickers")
+  truthy(hl("FloatBorder").fg ~= hl("NormalFloat").bg, "bright_borders still applies to other floats")
+  truthy(not hl("DiagnosticUnderlineError").undercurl, "no_underline beats diagnostics.underline")
+  reset()
+end)
+
+test("options: everything combined loads in every style without warnings", function()
+  local all = {
+    colorblind = "red-green",
+    saturation = 0.6,
+    accent = "teal",
+    rainbow = "dimmed",
+    borderless = true,
+    diagnostics = { underline = "underline", virtual_text = "plain" },
+    inlay_hints = "plain",
+    contrast = "high",
+    subtle_comments = 0.5,
+    transparent = true,
+    styles = { conditionals = { bold = true }, loops = { bold = true } },
+  }
+  for _, style in ipairs(styles) do
+    load(style, all)
+    eq(#warnings, 0, style .. ": no warnings")
+    eq(vim.g.colors_name, "kissaten-" .. style)
+  end
+  load("evening", { colorblind = "blue-yellow", accent = "pink" })
+  local text = checkhealth("kissaten")
+  truthy(text:find('colorblind = "blue-yellow"', 1, true), "health lists the active options")
+  truthy(text:find("Every syntax role meets WCAG AA"), "and AA still holds")
+  vim.cmd("bwipeout!")
+  load("evening", { colorblind = "deutan" })
+  truthy(#warnings == 1 and warnings[1].msg:find("colorblind"), "unknown colorblind value warns")
+  eq(require("kissaten.config").options.colorblind, false, "and turns it off")
+  reset()
+end)
+
 test(":checkhealth kissaten runs", function()
   local text = checkhealth("kissaten")
   truthy(text:find("kissaten.nvim"), "health output")

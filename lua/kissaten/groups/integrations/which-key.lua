@@ -7,7 +7,7 @@ function M.get(c)
   -- stylua: ignore
   return {
     WhichKey          = { fg = c.cyan },
-    WhichKeyGroup     = { fg = c.blue },
+    WhichKeyGroup     = { fg = c.ui.accent },
     WhichKeyDesc      = { fg = c.fg },
     WhichKeySeparator = { fg = c.overlay0 },
     WhichKeyValue     = { fg = c.comment },

@@ -15,9 +15,9 @@ function M.get(c)
   }
   for state, base in pairs(states) do
     hl["Buffer" .. state] = base
-    hl["Buffer" .. state .. "Index"] = { fg = c.blue, bg = base.bg }
+    hl["Buffer" .. state .. "Index"] = { fg = c.ui.accent, bg = base.bg }
     hl["Buffer" .. state .. "Mod"] = { fg = c.orange, bg = base.bg }
-    hl["Buffer" .. state .. "Sign"] = { fg = state == "Current" and c.blue or c.overlay0, bg = base.bg }
+    hl["Buffer" .. state .. "Sign"] = { fg = state == "Current" and c.ui.accent or c.overlay0, bg = base.bg }
     hl["Buffer" .. state .. "Target"] = { fg = c.red, bg = base.bg, bold = true }
     hl["Buffer" .. state .. "ERROR"] = { fg = c.diag.error, bg = base.bg }
     hl["Buffer" .. state .. "WARN"] = { fg = c.diag.warn, bg = base.bg }
@@ -28,7 +28,7 @@ function M.get(c)
     hl["Buffer" .. state .. "DELETED"] = { fg = c.git.delete, bg = base.bg }
   end
   hl.BufferTabpageFill = { fg = c.overlay0, bg = c.crust }
-  hl.BufferTabpages = { fg = c.blue, bg = c.crust, bold = true }
+  hl.BufferTabpages = { fg = c.ui.accent, bg = c.crust, bold = true }
   hl.BufferOffset = { fg = c.subtext, bg = Util.blend(c.mantle, c.crust, 0.5) }
   return hl
 end

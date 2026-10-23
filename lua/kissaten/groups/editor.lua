@@ -53,9 +53,9 @@ function M.get(c, opts)
     Visual                = { bg = ui.bg_visual },
     VisualNOS             = { bg = ui.bg_visual },
     Search                = { fg = ui.fg, bg = ui.bg_search },
-    IncSearch             = { fg = c.crust, bg = ui.bg_cursearch, bold = true },
+    IncSearch             = { fg = c.ui.on_badge, bg = ui.bg_cursearch, bold = true },
     CurSearch             = "IncSearch",
-    Substitute            = { fg = c.crust, bg = c.red },
+    Substitute            = { fg = c.ui.on_badge, bg = c.red },
     MatchParen            = { fg = c.orange, bg = ui.bg_match, bold = true },
     QuickFixLine          = { bg = ui.bg_visual, bold = true },
 
@@ -83,7 +83,7 @@ function M.get(c, opts)
     StatusLineTermNC      = "StatusLineNC",
     TabLine               = { fg = c.comment, bg = c.mantle },
     TabLineFill           = { bg = opts.transparent and c.none or c.crust },
-    TabLineSel            = { fg = c.crust, bg = c.blue, bold = true },
+    TabLineSel            = { fg = c.ui.on_badge, bg = ui.accent, bold = true },
     WinBar                = { fg = ui.fg_dim, bg = tbg },
     WinBarNC              = { fg = c.comment, bg = tbg },
 
@@ -101,9 +101,9 @@ function M.get(c, opts)
 
     DiffAdd               = { bg = c.diff.add },
     DiffChange            = { bg = c.diff.change },
-    DiffDelete            = { fg = Util.blend(c.red, c.bg, 0.6), bg = c.diff.delete },
+    DiffDelete            = { fg = Util.blend(c.git.delete, c.bg, 0.6), bg = c.diff.delete },
     DiffText              = { bg = c.diff.text },
-    DiffTextAdd           = { bg = Util.tint(c.green, c.bg, 0.32) },
+    DiffTextAdd           = { bg = Util.tint(c.git.add, c.bg, 0.32) },
     Added                 = { fg = c.git.add },
     Changed               = { fg = c.git.change },
     Removed               = { fg = c.git.delete },

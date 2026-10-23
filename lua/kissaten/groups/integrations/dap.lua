@@ -29,7 +29,7 @@ function M.get(c)
     DapUIFloatBorder         = "FloatBorder",
     DapUIWatchesEmpty        = { fg = c.comment },
     DapUIWatchesValue        = { fg = c.green },
-    DapUIWatchesError        = { fg = c.red },
+    DapUIWatchesError        = { fg = c.diag.error },
     DapUIBreakpointsPath     = { fg = c.blue },
     DapUIBreakpointsInfo     = { fg = c.green },
     DapUIBreakpointsCurrentLine = { fg = c.yellow, bold = true },
@@ -53,7 +53,7 @@ function M.get(c)
     DapUIUnavailableNC       = { fg = c.overlay0, bg = c.mantle },
     NvimDapVirtualText       = { fg = c.comment, italic = true },
     NvimDapVirtualTextChanged = { fg = c.orange, italic = true },
-    NvimDapVirtualTextError  = { fg = c.red, italic = true },
+    NvimDapVirtualTextError  = { fg = c.diag.error, italic = true },
   }
 end
 

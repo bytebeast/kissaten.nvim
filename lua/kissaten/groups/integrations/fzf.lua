@@ -3,14 +3,14 @@ local M = {}
 M.url = "https://github.com/ibhagwan/fzf-lua"
 
 ---@type kissaten.HighlightsFn
-function M.get(c)
+function M.get(c, opts)
   local fbg = c.ui.bg_float
   -- stylua: ignore
-  return {
+  local hl = {
     FzfLuaNormal          = { fg = c.fg, bg = fbg },
     FzfLuaBorder          = { fg = c.ui.border_float, bg = fbg },
-    FzfLuaTitle           = { fg = c.crust, bg = c.blue, bold = true },
-    FzfLuaPreviewTitle    = { fg = c.crust, bg = c.green, bold = true },
+    FzfLuaTitle           = { fg = c.ui.on_badge, bg = c.ui.accent, bold = true },
+    FzfLuaPreviewTitle    = { fg = c.ui.on_badge, bg = c.green, bold = true },
     FzfLuaPreviewBorder   = { fg = c.ui.border_float, bg = fbg },
     FzfLuaCursor          = "IncSearch",
     FzfLuaCursorLine      = { bg = c.ui.bg_sel },
@@ -34,7 +34,7 @@ function M.get(c)
     FzfLuaLiveSym         = { fg = c.orange },
     FzfLuaFzfNormal       = { fg = c.fg },
     FzfLuaFzfCursorLine   = { bg = c.ui.bg_sel },
-    FzfLuaFzfMatch        = { fg = c.blue, bold = true },
+    FzfLuaFzfMatch        = { fg = c.ui.accent, bold = true },
     FzfLuaFzfBorder       = { fg = c.ui.border_float },
     FzfLuaFzfScrollbar    = { fg = c.surface2 },
     FzfLuaFzfSeparator    = { fg = c.overlay0 },
@@ -47,6 +47,18 @@ function M.get(c)
     FzfLuaFzfPrompt       = { fg = c.orange },
     FzfLuaFzfQuery        = { fg = c.fg },
   }
+  if opts.borderless then
+    local p = c.ui.picker
+    hl.FzfLuaNormal = { fg = c.fg, bg = p.list }
+    hl.FzfLuaBorder = { fg = p.list, bg = p.list }
+    hl.FzfLuaPreviewNormal = { fg = c.fg, bg = p.preview }
+    hl.FzfLuaPreviewBorder = { fg = p.preview, bg = p.preview }
+    hl.FzfLuaFzfGutter = { bg = p.list }
+    hl.FzfLuaFzfBorder = { fg = p.list }
+    hl.FzfLuaCursorLine = { bg = p.sel }
+    hl.FzfLuaFzfCursorLine = { bg = p.sel }
+  end
+  return hl
 end
 
 return M

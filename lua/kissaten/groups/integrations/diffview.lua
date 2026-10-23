@@ -12,7 +12,7 @@ function M.get(c)
     DiffviewDim1              = { fg = c.overlay0 },
     DiffviewPrimary           = { fg = c.blue },
     DiffviewSecondary         = { fg = c.purple },
-    DiffviewFilePanelTitle    = { fg = c.blue, bold = true },
+    DiffviewFilePanelTitle    = { fg = c.ui.accent, bold = true },
     DiffviewFilePanelCounter  = { fg = c.orange },
     DiffviewFilePanelRootPath = { fg = c.lavender, bold = true },
     DiffviewFilePanelFileName = { fg = c.fg },

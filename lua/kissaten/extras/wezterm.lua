@@ -29,7 +29,7 @@ inactive_tab_edge = "${mantle}"
 
 [colors.tab_bar.active_tab]
 bg_color = "${blue}"
-fg_color = "${crust}"
+fg_color = "${ui.on_badge}"
 
 [colors.tab_bar.inactive_tab]
 bg_color = "${mantle}"

@@ -12,19 +12,19 @@ function M.theme(style)
 
   local function mode(color)
     return {
-      a = { fg = c.crust, bg = color, gui = bold },
+      a = { fg = c.ui.on_badge, bg = color, gui = bold },
       b = { fg = color, bg = Util.blend(color, c.surface0, 0.15) },
       c = { fg = c.subtext, bg = bg },
     }
   end
 
   return {
-    normal = mode(c.blue),
-    insert = mode(c.green),
-    visual = mode(c.purple),
-    replace = mode(c.red),
-    command = mode(c.orange),
-    terminal = mode(c.teal),
+    normal = mode(c.ui.modes.normal),
+    insert = mode(c.ui.modes.insert),
+    visual = mode(c.ui.modes.visual),
+    replace = mode(c.ui.modes.replace),
+    command = mode(c.ui.modes.command),
+    terminal = mode(c.ui.modes.terminal),
     inactive = {
       a = { fg = c.comment, bg = bg },
       b = { fg = c.comment, bg = bg },
