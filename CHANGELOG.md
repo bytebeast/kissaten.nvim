@@ -20,6 +20,8 @@ First release.
 - `diagnostics.underline`, `diagnostics.virtual_text`, `inlay_hints`, and
   `styles.virtual_text`, `styles.inlay_hints`, `styles.conditionals`, `styles.loops`.
 - Text on colored badges meets 4.5:1 on every style (the light style uses its paper color).
+- `midnight` and `graveyard`: floats and the completion menu sit a step above the editor so
+  they no longer blend into it; `bright_borders` docs explain `winborder` for border-less popups.
 - `:checkhealth kissaten` lists the options that shape the colors.
 - Options combine safely: status colors and statusline modes keep their hue under
   `saturation`, a mode never shares the accent's color, and the test suite checks

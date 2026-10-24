@@ -84,7 +84,9 @@ Defaults: >lua
       floats = "dark",        -- "dark" | "normal" | "transparent"
     },
     no_italic = false, no_bold = false, no_underline = false,
-    bright_borders = false,   -- accent-colored float borders
+    bright_borders = false,   -- accent popup borders; NOTE: needs
+                              -- vim.o.winborder = "rounded" to work
+                              -- effectively (|kissaten-bright-borders|)
     lualine_bold = false,
     on_palette = function(palette, style) end,
     on_colors = function(colors) end,
@@ -139,6 +141,15 @@ to blue.
 "vivid" (palette colors), "dimmed" (70% of their contrast, never below 3:1)
 or "mono" (greys, brightest outermost). Markdown headings keep their colors.
 
+                                                      *kissaten-bright-borders*
+`bright_borders = true` draws popup borders in the accent color. It colors
+borders but can't add them: windows without a border (LazyVim's completion
+menu and LSP hover by default) follow Neovim's 'winborder', so set >lua
+  vim.o.winborder = "rounded"  -- Neovim 0.11+
+<
+On midnight and graveyard, floats and the completion menu sit a step lighter
+than the editor, so popups stand out even without borders.
+
                                                           *kissaten-borderless*
 `borderless = true` removes the border lines of Telescope, snacks and fzf-lua
 pickers. Prompt, list and preview are told apart by background shade, and
@@ -166,6 +177,8 @@ every style). Where two touch the same thing:
   accent + statusline       a mode sharing the accent's color turns blue
   accent + colorblind       allowed; avoid an accent that is also a status
                             color (e.g. orange with "red-green")
+  bright_borders + no border  nothing to color: set 'winborder' (see
+                            |kissaten-bright-borders|)
   borderless + bright_borders  pickers stay borderless; other floats get
                             bright borders
   borderless + transparent  picker panels stay solid
