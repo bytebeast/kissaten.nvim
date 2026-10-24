@@ -214,7 +214,12 @@ return {
       no_bold = false,
       no_underline = false,
 
-      bright_borders = false, -- true: accent-colored float borders (not borderless pickers)
+      -- true: accent-colored popup borders.
+      -- NOTE: bright_borders needs this in lua/config/options.lua to work
+      -- effectively (Neovim 0.11+), otherwise completion/hover popups have no
+      -- border to color:
+      --   vim.o.winborder = "rounded"
+      bright_borders = false,
       lualine_bold = false, -- true: bold mode section in the statusline
 
       -- Recolor anything (see README "Overrides and recipes"):
@@ -304,7 +309,8 @@ require("kissaten").setup({
   no_bold = false,
   no_underline = false,
 
-  bright_borders = false,     -- accent-colored float borders
+  bright_borders = false,     -- accent-colored popup borders
+                              -- NOTE: needs vim.o.winborder = "rounded" to work effectively
   lualine_bold = false,       -- bold mode section in the lualine themes
 
   on_palette = function(palette, style) end,       -- 1. raw colors
@@ -331,6 +337,7 @@ Every option can be combined with every other. The test suite loads each pair on
 | `colorblind` + `on_colors` | `on_colors` runs last, so your role changes win. |
 | `accent` + statusline modes | Normal mode uses the accent. A mode that would share its color (insert is green, visual purple, replace red, command orange, terminal teal) switches to blue, so no two modes look alike. |
 | `accent` + `colorblind` | Allowed, but an accent that's also a status color can blur the two meanings, e.g. `accent = "orange"` with `"red-green"`, where deleted lines are orange. |
+| `bright_borders` + popups without borders | Nothing visible changes on windows that draw no border (LazyVim's completion menu and hover by default). Set `vim.o.winborder = "rounded"`; see [Borders around popups](#overrides-and-recipes). |
 | `borderless` + `bright_borders` | Pickers stay borderless. `bright_borders` still styles every other float (hover, completion docs, LSP info). |
 | `borderless` + `transparent` | Picker panels stay solid. Without lines, the shade is all that frames them. |
 | `contrast = "high"` + `subtle_comments` | They compose: comments fade starting from the lifted contrast (`0.5` gives about 3.8:1 instead of 3.1:1). |
@@ -536,6 +543,30 @@ opts = {
   end,
 }
 ```
+</details>
+
+<details>
+<summary><b>Borders around popups (completion, hover, signature help)</b></summary>
+
+> **Note:** `bright_borders` needs `vim.o.winborder = "rounded"` (Neovim 0.11+) to work effectively.
+
+`bright_borders` colors popup borders in the accent color, but a colorscheme can only color a border that a window actually draws. In LazyVim the completion menu, its docs and the LSP hover have no border by default. They follow Neovim's `winborder` option, which is empty. Turn borders on once and `bright_borders` takes effect everywhere:
+
+```lua
+-- LazyVim: lua/config/options.lua (Neovim 0.11+)
+vim.o.winborder = "rounded" -- or "single", "double", "bold", "solid"
+```
+
+```lua
+-- kissaten opts
+opts = { bright_borders = true }
+```
+
+![completion menu and docs with bright borders in kissaten-graveyard](assets/screenshots/popup-borders.png)
+
+blink.cmp and snacks use `winborder` when their own border is unset. To give only the completion menu a border, set it in blink instead: `opts = { completion = { menu = { border = "rounded" }, documentation = { window = { border = "rounded" } } } }` on `saghen/blink.cmp`.
+
+Even without borders, popups stand apart from the editor on every style. On `midnight` and `graveyard`, where there's no room for a darker shade, floats and the completion menu sit a step lighter than the background instead.
 </details>
 
 <details>

@@ -156,24 +156,33 @@ function M.setup(opts)
   end
 
   -- ── UI ──────────────────────────────────────────────────────────────────
-  local function bg_for(kind)
-    return kind == "transparent" and c.none or kind == "dark" and c.mantle or c.bg
+  -- Near-black styles (midnight, graveyard) have no room for a "darker"
+  -- float: mantle sits within ~1.05:1 of the editor, so popups would bleed
+  -- into it. There, floats and popups sit a step *above* the editor instead.
+  local near_black = not light and Util.contrast(c.mantle, c.bg) < 1.06
+  local float_shade = near_black and c.surface0 or c.mantle
+
+  local function bg_for(kind, dark)
+    return kind == "transparent" and c.none or kind == "dark" and dark or c.bg
   end
 
   ---@class kissaten.UiColors
   c.ui = {
     bg = opts.transparent and c.none or c.bg,
     bg_dim = c.mantle, -- inactive windows when dim_inactive = true
-    bg_sidebar = opts.transparent and c.none or bg_for(opts.styles.sidebars),
-    bg_float = opts.transparent and opts.styles.floats ~= "normal" and c.none or bg_for(opts.styles.floats),
-    bg_popup = c.mantle, -- completion menus always get a solid background
+    -- sidebars stay below the editor: lifting them would hide their cursorline
+    bg_sidebar = opts.transparent and c.none or bg_for(opts.styles.sidebars, c.mantle),
+    bg_float = opts.transparent and opts.styles.floats ~= "normal" and c.none
+      or bg_for(opts.styles.floats, float_shade),
+    bg_popup = float_shade, -- completion menus always get a solid background
     bg_statusline = opts.transparent and c.none or c.mantle,
     bg_cursorline = c.surface0,
     bg_visual = Util.tint(c.blue, c.bg, light and 0.18 or 0.22),
     bg_search = Util.tint(c.yellow, c.bg, light and 0.25 or 0.22),
     bg_cursearch = c.orange,
     bg_match = c.surface2,
-    bg_sel = c.surface1, -- selected item in menus/lists
+    -- selected item in menus/lists; a step further on lifted near-black floats
+    bg_sel = near_black and c.surface2 or c.surface1,
     fg = c.fg,
     fg_dim = c.subtext,
     fg_sidebar = c.subtext,
@@ -215,10 +224,9 @@ function M.setup(opts)
     preview = c.crust,
     sel = c.ui.bg_sel,
   }
-  if not light and Util.contrast(c.mantle, c.bg) < 1.06 then
-    -- near-black styles have no room below the editor: lift prompt and list,
-    -- and the selection with them so it doesn't match the prompt
-    c.ui.picker.prompt, c.ui.picker.list, c.ui.picker.sel = c.surface1, c.surface0, c.surface2
+  if near_black then
+    -- near-black styles have no room below the editor: lift prompt and list
+    c.ui.picker.prompt, c.ui.picker.list = c.surface1, c.surface0
   end
 
   -- Text on a colored badge (mode indicators, picker titles, the selected

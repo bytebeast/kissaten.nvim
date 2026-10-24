@@ -820,6 +820,38 @@ test("rainbow: vivid, dimmed and mono brackets", function()
   eq(hex(hl("SnacksIndent1").fg), Util.blend(c.scopes[1], c.bg, 0.4), "snacks rainbow indent follows")
 end)
 
+test("popups stand out from the editor on every style, even without borders", function()
+  for _, style in ipairs(styles) do
+    local c = colors(style)
+    local ui = c.ui
+    truthy(
+      Util.contrast(ui.bg_popup, c.bg) >= 1.08,
+      ("%s: completion menu vs editor %.3f"):format(style, Util.contrast(ui.bg_popup, c.bg))
+    )
+    truthy(
+      Util.contrast(ui.bg_float, c.bg) >= 1.08,
+      ("%s: floats vs editor %.3f"):format(style, Util.contrast(ui.bg_float, c.bg))
+    )
+    local sel = Util.contrast(ui.bg_sel, ui.bg_popup)
+    truthy(sel >= (c.light and 1.1 or 1.3), ("%s: menu selection vs menu %.3f"):format(style, sel))
+    truthy(Util.contrast(ui.bg_sel, ui.bg_sidebar) >= 1.1, style .. ": sidebar selection")
+    truthy(Util.contrast(c.fg, ui.bg_sel) >= 4.5, style .. ": text on the selection")
+    eq(ui.bg_sidebar, c.mantle, style .. ": sidebars stay on mantle")
+  end
+end)
+
+test("bright_borders colors every popup border it can reach", function()
+  for _, style in ipairs(styles) do
+    load(style, { bright_borders = true, accent = "pink" })
+    local accent = require("kissaten").colors().pink
+    for _, g in ipairs({ "FloatBorder", "PmenuBorder", "BlinkCmpMenuBorder", "BlinkCmpDocBorder", "TelescopeBorder" }) do
+      eq(hex(hl(g).fg), accent, style .. ": " .. g)
+    end
+    load(style)
+    truthy(hex(hl("FloatBorder").fg) ~= require("kissaten").colors().blue, style .. ": subtle by default")
+  end
+end)
+
 test("extras: badge text (tmux, kitty, wezterm, k9s) meets 4.5:1 on every style", function()
   local E = require("kissaten.extras")
   for _, style in ipairs(styles) do
