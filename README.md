@@ -870,6 +870,9 @@ stylua lua plugin colors tests scripts/build_extras.lua
 python3 scripts/screenshot.py --scenario my_scenario.lua --out shots --frame
 python3 scripts/make_assets.py --shots shots
 
+# social preview background: a made-up siphon still life rendered in Blender (pip install bpy)
+python3 scripts/social_scene.py render.png 1280 128
+
 # every computed color (palette, roles, UI, diff) as JSON, e.g. for porting
 nvim --headless -u NONE -i NONE -l scripts/export_colors.lua > colors.json
 ```
