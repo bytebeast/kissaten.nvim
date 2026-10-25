@@ -7,7 +7,9 @@ Produces:
   assets/screenshots/*.png     copies of the framed screenshots
   assets/styles.png            grid of every style (rows of 3, last row centered)
   assets/palette.png           swatch sheet generated from lua/kissaten/palettes
-  assets/social-preview.png    1280x640 GitHub social preview (< 1 MB)
+  assets/social-preview.png    1280x640 GitHub social preview (< 1 MB), drawn over
+                               assets/src/social-background.jpg (rendered by
+                               scripts/social_scene.py in Blender, then softened)
   assets/colorblind.png        default vs `colorblind`, as each deficiency sees them
 """
 import argparse
@@ -107,6 +109,17 @@ def social_preview(shots, font, out):
     W, H = 1280, 640
     p = palette("evening")
     img = Image.new("RGB", (W, H), rgb(p["crust"]))
+    bg = os.path.join(ROOT, "assets", "src", "social-background.jpg")
+    if os.path.exists(bg):
+        # siphon, cup and candle on a counter; darken behind the text with a
+        # soft elliptical scrim so the title stays readable
+        import numpy as np
+
+        img = Image.open(bg).convert("RGB").resize((W, H), Image.LANCZOS)
+        yy, xx = np.mgrid[0:H, 0:W]
+        r = np.sqrt(((xx - 280) / 600) ** 2 + ((yy - 330) / 340) ** 2)
+        a = (np.clip(1 - r, 0, 1) * 0.62 * 255).astype("uint8")
+        img.paste(Image.new("RGB", (W, H), (10, 10, 16)), (0, 0), Image.fromarray(a, "L"))
     d = ImageDraw.Draw(img)
 
     # right: real screenshot crop with a soft left edge
