@@ -62,6 +62,12 @@ M.defaults = {
   ---@type "vivid"|"dimmed"|"mono"
   rainbow = "vivid",
 
+  --- Give every local variable and parameter its own color, as in
+  --- JetBrains IDEs (semantic highlighting). Needs an LSP with semantic
+  --- tokens. Colors are tuned per style, all meet WCAG AA, and follow
+  --- `colorblind` (6 colors that type can tell apart instead of 12).
+  rainbow_variables = false,
+
   --- Pickers (Telescope, snacks, fzf-lua) without border lines: prompt,
   --- list and preview are told apart by background shade and title badges.
   borderless = false,
@@ -86,6 +92,11 @@ M.defaults = {
     -- loops = { bold = true },
     virtual_text = {}, -- diagnostic virtual text, e.g. { italic = true }
     inlay_hints = { italic = true },
+    --- LSP semantic modifiers (stack on the token's color):
+    mutable = { underline = true }, -- `mut` bindings (rust-analyzer)
+    readonly = {}, -- const / readonly / final, e.g. { italic = true }
+    statics = {}, -- static members, e.g. { bold = true }
+    globals = {}, -- global scope (clangd, LuaLS), e.g. { underdotted = true }
     functions = {},
     variables = {},
     parameters = {},
@@ -160,6 +171,7 @@ local rules = {
   { "accent", one_of(M.accents), "a palette accent (" .. table.concat(M.accents, ", ") .. ")" },
   { "rainbow", one_of({ "vivid", "dimmed", "mono" }), '"vivid", "dimmed" or "mono"' },
   { "borderless", function(v) return type(v) == "boolean" end, "boolean" },
+  { "rainbow_variables", function(v) return type(v) == "boolean" end, "boolean" },
   { "diagnostics", is_table, "table" },
   { "diagnostics.underline", function(v) return v == false or v == "undercurl" or v == "underline" end, '"undercurl", "underline" or false' },
   { "diagnostics.virtual_text", one_of({ "tinted", "plain" }), '"tinted" or "plain"' },
@@ -168,6 +180,10 @@ local rules = {
   { "styles.loops", table_or_nil, "table of highlight attributes" },
   { "styles.virtual_text", is_table, "table of highlight attributes" },
   { "styles.inlay_hints", is_table, "table of highlight attributes" },
+  { "styles.mutable", is_table, "table of highlight attributes" },
+  { "styles.readonly", is_table, "table of highlight attributes" },
+  { "styles.statics", is_table, "table of highlight attributes" },
+  { "styles.globals", is_table, "table of highlight attributes" },
 }
 
 local function get(t, path)

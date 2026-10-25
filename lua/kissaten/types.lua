@@ -38,6 +38,7 @@
 ---@field git kissaten.GitColors
 ---@field diff kissaten.DiffColors
 ---@field rainbow string[] heading colors (markdown, help)
+---@field variables? string[] `rainbow_variables` colors (only when enabled)
 ---@field brackets {red: string, yellow: string, blue: string, orange: string, green: string, violet: string, cyan: string} rainbow-delimiters; follows `rainbow`
 ---@field scopes string[] rainbow indent scopes; follows `rainbow`
 ---@field terminal kissaten.TerminalColors
@@ -70,6 +71,8 @@
 ---@field accent string the `accent` option: titles, matches, normal mode
 ---@field pmenu_match string
 ---@field on_badge string text on a colored badge
+---@field bg_read string symbol references that read (LspReferenceRead/Text)
+---@field bg_write string symbol references that write (LspReferenceWrite)
 ---@field modes {normal: string, insert: string, visual: string, replace: string, command: string, terminal: string} statusline mode colors; never two alike
 ---@field picker {prompt: string, list: string, preview: string, sel: string} panel shades for `borderless`
 

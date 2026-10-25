@@ -48,6 +48,7 @@ Tokyonight and Catppuccin are both excellent, and kissaten borrows from each on 
 - **A light style that actually passes.** Every syntax role in `kissaten-morning` meets WCAG AA (4.5:1). Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
 - **Color carries meaning.** Structure (keywords, functions, operators) is cool. Data (strings, numbers, types) is warm. Parameters get their own hue, distinct from both numbers and builtin variables (checked with CIEDE2000), so `f(x, 42, self)` reads as three different things at a glance.
 - **Color vision support.** `colorblind = "red-green"` or `"blue-yellow"` remaps the colors that carry meaning on their own (diff and git status, diagnostics) to pairs chosen by simulating each type of color blindness on every style. With the default colors, deuteranopes see "added" and "changed" as the same yellow; in red-green mode they're blue and teal.
+- **JetBrains-style semantic highlighting.** `rainbow_variables` gives every local variable and parameter its own color, the way JetBrains IDEs do, from a set tuned per style so every color meets WCAG AA. Optional styles for `readonly`, `static`, global and mutable symbols use what your language server knows. And symbol references show reads and writes in different colors.
 - **Semantic layers instead of 1,600 hex codes.** Palette, then roles (`colors.syn.parameter`, `colors.diag.warn`, ...), then highlight groups. Change one role and every language and plugin follows.
 - **No cache, nothing to go stale.** Building all 1,600+ groups takes about 1 ms, so kissaten rebuilds them on every load and your changes always show up. Applying the theme in a real LazyVim startup takes about 7–8 ms, most of it Neovim itself setting the highlights. (A bytecode cache was tried and measured. It saved about 1 ms and added stale-cache edge cases, so it was left out.)
 - **Robust.** Typos in your config produce a warning and a fallback, never a broken editor. CI tests every release on Neovim 0.9, 0.10, 0.11, stable and nightly.
@@ -182,6 +183,10 @@ return {
       borderless = false, -- true: pickers without border lines, framed by shade
       -- (how options combine: README "Combining options")
 
+      -- JetBrains-style: every local variable and parameter gets its own color
+      -- (needs an LSP with semantic tokens; 6 colorblind-safe colors with colorblind)
+      rainbow_variables = false,
+
       diagnostics = {
         underline = "undercurl", -- "undercurl" | "underline" | false
         virtual_text = "tinted", -- "tinted" (colored background) | "plain"
@@ -198,6 +203,11 @@ return {
         -- loops = { bold = true }, -- for/while (default: same as keywords)
         virtual_text = {}, -- diagnostic virtual text, e.g. { italic = true }
         inlay_hints = { italic = true },
+        -- LSP modifiers, stacked on the symbol's color (needs an LSP):
+        mutable = { underline = true }, -- `mut` bindings (Rust); { underline = false } = off
+        readonly = {}, -- const / readonly / final, e.g. { italic = true }
+        statics = {}, -- static members, e.g. { bold = true }
+        globals = {}, -- global scope (clangd, LuaLS), e.g. { underdotted = true }
         functions = {}, -- e.g. { bold = true }
         variables = {},
         parameters = {}, -- e.g. { italic = true }
@@ -279,6 +289,7 @@ require("kissaten").setup({
   accent = "blue",            -- UI accent: any palette accent name
   rainbow = "vivid",          -- brackets and indent scopes: "vivid" | "dimmed" | "mono"
   borderless = false,         -- pickers framed by shade instead of border lines
+  rainbow_variables = false,  -- a color per local variable and parameter (LSP)
 
   diagnostics = {
     underline = "undercurl",  -- "undercurl" | "underline" | false
@@ -294,6 +305,10 @@ require("kissaten").setup({
     -- loops = {},            -- for/while; unset = same as keywords
     virtual_text = {},        -- diagnostic virtual text
     inlay_hints = { italic = true },
+    mutable = { underline = true }, -- LSP modifiers: `mut` bindings
+    readonly = {},            -- const / readonly / final
+    statics = {},             -- static members
+    globals = {},             -- global scope
     functions = {},
     variables = {},
     parameters = {},
@@ -340,6 +355,9 @@ Every option can be combined with every other. The test suite loads each pair on
 | `bright_borders` + popups without borders | Nothing visible changes on windows that draw no border (LazyVim's completion menu and hover by default). Set `vim.o.winborder = "rounded"`; see [Borders around popups](#overrides-and-recipes). |
 | `borderless` + `bright_borders` | Pickers stay borderless. `bright_borders` still styles every other float (hover, completion docs, LSP info). |
 | `borderless` + `transparent` | Picker panels stay solid. Without lines, the shade is all that frames them. |
+| `rainbow_variables` + `colorblind` | Variables use 6 colors that type can tell apart (two hues, three lightness steps) instead of 12. |
+| `rainbow_variables` + `saturation` | Like status colors, variable colors keep their hue, so they stay apart even at `0`. |
+| `rainbow_variables` + `styles.readonly` / `mutable` / ... | They stack: a `const` local keeps its own color and gets the readonly style on top. |
 | `contrast = "high"` + `subtle_comments` | They compose: comments fade starting from the lifted contrast (`0.5` gives about 3.8:1 instead of 3.1:1). |
 | `no_italic` / `no_bold` / `no_underline` | Global kill switches. They beat `styles.*` and `diagnostics.underline`. |
 | `transparent` + tinted virtual text / inlay hints | The tints are still drawn as small colored backgrounds; set `"plain"` for a fully see-through look. |
@@ -527,6 +545,116 @@ opts = {
 ```
 
 Unset, both follow `styles.keywords`. Setting one replaces the keyword style for that category: `{ bold = true }` here means bold and not italic. Options merge with the defaults, so to turn off an attribute that's on by default, set it to `false` (for example, `comments = { italic = false }`).
+</details>
+
+<details open>
+<summary><b>Rainbow variables (JetBrains-style semantic highlighting)</b></summary>
+
+```lua
+opts = { rainbow_variables = true }
+```
+
+![rainbow variables in kissaten-evening](assets/screenshots/rainbow-variables.png)
+
+Every local variable and parameter gets a color picked from its name, so `sum` is the same color everywhere it appears and `sum`, `raw` and `cart` are easy to tell apart. Properties, functions and types keep their usual colors, and library globals like `console` are skipped.
+
+- **Needs** an LSP that sends semantic tokens: vtsls, rust-analyzer, clangd, LuaLS, basedpyright, gopls (with its `semanticTokens = true` setting, which LazyVim's Go extra turns on), and others. Treesitter alone doesn't know which names are variables.
+- **12 colors**, evenly spaced hues in two lightness tiers, tuned to each style's own accents. All meet WCAG AA, and the nearest two are at least 6.5 apart in OKLab (3 is about the smallest difference you can see side by side).
+- **With `colorblind`**, it uses 6 colors on the hues that type keeps apart (blue and yellow for red-green, red and teal for blue-yellow), at three lightness steps.
+- Two different names can land on the same color, since 12 colors cover any number of names. JetBrains IDEs share this limit.
+- `:checkhealth kissaten` shows whether it's active.
+</details>
+
+<details>
+<summary><b>LSP modifiers: readonly, static, global and mutable symbols</b></summary>
+
+```lua
+opts = {
+  styles = {
+    readonly = { italic = true },     -- const / readonly / final
+    statics = { bold = true },        -- static members
+    globals = { underdotted = true }, -- global scope
+    mutable = { underline = true },   -- `mut` bindings (the default)
+  },
+}
+```
+
+![readonly symbols in italics in kissaten-evening](assets/screenshots/modifiers.png)
+
+These use what your language server knows and the parser doesn't. JetBrains IDEs make the same distinctions. Each style is added on top of the symbol's normal color, so they combine with `rainbow_variables`. Which ones appear depends on the server: TypeScript (vtsls) reports `readonly` and `static`; rust-analyzer reports `mutable`; clangd and LuaLS report global scope. Only `mutable` is on by default. To turn it off, set `mutable = { underline = false }`.
+</details>
+
+<details>
+<summary><b>Read vs. write references (and a fix for TypeScript)</b></summary>
+
+![reads and writes of sum highlighted differently](assets/screenshots/references.png)
+
+When your cursor rests on a symbol, LSP document highlights mark every other use of it (in LazyVim through snacks words or vim-illuminate). Kissaten shows **reads** on a neutral shade and **writes** (assignments, `+=`, declarations) on a pink tint. The two stay apart with color blindness too, and pink doesn't clash with search, selection or diff colors.
+
+**TypeScript in LazyVim:** vtsls (0.3.0) sends VS Code's 0-based highlight kinds instead of the LSP's 1-based ones, so writes arrive labeled as reads and reads as plain text, and every use looks the same. Shift them back in your LSP config:
+
+```lua
+-- lua/plugins/lsp.lua
+return {
+  "neovim/nvim-lspconfig",
+  opts = {
+    servers = {
+      vtsls = {
+        handlers = {
+          ["textDocument/documentHighlight"] = function(err, result, ctx, config)
+            for _, h in ipairs(result or {}) do
+              h.kind = (h.kind or 0) + 1 -- VS Code 0-based -> LSP 1-based
+            end
+            return vim.lsp.handlers["textDocument/documentHighlight"](err, result, ctx, config)
+          end,
+        },
+      },
+    },
+  },
+}
+```
+
+Servers that follow the LSP numbering (rust-analyzer, gopls, clangd, LuaLS, ...) need nothing.
+</details>
+
+<details>
+<summary><b>Follow your OS light/dark mode</b></summary>
+
+Kissaten follows Neovim's `background` option: dark loads `style`, light loads `light_style`. [auto-dark-mode.nvim](https://github.com/f-person/auto-dark-mode.nvim) sets `background` when macOS, Windows or Linux (GNOME, KDE, darkman) switches, so pairing the two is all it takes:
+
+```lua
+-- lua/plugins/colorscheme.lua (alongside kissaten)
+return {
+  { "f-person/auto-dark-mode.nvim", opts = {} }, -- its defaults set 'background'
+  {
+    "bytebeast/kissaten.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = { style = "evening", light_style = "morning" },
+  },
+  { "LazyVim/LazyVim", opts = { colorscheme = "kissaten" } },
+}
+```
+
+Use `colorscheme = "kissaten"` (not a pinned style like `kissaten-evening`) so the switch can happen.
+</details>
+
+<details>
+<summary><b>Per-language overrides</b></summary>
+
+Neovim's highlight groups take a language suffix, so `on_highlights` can change one language without touching the others:
+
+```lua
+opts = {
+  on_highlights = function(hl, c)
+    hl["@variable.member.python"] = { fg = c.orange }               -- treesitter, Python only
+    hl["@lsp.type.variable.lua"] = { fg = c.pink, italic = true }   -- semantic tokens, Lua only
+    hl["@markup.heading.1.markdown"] = { fg = c.yellow, bold = true }
+  end,
+}
+```
+
+Run `:Inspect` with the cursor on any text to see which groups color it.
 </details>
 
 <details>

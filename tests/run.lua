@@ -993,6 +993,167 @@ test("accent: statusline modes never share a color", function()
   truthy(hl("MiniStatuslineModeNormal").bg ~= hl("MiniStatuslineModeInsert").bg, "mini.statusline")
 end)
 
+test("rainbow_variables: distinct, readable colors on every style", function()
+  local C = require("kissaten.colors")
+  for _, style in ipairs(styles) do
+    -- off by default: no colors, no groups
+    eq(colors(style).variables, nil, style .. ": off by default")
+    local c = colors(style, { rainbow_variables = true })
+    eq(#c.variables, C.VARIABLE_COLORS, style .. ": 12 colors")
+    for i, color in ipairs(c.variables) do
+      truthy(Util.contrast(color, c.bg) >= 4.5, ("%s: variable %d below AA"):format(style, i))
+      truthy(distance(color, c.fg) >= 4, ("%s: variable %d too close to plain text"):format(style, i))
+    end
+    local list = {}
+    for i, color in ipairs(c.variables) do
+      list[i] = { "v" .. i, color }
+    end
+    local d, w = separation(list, { "normal" })
+    truthy(d >= 6.5, ("%s: variable colors %.1f apart (%s)"):format(style, d, w))
+    -- colorblind: 6 colors on the axis that type keeps
+    for mode, kinds in pairs({
+      ["red-green"] = { "normal", "protan", "deutan" },
+      ["blue-yellow"] = { "normal", "tritan" },
+    }) do
+      local cb = colors(style, { rainbow_variables = true, colorblind = mode })
+      eq(#cb.variables, 6, style .. " " .. mode .. ": 6 colors")
+      list = {}
+      for i, color in ipairs(cb.variables) do
+        truthy(Util.contrast(color, cb.bg) >= 4.5, ("%s %s: variable %d below AA"):format(style, mode, i))
+        list[i] = { "v" .. i, color }
+      end
+      d, w = separation(list, kinds)
+      truthy(d >= 5, ("%s %s: variable colors %.1f apart (%s)"):format(style, mode, d, w))
+    end
+    -- like status colors, they keep their hue under saturation
+    local grey = colors(style, { rainbow_variables = true, saturation = 0 })
+    list = {}
+    for i, color in ipairs(grey.variables) do
+      list[i] = { "v" .. i, color }
+    end
+    d = separation(list, { "normal" })
+    truthy(d >= 4, ("%s @saturation 0: variable colors %.1f apart"):format(style, d))
+  end
+end)
+
+test("rainbow_variables: groups, autocommand and token filtering", function()
+  local sem = require("kissaten.semantic")
+  -- stable, in range, spread out
+  eq(sem.index("total", 12), sem.index("total", 12), "same name, same color")
+  local used = {}
+  for _, name in ipairs({ "a", "b", "item", "items", "sum", "total", "cart", "raw", "path", "x", "y", "i" }) do
+    local i = sem.index(name, 12)
+    truthy(i >= 1 and i <= 12, "index in range")
+    used[i] = true
+  end
+  truthy(vim.tbl_count(used) >= 6, "names spread over the colors")
+
+  load("evening", { rainbow_variables = true })
+  eq(sem.count, 12, "enabled with 12 colors")
+  local c = require("kissaten").colors()
+  for i = 1, 12 do
+    eq(hex(hl("KissatenVariable" .. i).fg), c.variables[i], "group " .. i)
+  end
+  truthy(#vim.api.nvim_get_autocmds({ group = sem.augroup, event = "LspTokenUpdate" }) == 1, "one autocommand")
+  load("evening", { rainbow_variables = true }) -- reloading doesn't stack autocommands
+  truthy(#vim.api.nvim_get_autocmds({ group = sem.augroup, event = "LspTokenUpdate" }) == 1, "still one")
+
+  local function tok(type, mods)
+    return { type = type, modifiers = mods or {}, line = 0, start_col = 0, end_col = 3 }
+  end
+  truthy(sem.group_for(tok("variable"), "sum"), "variables")
+  truthy(sem.group_for(tok("parameter"), "item"), "parameters")
+  truthy(sem.group_for(tok("variable", { readonly = true }), "MAX"), "const locals too")
+  eq(sem.group_for(tok("property"), "sku"), nil, "properties keep their color")
+  eq(sem.group_for(tok("function"), "add"), nil, "functions keep their color")
+  eq(sem.group_for(tok("variable", { defaultLibrary = true }), "console"), nil, "library globals skipped")
+  eq(sem.group_for(tok("variable"), "sum"), sem.group_for(tok("parameter"), "sum"), "by name, not by kind")
+
+  load("evening", { rainbow_variables = true, colorblind = "red-green" })
+  eq(sem.count, 6, "colorblind: 6 colors")
+  load("evening")
+  eq(sem.count, 0, "off again")
+  eq(pcall(vim.api.nvim_get_autocmds, { group = sem.augroup }), false, "autocommand removed")
+  eq(hl("KissatenVariable1").fg, nil, "groups cleared")
+end)
+
+test("semantic modifiers: readonly, statics, globals and mutable styles", function()
+  load("evening")
+  truthy(hl("@lsp.typemod.variable.mutable.rust").underline, "rust mut underlined by default")
+  truthy(hl("@lsp.mod.mutable").underline, "any server's mutable too")
+  eq(
+    hex(hl("@lsp.typemod.parameter.mutable.rust").fg),
+    require("kissaten").colors().syn.parameter,
+    "mut params keep their color"
+  )
+  eq(next(hl("@lsp.mod.readonly")), nil, "readonly untouched by default")
+  load("evening", {
+    styles = {
+      readonly = { italic = true },
+      statics = { bold = true },
+      globals = { underdotted = true },
+      mutable = { underdouble = true },
+    },
+  })
+  truthy(hl("@lsp.mod.readonly").italic, "readonly")
+  truthy(hl("@lsp.mod.static").bold, "statics")
+  truthy(hl("@lsp.mod.global").underdotted and hl("@lsp.mod.globalScope").underdotted, "globals (LuaLS and clangd)")
+  local mut = hl("@lsp.typemod.variable.mutable.rust")
+  truthy(mut.underdouble and not mut.underline, "mutable style replaces the underline")
+  eq(hl("@lsp.mod.readonly").fg, nil, "modifiers only add attributes, never color")
+  -- options merge with the defaults, so turning the underline off is explicit
+  load("evening", { styles = { mutable = { underline = false } } })
+  truthy(not hl("@lsp.mod.mutable").underline, "underline = false turns it off")
+  truthy(not hl("@lsp.typemod.variable.mutable.rust").underline, "for rust too")
+  load("evening", { styles = { readonly = { italic = true } }, no_italic = true })
+  truthy(not hl("@lsp.mod.readonly").italic, "no_italic still wins")
+  load("evening", { styles = { readonly = "italic" } })
+  truthy(#warnings == 1 and warnings[1].msg:find("styles.readonly"), "invalid style warns")
+end)
+
+test("references: reads and writes look different on every style", function()
+  for _, style in ipairs(styles) do
+    load(style)
+    local c = require("kissaten").colors()
+    eq(hex(hl("LspReferenceRead").bg), c.ui.bg_read, style .. " read")
+    eq(hex(hl("LspReferenceWrite").bg), c.ui.bg_write, style .. " write")
+    local d, w = separation(
+      { { "read", c.ui.bg_read }, { "write", c.ui.bg_write } },
+      { "normal", "protan", "deutan", "tritan" }
+    )
+    truthy(d >= 5, ("%s: read vs write %.1f (%s)"):format(style, d, w))
+    truthy(distance(c.ui.bg_write, c.ui.bg_search) >= 3.5, style .. ": write vs search")
+    truthy(distance(c.ui.bg_write, c.ui.bg_visual) >= 3.5, style .. ": write vs selection")
+    truthy(Util.contrast(c.fg, c.ui.bg_write) >= 4.5, style .. ": text on a write")
+    truthy(Util.contrast(c.ui.bg_read, c.bg) >= 1.2, style .. ": reads visible")
+  end
+  eq(hl("IlluminatedWordWrite").bg, hl("LspReferenceWrite").bg, "vim-illuminate follows")
+end)
+
+test("recipes: OS dark mode (auto-dark-mode.nvim) and per-language overrides", function()
+  -- auto-dark-mode.nvim's defaults just set 'background' like this
+  load("midnight", { style = "midnight", light_style = "morning" })
+  vim.api.nvim_set_option_value("background", "light", {})
+  eq(vim.g.colors_name, "kissaten-morning", "OS switched to light")
+  vim.api.nvim_set_option_value("background", "dark", {})
+  eq(vim.g.colors_name, "kissaten-midnight", "and back to dark")
+
+  -- per-language: treesitter captures and semantic tokens take a .<lang> suffix
+  load("evening", {
+    on_highlights = function(h, c)
+      h["@variable.member.python"] = { fg = c.orange }
+      h["@lsp.type.variable.lua"] = { fg = c.pink, italic = true }
+      h["@markup.heading.1.markdown"] = { fg = c.yellow, bold = true }
+    end,
+  })
+  local c = require("kissaten").colors()
+  eq(hex(hl("@variable.member.python").fg), c.orange, "python members only")
+  eq(hex(hl("@variable.member").fg), c.syn.property, "other languages untouched")
+  truthy(hl("@lsp.type.variable.lua").italic, "semantic tokens per language")
+  eq(hex(hl("@markup.heading.1.markdown").fg), c.yellow, "markdown headings")
+  vim.o.background = "dark"
+end)
+
 test("options: every pair of options works together on every style", function()
   -- one representative value per option; each pair must load cleanly and
   -- keep the theme's guarantees
@@ -1013,6 +1174,8 @@ test("options: every pair of options works together on every style", function()
     { no_italic = true, no_underline = true },
     { bright_borders = true },
     { styles = { conditionals = { bold = true }, loops = { bold = true } } },
+    { rainbow_variables = true },
+    { styles = { readonly = { italic = true }, statics = { bold = true }, globals = { underdotted = true } } },
   }
   local skip = { comment = true, deprecated = true, tag_delimiter = true, string_doc = true }
   local pairs_run = 0
@@ -1040,6 +1203,9 @@ test("options: every pair of options works together on every style", function()
           for mode, color in pairs(c.ui.modes) do
             truthy(not seen[color], where .. ": modes " .. mode .. "/" .. tostring(seen[color]))
             seen[color] = mode
+          end
+          for i, color in ipairs(c.variables or {}) do
+            truthy(Util.contrast(color, c.bg) >= 4.5, where .. ": variable color " .. i .. " below AA")
           end
           if opts.colorblind then
             local kinds = opts.colorblind == "red-green" and { "protan", "deutan" } or { "tritan" }
