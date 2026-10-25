@@ -68,6 +68,7 @@ Defaults: >lua
     accent = "blue",          -- UI accent: any palette accent name
     rainbow = "vivid",        -- "vivid" | "dimmed" | "mono"
     borderless = false,       -- pickers framed by shade, not lines
+    rainbow_variables = false, -- a color per variable/parameter (LSP)
     diagnostics = {
       underline = "undercurl", -- "undercurl" | "underline" | false
       virtual_text = "tinted", -- "tinted" | "plain"
@@ -78,6 +79,8 @@ Defaults: >lua
       keywords = { italic = true },
       -- conditionals = {}, loops = {},  -- unset: same as keywords
       virtual_text = {}, inlay_hints = { italic = true },
+      mutable = { underline = true }, readonly = {},  -- LSP modifiers
+      statics = {}, globals = {},
       functions = {}, variables = {}, parameters = {},
       types = {}, strings = {}, constants = {},
       sidebars = "dark",      -- "dark" | "normal" | "transparent"
@@ -150,6 +153,31 @@ menu and LSP hover by default) follow Neovim's 'winborder', so set >lua
 On midnight and graveyard, floats and the completion menu sit a step lighter
 than the editor, so popups stand out even without borders.
 
+                                                   *kissaten-rainbow-variables*
+`rainbow_variables = true` gives every local variable and parameter its own
+color, picked from its name (JetBrains-style semantic highlighting). It
+needs an LSP that sends semantic tokens; properties, functions, types and
+library globals keep their colors. 12 colors tuned per style, all at least
+4.5:1; with `colorblind`, 6 colors on the hues that type keeps apart. Like
+status colors they keep their hue under `saturation`. The colors are in
+`require("kissaten").colors().variables` and the groups are
+`KissatenVariable1` to `KissatenVariable12`.
+
+                                                     *kissaten-lsp-modifiers*
+Styles for what the language server knows, stacked on the symbol's color:
+`styles.mutable` (`mut` bindings, default `{ underline = true }`),
+`styles.readonly` (const/readonly/final), `styles.statics` and
+`styles.globals` (clangd `globalScope`, LuaLS `global`). Which ones show
+depends on the server. To turn off the mutable underline, set
+`mutable = { underline = false }`.
+
+                                                        *kissaten-references*
+LSP document highlights show reads (|hl-LspReferenceRead|, also Text) on a
+neutral shade and writes (|hl-LspReferenceWrite|) on a pink tint, apart with
+color blindness too. vtsls 0.3.0 sends VS Code's 0-based kinds, so in
+TypeScript writes arrive as reads; the README has a 6-line handler that
+shifts them back.
+
                                                           *kissaten-borderless*
 `borderless = true` removes the border lines of Telescope, snacks and fzf-lua
 pickers. Prompt, list and preview are told apart by background shade, and
@@ -185,6 +213,9 @@ every style). Where two touch the same thing:
   contrast "high" + subtle_comments  fade starts from the lifted contrast
   no_italic/no_bold/no_underline  beat styles.* and diagnostics.underline
   transparent + "tinted"    tints still draw; use "plain" to see through
+  rainbow_variables + colorblind  6 colors that type tells apart
+  rainbow_variables + saturation  variable colors keep their hue
+  rainbow_variables + modifiers   stack: own color plus the style
 
 Invalid values never break your editor: kissaten reports them once with
 |vim.notify()| and falls back to the default for that option.

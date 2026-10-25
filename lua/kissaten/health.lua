@@ -71,7 +71,15 @@ function M.check()
   -- non-default look options, so a report shows what's shaping the colors
   local d = require("kissaten.config").defaults
   local active = {}
-  for _, key in ipairs({ "colorblind", "saturation", "accent", "rainbow", "borderless", "inlay_hints" }) do
+  for _, key in ipairs({
+    "colorblind",
+    "saturation",
+    "accent",
+    "rainbow",
+    "borderless",
+    "inlay_hints",
+    "rainbow_variables",
+  }) do
     if opts[key] ~= d[key] then
       active[#active + 1] = ("%s = %s"):format(key, vim.inspect(opts[key]))
     end
@@ -83,6 +91,14 @@ function M.check()
   end
   if #active > 0 then
     h.info("Options: " .. table.concat(active, ", "))
+  end
+  if opts.rainbow_variables then
+    local sem = require("kissaten.semantic")
+    if sem.count > 0 then
+      h.ok(("rainbow_variables: %d colors, applied to LSP semantic tokens"):format(sem.count))
+    else
+      h.warn("rainbow_variables is on but not active (needs Neovim 0.9+ and an LSP with semantic tokens)")
+    end
   end
 
   local low = {}

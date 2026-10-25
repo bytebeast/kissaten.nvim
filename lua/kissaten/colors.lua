@@ -58,6 +58,99 @@ M.STATUS_SATURATION = 0.7
 --- and deleted lines stay as far apart as they are for normal color vision.
 M.COLORBLIND_DIFF_BOOST = 1.25
 
+--- How much stronger write references are than reads (contrast factor).
+M.WRITE_STRENGTH = 1.3
+
+--- Mix `color` into `bg` until the mix has `ratio` contrast against `bg`
+--- (a tint exactly as visible as a given neutral shade).
+function M.tint_to(color, bg, ratio)
+  local lo, hi = 0, 1
+  for _ = 1, 20 do
+    local mid = (lo + hi) / 2
+    if Util.contrast(Util.blend(color, bg, mid), bg) < ratio then
+      lo = mid
+    else
+      hi = mid
+    end
+  end
+  return Util.blend(color, bg, hi)
+end
+
+--- `rainbow_variables`: how many distinct colors variables cycle through.
+M.VARIABLE_COLORS = 12
+
+--- The accents whose chroma and contrast the variable colors are tuned to.
+local ACCENTS =
+  { "red", "maroon", "orange", "yellow", "green", "teal", "cyan", "sky", "blue", "lavender", "purple", "pink" }
+
+local function median(list)
+  table.sort(list)
+  local n = #list
+  return n % 2 == 1 and list[(n + 1) / 2] or (list[n / 2] + list[n / 2 + 1]) / 2
+end
+
+--- `rainbow_variables` colors. Evenly spaced hues around the OKLab circle at
+--- the palette's typical chroma and contrast, so per-variable colors sit at
+--- the same visual weight as the theme's own accents. Two lightness tiers
+--- alternate around the circle, so hue neighbours also differ in lightness.
+--- Every color is matched to its contrast exactly (all >= 4.5:1).
+---
+--- With `colorblind`, hue alone can't carry 12 colors, so the set uses the
+--- two hues that type still tells apart (blue vs. yellow for red-green, red
+--- vs. teal for blue-yellow), each in three lightness steps: 6 colors.
+---@param c kissaten.Colors|kissaten.Palette
+---@param colorblind? false|"red-green"|"blue-yellow"
+---@return string[]
+function M.variable_colors(c, colorblind)
+  local chromas, ratios = {}, {}
+  for _, key in ipairs(ACCENTS) do
+    local _, a, b = Util.to_oklab(c[key])
+    chromas[#chromas + 1] = math.sqrt(a * a + b * b)
+    ratios[#ratios + 1] = Util.contrast(c[key], c.bg)
+  end
+  local chroma, ratio = median(chromas), math.max(4.5, median(ratios))
+  local fg_ratio = Util.contrast(c.fg, c.bg)
+  -- the second tier goes toward the background where there's room (dark
+  -- styles), otherwise away from it (the light style's inks sit near 4.5)
+  local function tier(k) -- k = 0, 1, 2 steps away from the main tier
+    if k == 0 then
+      return ratio
+    end
+    local down = ratio * M.VARIABLE_TIER ^ k
+    if down >= 4.5 then
+      return down
+    end
+    return math.min(ratio / M.VARIABLE_TIER ^ k, fg_ratio * 0.95)
+  end
+  local L = Util.to_oklab(c.fg)
+  local function color(hue, target)
+    local h = math.rad(hue)
+    return Util.match_contrast(Util.from_oklab(L, chroma * math.cos(h), chroma * math.sin(h)), c.bg, target)
+  end
+  local out = {}
+  local axis = M.VARIABLE_CVD_HUES[colorblind or ""]
+  if axis then
+    -- three lightness steps spread over the whole readable range, from just
+    -- above AA to just below the text color
+    local lo, hi = 4.6, fg_ratio * 0.95
+    for _, target in ipairs({ lo, math.sqrt(lo * hi), hi }) do
+      for _, hue in ipairs(axis) do
+        out[#out + 1] = color(hue, target)
+      end
+    end
+    return out
+  end
+  local n = M.VARIABLE_COLORS
+  for i = 0, n - 1 do
+    out[i + 1] = color(M.VARIABLE_HUE_START + i * 360 / n, tier(i % 2))
+  end
+  return out
+end
+M.VARIABLE_HUE_START = 25
+M.VARIABLE_TIER = 0.6
+--- OKLab hues each color vision deficiency keeps apart.
+M.VARIABLE_CVD_HUES = { ["red-green"] = { 260, 85 }, ["blue-yellow"] = { 25, 195 } }
+
 --- rainbow-delimiters' default nesting order (outermost first).
 M.BRACKET_ORDER = { "red", "yellow", "blue", "orange", "green", "violet", "cyan" }
 
@@ -212,6 +305,24 @@ function M.setup(opts)
   c.ui.modes = { normal = s[opts.accent] or s.blue }
   for mode, name in pairs(modes) do
     c.ui.modes[mode] = s[name == opts.accent and "blue" or name]
+  end
+
+  -- Symbol references under the cursor (LSP document highlight,
+  -- vim-illuminate): reads on a neutral shade, writes on a pink tint a little
+  -- stronger, like JetBrains' "identifier under caret" read/write colors.
+  -- Pink stays clear of search (yellow), selection (blue) and diff tints,
+  -- and the extra strength keeps writes apart with color blindness too.
+  c.ui.bg_read = c.surface1
+  c.ui.bg_write = M.tint_to(c.pink, c.bg, Util.contrast(c.surface1, c.bg) * M.WRITE_STRENGTH)
+
+  -- `rainbow_variables`: like status colors, per-variable colors carry
+  -- meaning, so they read from the status palette (hue kept under saturation)
+  if opts.rainbow_variables then
+    local base = { bg = c.bg, fg = c.fg }
+    for _, key in ipairs(ACCENTS) do
+      base[key] = s[key]
+    end
+    c.variables = M.variable_colors(base, opts.colorblind)
   end
 
   -- `borderless`: picker panels told apart by shade instead of lines (the
