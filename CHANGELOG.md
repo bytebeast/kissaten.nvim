@@ -32,7 +32,12 @@ First release.
 - Options combine safely: status colors and statusline modes keep their hue under
   `saturation`, a mode never shares the accent's color, and the test suite checks
   every pair of options on every style.
-- 46 plugin integrations, auto-detected through lazy.nvim and `vim.pack`.
+- 55 plugin integrations, auto-detected through lazy.nvim and `vim.pack` (renamed and
+  companion repos such as nvim-bufferline.lua and telescope-file-browser.nvim included):
+  new are blink.pairs, codediff.nvim, git-conflict.nvim, hlargs.nvim, hover.nvim,
+  lspsaga.nvim, minuet-ai.nvim, nvim-cursorword and virt-column.nvim; barbar, fzf-lua,
+  gitsigns, neogit, nvim-tree, render-markdown, scrollbar, telescope, trouble, ufo and
+  which-key now theme every group their current versions use.
 - No cache: all groups are rebuilt on every load (about 1 ms), so changes always apply.
 - Lualine themes, `:Kissaten` command, `:checkhealth kissaten`.
 - Extras for Alacritty, bat, delta, eza, fzf, Ghostty, k9s (with transparent skins), Kitty,

@@ -13,6 +13,7 @@ function M.get(c)
     FlashLabel    = { fg = c.ui.on_badge, bg = c.pink, bold = true },
     FlashPrompt   = { fg = c.fg, bg = c.mantle },
     FlashPromptIcon = { fg = c.pink },
+    FlashCursor   = "Cursor",
   }
 end
 

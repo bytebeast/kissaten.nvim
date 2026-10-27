@@ -750,7 +750,7 @@ opts = { style = "midnight", light_style = "morning" }
 With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations only for plugins you actually have. Run `:checkhealth kissaten` to see which ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and `:terminal` are always covered.
 
 <details>
-<summary><b>All 46 integrations</b></summary>
+<summary><b>All 55 integrations</b></summary>
 
 | Plugin | Module |
 | --- | --- |
@@ -758,33 +758,38 @@ With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations
 | [alpha-nvim](https://github.com/goolord/alpha-nvim) | `alpha` |
 | [barbar.nvim](https://github.com/romgrk/barbar.nvim) | `barbar` |
 | [blink.cmp](https://github.com/Saghen/blink.cmp) | `blink` |
-| [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) | `bufferline` |
+| [blink.pairs](https://github.com/saghen/blink.pairs) | `blink-pairs` |
+| [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) (also under its old name, nvim-bufferline.lua) | `bufferline` |
 | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | `cmp` |
+| [codediff.nvim](https://github.com/esmuellert/codediff.nvim) | `codediff` |
 | [copilot.lua / copilot.vim](https://github.com/zbirenbaum/copilot.lua) | `copilot` |
+| [nvim-cursorword](https://github.com/xiyaowong/nvim-cursorword) | `cursorword` |
 | [nvim-dap / nvim-dap-ui](https://github.com/mfussenegger/nvim-dap) | `dap` |
 | [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim) | `dashboard` |
 | [diffview.nvim](https://github.com/sindrets/diffview.nvim) | `diffview` |
 | [fidget.nvim](https://github.com/j-hui/fidget.nvim) | `fidget` |
 | [flash.nvim](https://github.com/folke/flash.nvim) | `flash` |
 | [fzf-lua](https://github.com/ibhagwan/fzf-lua) | `fzf` |
-| [vim-gitgutter](https://github.com/airblade/vim-gitgutter) | `gitgutter` |
+| [git-conflict.nvim](https://github.com/akinsho/git-conflict.nvim) | `git-conflict` |
 | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | `gitsigns` |
 | [grug-far.nvim](https://github.com/MagicDuck/grug-far.nvim) | `grug-far` |
 | [harpoon](https://github.com/ThePrimeagen/harpoon) | `harpoon` |
+| [hlargs.nvim](https://github.com/m-demare/hlargs.nvim) | `hlargs` |
 | [hop.nvim](https://github.com/smoka7/hop.nvim) | `hop` |
-| [vim-illuminate](https://github.com/RRethy/vim-illuminate) | `illuminate` |
+| [hover.nvim](https://github.com/lewis6991/hover.nvim) | `hover` |
 | [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) | `indent-blankline` |
 | [lazy.nvim](https://github.com/folke/lazy.nvim) | `lazy` |
 | [leap.nvim](https://codeberg.org/andyg/leap.nvim) | `leap` |
+| [lspsaga.nvim](https://github.com/nvimdev/lspsaga.nvim) | `lspsaga` |
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | `mason` |
 | [mini.nvim](https://github.com/echasnovski/mini.nvim) | `mini` |
+| [minuet-ai.nvim](https://github.com/milanglacier/minuet-ai.nvim) | `minuet` |
 | [nvim-navic](https://github.com/SmiteshP/nvim-navic) | `navic` |
 | [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim) | `neo-tree` |
 | [neogit](https://github.com/NeogitOrg/neogit) | `neogit` |
 | [neotest](https://github.com/nvim-neotest/neotest) | `neotest` |
 | [noice.nvim](https://github.com/folke/noice.nvim) | `noice` |
 | [nvim-notify](https://github.com/rcarriga/nvim-notify) | `notify` |
-| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | `nvim-tree` |
 | [octo.nvim](https://github.com/pwntester/octo.nvim) | `octo` |
 | [outline.nvim](https://github.com/hedyhli/outline.nvim) | `outline` |
 | [overseer.nvim](https://github.com/stevearc/overseer.nvim) | `overseer` |
@@ -793,15 +798,30 @@ With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations
 | [nvim-scrollbar](https://github.com/petertriho/nvim-scrollbar) | `scrollbar` |
 | [sidekick.nvim](https://github.com/folke/sidekick.nvim) | `sidekick` |
 | [snacks.nvim](https://github.com/folke/snacks.nvim) | `snacks` |
-| [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) | `telescope` |
+| [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) (and [telescope-file-browser](https://github.com/nvim-telescope/telescope-file-browser.nvim)) | `telescope` |
 | [todo-comments.nvim](https://github.com/folke/todo-comments.nvim) | `todo-comments` |
+| [nvim-tree.lua](https://github.com/nvim-tree/nvim-tree.lua) | `nvim-tree` |
 | [nvim-treesitter-context](https://github.com/nvim-treesitter/nvim-treesitter-context) | `treesitter-context` |
 | [trouble.nvim](https://github.com/folke/trouble.nvim) | `trouble` |
 | [nvim-ufo](https://github.com/kevinhwang91/nvim-ufo) | `ufo` |
+| [vim-gitgutter](https://github.com/airblade/vim-gitgutter) | `gitgutter` |
+| [vim-illuminate](https://github.com/RRethy/vim-illuminate) | `illuminate` |
+| [virt-column.nvim](https://github.com/lukas-reineke/virt-column.nvim) | `virt-column` |
 | [which-key.nvim](https://github.com/folke/which-key.nvim) | `which-key` |
 | [yanky.nvim](https://github.com/gbprod/yanky.nvim) | `yanky` |
 
 LazyVim's default set (snacks, blink.cmp, bufferline, lualine, noice, which-key, flash, gitsigns, trouble, grug-far, todo-comments, mini.*) is covered out of the box.
+
+Treesitter, built-in LSP ([nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) included) and lualine need no module: they're always covered.
+
+A few plugins draw some colors themselves; these work as-is, and one option hands them over to kissaten:
+
+| Plugin | What it does | To use kissaten's colors |
+| --- | --- | --- |
+| nvim-scrollbar | rebuilds its marks from kissaten's diagnostic and git groups (looks right already) | `set_highlights = false` |
+| virt-column.nvim | draws with `NonText` by default | `highlight = "VirtColumn"` (the indent-guide color) |
+| codediff.nvim | derives its line/character diff colors from kissaten's `DiffAdd`/`DiffDelete` | nothing to do; everything else (signs, explorer, help) is themed |
+| hlargs.nvim | its `highlight` option replaces the group outright | leave `highlight` unset; arguments then match parameters |
 
 </details>
 

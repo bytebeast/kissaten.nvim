@@ -7,7 +7,12 @@ M.url = "https://github.com/rcarriga/nvim-notify"
 ---@type kissaten.HighlightsFn
 function M.get(c, opts)
   local bg = opts.transparent and c.none or c.ui.bg_float
-  local hl = { NotifyBackground = { fg = c.fg, bg = bg } }
+  -- stylua: ignore
+  local hl = {
+    NotifyBackground = { fg = c.fg, bg = bg },
+    NotifyLogTime    = { fg = c.comment },
+    NotifyLogTitle   = { fg = c.ui.accent, bold = true },
+  }
   for name, color in pairs({
     ERROR = c.diag.error,
     WARN = c.diag.warn,

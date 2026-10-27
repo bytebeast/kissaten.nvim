@@ -18,6 +18,13 @@ function M.get(c)
     hl["Buffer" .. state .. "Index"] = { fg = c.ui.accent, bg = base.bg }
     hl["Buffer" .. state .. "Mod"] = { fg = c.orange, bg = base.bg }
     hl["Buffer" .. state .. "Sign"] = { fg = state == "Current" and c.ui.accent or c.overlay0, bg = base.bg }
+    hl["Buffer" .. state .. "SignRight"] = hl["Buffer" .. state .. "Sign"]
+    hl["Buffer" .. state .. "Number"] = { fg = c.ui.accent, bg = base.bg }
+    hl["Buffer" .. state .. "Icon"] = { fg = base.fg, bg = base.bg }
+    hl["Buffer" .. state .. "Btn"] = { fg = state == "Current" and c.subtext or c.overlay0, bg = base.bg }
+    hl["Buffer" .. state .. "ModBtn"] = { fg = c.orange, bg = base.bg }
+    hl["Buffer" .. state .. "Pin"] = { fg = c.pink, bg = base.bg }
+    hl["Buffer" .. state .. "PinBtn"] = { fg = c.pink, bg = base.bg }
     hl["Buffer" .. state .. "Target"] = { fg = c.red, bg = base.bg, bold = true }
     hl["Buffer" .. state .. "ERROR"] = { fg = c.diag.error, bg = base.bg }
     hl["Buffer" .. state .. "WARN"] = { fg = c.diag.warn, bg = base.bg }
@@ -29,6 +36,8 @@ function M.get(c)
   end
   hl.BufferTabpageFill = { fg = c.overlay0, bg = c.crust }
   hl.BufferTabpages = { fg = c.ui.accent, bg = c.crust, bold = true }
+  hl.BufferTabpagesSep = { fg = c.overlay0, bg = c.crust }
+  hl.BufferScrollArrow = { fg = c.ui.accent, bg = c.crust, bold = true }
   hl.BufferOffset = { fg = c.subtext, bg = Util.blend(c.mantle, c.crust, 0.5) }
   return hl
 end
