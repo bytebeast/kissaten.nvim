@@ -46,6 +46,18 @@ function M.get(c, opts)
     FzfLuaFzfSpinner      = { fg = c.orange },
     FzfLuaFzfPrompt       = { fg = c.orange },
     FzfLuaFzfQuery        = { fg = c.fg },
+    FzfLuaLivePrompt      = { fg = c.orange },
+    FzfLuaTitleFlags      = { fg = c.ui.accent, bg = c.surface1 },
+    FzfLuaBackdrop        = { bg = c.crust },
+    FzfLuaHelpNormal      = "FzfLuaNormal",
+    FzfLuaHelpBorder      = "FzfLuaBorder",
+    FzfLuaScrollFloatEmpty = { bg = c.surface0 },
+    FzfLuaDirIcon         = { fg = c.blue },
+    FzfLuaBufId           = { fg = c.comment },
+    FzfLuaBufLineNr       = { fg = c.ui.fg_gutter },
+    FzfLuaCmdEx           = { fg = c.purple },
+    FzfLuaCmdBuf          = { fg = c.green },
+    FzfLuaCmdGlobal       = { fg = c.blue },
   }
   if opts.borderless then
     local p = c.ui.picker

@@ -30,6 +30,15 @@ function M.get(c)
     GitSignsDeletePreview    = "DiffDelete",
     GitSignsDeleteVirtLn     = "DiffDelete",
     GitSignsCurrentLineBlame = { fg = c.comment, italic = true },
+    -- `linehl`, `word_diff` and inline hunk previews
+    GitSignsAddLn            = { bg = c.diff.add },
+    GitSignsChangeLn         = { bg = c.diff.change },
+    GitSignsAddLnInline      = "GitSignsAddInline",
+    GitSignsChangeLnInline   = "GitSignsChangeInline",
+    GitSignsDeleteLnInline   = "GitSignsDeleteInline",
+    GitSignsDeleteVirtLnInLine = "GitSignsDeleteInline",
+    GitSignsVirtLnum         = { fg = Util.blend(g.delete, c.bg, 0.6), bg = c.diff.delete },
+    GitSignsNoEOLPreview     = { fg = c.comment, italic = true },
   }
 end
 

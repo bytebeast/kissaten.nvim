@@ -5,7 +5,14 @@ M.url = "https://github.com/folke/trouble.nvim"
 ---@type kissaten.HighlightsFn
 function M.get(c)
   -- stylua: ignore
-  return {
+  local hl = {
+    TroubleBasename    = { fg = c.fg },
+    TroubleIconDirectory = { fg = c.lavender },
+    TroublePreview     = { bg = c.ui.bg_visual },
+    TroubleIndentTop   = "TroubleIndent",
+    TroubleIndentMiddle = "TroubleIndent",
+    TroubleIndentLast  = "TroubleIndent",
+    TroubleIndentWs    = "TroubleIndent",
     TroubleNormal      = { fg = c.ui.fg_sidebar, bg = c.ui.bg_sidebar },
     TroubleNormalNC    = { fg = c.ui.fg_sidebar, bg = c.ui.bg_sidebar },
     TroubleText        = { fg = c.fg },
@@ -19,6 +26,8 @@ function M.get(c)
     TroubleSource      = { fg = c.comment },
     TroubleCode        = { fg = c.comment },
   }
+  -- symbol icons match the code they stand for
+  return require("kissaten.groups.lsp").kind_groups(hl, "TroubleIcon%s")
 end
 
 return M

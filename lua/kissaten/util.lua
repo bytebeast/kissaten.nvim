@@ -194,6 +194,16 @@ function M.to_oklab(hex)
     0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s
 end
 
+--- Perceptual distance between two colors (OKLab, x100; ~3 is just noticeable).
+---@param a string
+---@param b string
+---@return number
+function M.distance(a, b)
+  local l1, a1, b1 = M.to_oklab(a)
+  local l2, a2, b2 = M.to_oklab(b)
+  return 100 * math.sqrt((l1 - l2) ^ 2 + (a1 - a2) ^ 2 + (b1 - b2) ^ 2)
+end
+
 ---@return string
 function M.from_oklab(L, a, b)
   local l = (L + 0.3963377774 * a + 0.2158037573 * b) ^ 3

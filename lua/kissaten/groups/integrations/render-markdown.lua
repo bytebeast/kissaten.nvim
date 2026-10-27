@@ -27,7 +27,19 @@ function M.get(c)
     RenderMarkdownHint       = { fg = c.diag.hint },
     RenderMarkdownWarn       = { fg = c.diag.warn },
     RenderMarkdownError      = { fg = c.diag.error },
+    RenderMarkdownCodeInfo   = { fg = c.comment, bg = c.mantle, italic = true },
+    RenderMarkdownCodeFallback = { fg = c.fg, bg = c.mantle },
+    RenderMarkdownInlineHighlight = { fg = c.fg, bg = Util.tint(c.yellow, c.bg, 0.25) },
+    RenderMarkdownMath       = { fg = c.cyan },
+    RenderMarkdownIndent     = { fg = c.ui.indent },
+    RenderMarkdownHtmlComment = { fg = c.comment, italic = true },
+    RenderMarkdownLinkTitle  = { fg = c.teal, underline = true },
+    RenderMarkdownWikiLink   = { fg = c.teal },
   }
+  -- nested quotes step through the heading colors, muted like the quote text
+  for i = 1, 6 do
+    hl["RenderMarkdownQuote" .. i] = { fg = Util.blend(c.rainbow[i], c.comment, 0.5) }
+  end
   for i = 1, 6 do
     local color = c.rainbow[i]
     hl["RenderMarkdownH" .. i] = { fg = color, bold = true }

@@ -159,7 +159,8 @@ def social_preview(shots, font, out):
         d.ellipse([x, y, x + 26, y + 26], fill=rgb(p[key]))
         x += 34
 
-    d.text((x0 + 4, H - 70), "WCAG-checked · 46 integrations · Neovim 0.9+", font=small, fill=rgb(p["comment"]))
+    count = len([f for f in os.listdir(os.path.join(ROOT, "lua", "kissaten", "groups", "integrations")) if f.endswith(".lua")])
+    d.text((x0 + 4, H - 70), f"WCAG-checked · {count} integrations · Neovim 0.9+", font=small, fill=rgb(p["comment"]))
     img.save(out, optimize=True)
     size = os.path.getsize(out)
     assert img.size == (1280, 640) and size < 1_000_000, (img.size, size)

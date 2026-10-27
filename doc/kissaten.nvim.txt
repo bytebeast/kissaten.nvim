@@ -288,6 +288,16 @@ integration is loaded. Force one on or off by module or repo name: >lua
 <
 Run |:checkhealth| kissaten to see which integrations are active.
 
+55 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
+Treesitter, built-in LSP (nvim-lspconfig included) and lualine are always
+covered. Renamed and companion repos are recognized too (nvim-bufferline.lua,
+telescope-file-browser.nvim).
+
+Plugins that draw some colors themselves work as-is; to hand them over:
+  nvim-scrollbar    `set_highlights = false` (it rebuilds its marks otherwise)
+  virt-column.nvim  `highlight = "VirtColumn"` (it uses `NonText` otherwise)
+  hlargs.nvim       leave its `highlight` option unset
+
 ==============================================================================
 8. COMMANDS AND API                                              *kissaten-api*
 

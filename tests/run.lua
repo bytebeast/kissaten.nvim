@@ -1255,6 +1255,195 @@ test("options: everything combined loads in every style without warnings", funct
   reset()
 end)
 
+-- ── plugin integrations ──────────────────────────────────────────────────
+-- Groups each plugin draws with (from its source), checked on every style:
+-- the ones a plugin hardcodes its own colors for, plus a few per plugin that
+-- show it is themed at all.
+local PLUGIN_GROUPS = {
+  ["nvim-treesitter"] = { "@function", "@variable.parameter", "@markup.heading.1" },
+  ["hlargs.nvim"] = { "Hlargs", "HlargsUnused", "@HlargsNamedParams" },
+  ["alpha-nvim"] = { "AlphaHeader", "AlphaButtons", "AlphaShortcut", "AlphaFooter" },
+  ["nvim-notify"] = { "NotifyERRORBorder", "NotifyWARNIcon", "NotifyINFOTitle", "NotifyLogTime", "NotifyLogTitle" },
+  ["mason.nvim"] = { "MasonHeader", "MasonHighlight", "MasonHighlightBlockBold", "MasonMuted", "MasonBackdrop" },
+  ["nvim-cursorword"] = { "CursorWord" },
+  ["vim-illuminate"] = { "IlluminatedWordText", "IlluminatedWordRead", "IlluminatedWordWrite" },
+  ["nvim-scrollbar"] = {
+    "ScrollbarHandle",
+    "ScrollbarCursor",
+    "ScrollbarError",
+    "ScrollbarGitAdd",
+    "ScrollbarGitDeleteHandle",
+  },
+  ["barbar.nvim"] = {
+    "BufferCurrent",
+    "BufferCurrentBtn",
+    "BufferCurrentPin",
+    "BufferInactiveIcon",
+    "BufferTabpagesSep",
+  },
+  ["bufferline.nvim"] = { "BufferLineIndicatorSelected", "BufferLineModifiedSelected" },
+  ["indent-blankline.nvim"] = { "IblIndent", "IblScope" },
+  ["neogit"] = {
+    "NeogitDiffAdd",
+    "NeogitDiffAddInline",
+    "NeogitGraphAuthor",
+    "NeogitHunkHeaderCursor",
+    "NeogitActiveItem",
+  },
+  ["diffview.nvim"] = { "DiffviewFilePanelTitle", "DiffviewStatusAdded", "DiffviewNormal" },
+  ["codediff.nvim"] = { "CodeDiffGutterInsert", "CodeDiffConflictSign", "CodeDiffFiller", "CodeDiffMoveTo" },
+  ["render-markdown.nvim"] = { "RenderMarkdownH1Bg", "RenderMarkdownQuote3", "RenderMarkdownInlineHighlight" },
+  ["git-conflict.nvim"] = {
+    "GitConflictCurrent",
+    "GitConflictCurrentLabel",
+    "GitConflictIncoming",
+    "GitConflictAncestor",
+  },
+  ["gitsigns.nvim"] = { "GitSignsAdd", "GitSignsAddLn", "GitSignsVirtLnum", "GitSignsStagedAdd" },
+  ["nvim-cmp"] = { "CmpItemAbbrMatch", "CmpItemKindFunction" },
+  ["blink.cmp"] = { "BlinkCmpMenu", "BlinkCmpKindFunction" },
+  ["blink.pairs"] = {
+    "BlinkPairsOrange",
+    "BlinkPairsPurple",
+    "BlinkPairsBlue",
+    "BlinkPairsUnmatched",
+    "BlinkPairsMatchParen",
+  },
+  ["minuet-ai.nvim"] = { "MinuetVirtualText", "MinuetDuetAdd", "MinuetDuetDelete", "CmpItemKindMinuet" },
+  ["which-key.nvim"] = { "WhichKey", "WhichKeyGroup", "WhichKeyIconAzure", "WhichKeyIconRed" },
+  ["todo-comments.nvim"] = { "TodoSignTODO", "TodoSignFIX" },
+  ["trouble.nvim"] = { "TroubleNormal", "TroubleIconFunction", "TroubleBasename" },
+  ["nvim-tree.lua"] = { "NvimTreeWindowPicker", "NvimTreeGitDirtyIcon", "NvimTreeFolderIcon" },
+  ["telescope.nvim"] = { "TelescopeNormal", "TelescopeResultsDiffAdd", "TelescopePreviewLine" },
+  ["telescope-file-browser.nvim"] = { "TelescopePreviewDirectory", "TelescopePreviewSize", "TelescopePreviewDate" },
+  ["fzf-lua"] = { "FzfLuaNormal", "FzfLuaLivePrompt", "FzfLuaHeaderBind", "FzfLuaBufNr" },
+  ["nvim-lspconfig"] = { "LspInfoBorder", "LspInfoTitle" },
+  ["lspsaga.nvim"] = { "SagaNormal", "SagaBorder", "SagaBeacon", "SagaCount", "SagaFunction", "DiagnosticErrorReverse" },
+  ["hover.nvim"] = { "HoverWindow", "HoverBorder", "HoverActiveSource" },
+  ["leap.nvim"] = { "LeapLabel", "LeapMatch" },
+  ["flash.nvim"] = { "FlashLabel", "FlashCurrent", "FlashCursor" },
+  ["snacks.nvim"] = { "SnacksPicker", "SnacksPickerTitle" },
+  ["neotest"] = { "NeotestPassed", "NeotestFailed", "NeotestRunning" },
+  ["rainbow-delimiters.nvim"] = { "RainbowDelimiterRed", "RainbowDelimiterViolet" },
+  ["copilot.lua"] = { "CopilotSuggestion" },
+  ["nvim-ufo"] = { "UfoFoldedBg", "UfoCursorFoldedLine" },
+  ["virt-column.nvim"] = { "VirtColumn" },
+}
+
+test("integrations: every supported plugin's groups are themed on every style", function()
+  for _, style in ipairs(styles) do
+    load(style, { plugins = { all = true } })
+    for plugin, groups in pairs(PLUGIN_GROUPS) do
+      for _, name in ipairs(groups) do
+        local h = hl(name)
+        truthy(h.fg or h.bg or h.sp, ("%s: %s (%s) has no colors"):format(style, name, plugin))
+      end
+    end
+  end
+  reset()
+end)
+
+test("integrations: plugin detection knows renamed and companion repos", function()
+  reset()
+  local Groups = require("kissaten.groups")
+  for repo, mod in pairs({
+    ["nvim-bufferline.lua"] = "bufferline",
+    ["telescope-file-browser.nvim"] = "telescope",
+    ["blink.pairs"] = "blink-pairs",
+    ["minuet-ai.nvim"] = "minuet",
+    ["codediff.nvim"] = "codediff",
+    ["git-conflict.nvim"] = "git-conflict",
+    ["hlargs.nvim"] = "hlargs",
+    ["lspsaga.nvim"] = "lspsaga",
+    ["hover.nvim"] = "hover",
+    ["nvim-cursorword"] = "cursorword",
+    ["virt-column.nvim"] = "virt-column",
+  }) do
+    package.loaded["lazy.core.config"] = { plugins = { [repo] = {} } }
+    package.loaded["lazy"] = {}
+    local enabled = Groups.enabled(require("kissaten.config").extend())
+    eq(enabled, { mod }, repo)
+  end
+  package.loaded["lazy.core.config"], package.loaded["lazy"] = nil, nil
+  -- every module listed loads and returns groups
+  for _, mod in pairs(Groups.plugins) do
+    truthy(
+      next(Groups.module(mod).get(require("kissaten").colors("evening"), require("kissaten.config").extend())),
+      mod
+    )
+  end
+end)
+
+test("integrations: icons, words and pairs look like the code they stand for", function()
+  local function fg(name)
+    return hex(hl(name).fg)
+  end
+  for _, style in ipairs(styles) do
+    load(style, { plugins = { all = true } })
+    eq(fg("TroubleIconFunction"), fg("@function"), style .. ": trouble kind icons")
+    eq(fg("SagaMethod"), fg("@function.method"), style .. ": lspsaga kind icons")
+    eq(fg("SagaText"), fg("Comment"), style .. ": lspsaga's own SagaText wins over the Text kind")
+    eq(fg("Hlargs"), fg("@variable.parameter"), style .. ": hlargs = parameters")
+    eq(hex(hl("CursorWord").bg), hex(hl("LspReferenceText").bg), style .. ": cursorword = references")
+    eq(fg("MinuetVirtualText"), fg("CopilotSuggestion"), style .. ": AI ghost text agrees")
+    eq(fg("WhichKeyIconAzure"), fg("MiniIconsAzure"), style .. ": which-key icons = mini.icons")
+    eq(fg("TelescopeResultsDiffAdd"), fg("GitSignsAdd"), style .. ": git status agrees")
+    eq(fg("CodeDiffStatusDeleted"), fg("GitSignsDelete"), style .. ": codediff status agrees")
+  end
+  for _, mode in ipairs({ "vivid", "dimmed", "mono" }) do
+    load("evening", { plugins = { all = true }, rainbow = mode })
+    eq(fg("BlinkPairsBlue"), fg("RainbowDelimiterBlue"), mode .. ": blink.pairs follows `rainbow`")
+    eq(fg("BlinkPairsPurple"), fg("RainbowDelimiterViolet"), mode)
+  end
+  reset()
+end)
+
+test("integrations: new groups stay readable and distinct on every style", function()
+  local function fg(name, bg)
+    local h = hl(name)
+    return Util.contrast(hex(h.fg), hex(h.bg) or bg)
+  end
+  for _, style in ipairs(styles) do
+    for _, cb in ipairs({ false, "red-green", "blue-yellow" }) do
+      load(style, { plugins = { all = true }, colorblind = cb })
+      local c = require("kissaten").colors(style)
+      local tag = style .. (cb and (" " .. cb) or "")
+      for _, side in ipairs({ "Current", "Incoming", "Ancestor" }) do
+        truthy(fg("GitConflict" .. side .. "Label", c.bg) >= 3, tag .. ": GitConflict" .. side .. "Label readable")
+        local bg = hex(hl("GitConflict" .. side).bg)
+        truthy(distance(bg, c.bg) >= 3, tag .. ": GitConflict" .. side .. " visible on the editor")
+      end
+      local sides = {
+        { "current", hex(hl("GitConflictCurrent").bg) },
+        { "incoming", hex(hl("GitConflictIncoming").bg) },
+        { "ancestor", hex(hl("GitConflictAncestor").bg) },
+      }
+      local kinds = cb == "red-green" and { "normal", "protan", "deutan" }
+        or cb == "blue-yellow" and { "normal", "tritan" }
+        or { "normal" }
+      sides[#sides + 1] = { "editor", c.bg }
+      local d, where = separation(sides, kinds)
+      truthy(d >= 3, ("%s: conflict sides too close (%.1f, %s)"):format(tag, d, where))
+      -- incoming is the side you didn't write: don't let it pass for a selection
+      d = separation({ sides[2], { "visual selection", c.ui.bg_visual } }, kinds)
+      truthy(d >= 3, ("%s: incoming looks like a selection (%.1f)"):format(tag, d))
+      if not cb then
+        for i = 1, 6 do
+          truthy(fg("RenderMarkdownQuote" .. i, c.bg) >= 3, tag .. ": quote level " .. i)
+        end
+        for _, name in ipairs({ "TelescopePreviewDate", "TelescopePreviewSize", "TelescopePreviewHyphen" }) do
+          truthy(fg(name, c.ui.bg_float) >= 3, tag .. ": " .. name)
+        end
+        for _, name in ipairs({ "NvimTreeWindowPicker", "HoverActiveSource", "SagaCount", "NeogitActiveItem" }) do
+          truthy(fg(name) >= 4.5, tag .. ": badge " .. name)
+        end
+        truthy(fg("Hlargs", c.bg) >= 4.5, tag .. ": hlargs parameters meet AA")
+      end
+    end
+  end
+  reset()
+end)
+
 test(":checkhealth kissaten runs", function()
   local text = checkhealth("kissaten")
   truthy(text:find("kissaten.nvim"), "health output")
