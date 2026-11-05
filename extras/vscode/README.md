@@ -78,15 +78,72 @@ You can also set it in `settings.json`: `"workbench.colorTheme": "Kissaten Eveni
 - **Update:** pull the latest repo, then repeat step 2. With Option A, delete the old `bytebeast.kissaten` folder first.
 - **Uninstall:** with Option A, delete the `bytebeast.kissaten` folder and restart. With Option B, run `code --uninstall-extension bytebeast.kissaten`, or uninstall it from the Extensions view.
 
-## Follow the OS light/dark mode
+## Settings
 
-This is the VS Code version of the auto dark mode recipe in the main README. Add to `settings.json`:
+VS Code themes take no options of their own: everything that shapes how kissaten looks is a VS Code setting. This is every setting that matters, ready to paste into your user `settings.json` (open it with **Preferences: Open User Settings (JSON)**).
+
+Each line shows **VS Code's default**, except the first three, which select kissaten. Delete any line you don't change.
 
 ```jsonc
 {
-  "window.autoDetectColorScheme": true,
+  // ── Theme ─────────────────────────────────────────────────────────────
+  // VS Code's defaults: "Dark 2026" / "Dark 2026" / "Light 2026"
+  "workbench.colorTheme": "Kissaten Evening",
+  "workbench.preferredDarkColorTheme": "Kissaten Evening",
   "workbench.preferredLightColorTheme": "Kissaten Morning",
-  "workbench.preferredDarkColorTheme": "Kissaten Evening"
+  // Follow the OS light/dark mode (uses the two preferred themes above)
+  "window.autoDetectColorScheme": false,
+  // Switch to a high contrast theme when the OS asks for one
+  "window.autoDetectHighContrast": true,
+
+  // ── Code colors ───────────────────────────────────────────────────────
+  // true | false | "configuredByTheme" (kissaten turns it on: LSP-aware
+  // colors for parameters, built-ins, interfaces, deprecated symbols, ...)
+  "editor.semanticHighlighting.enabled": "configuredByTheme",
+  // Rainbow brackets, in rainbow-delimiters' order
+  "editor.bracketPairColorization.enabled": true,
+  // true: ( ), [ ] and { } each cycle through the colors on their own
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": false,
+  // Vertical lines in the bracket colors: true | "active" | false
+  "editor.guides.bracketPairs": false,
+  "editor.guides.bracketPairsHorizontal": "active",
+  "editor.guides.highlightActiveBracketPair": true,
+  // Indent guides (the active scope is drawn brighter)
+  "editor.guides.indentation": true,
+  "editor.guides.highlightActiveIndentation": true,
+  // "none" | "boundary" | "selection" | "trailing" | "all"
+  "editor.renderWhitespace": "selection",
+  // Inlay hints in kissaten's tinted style: "on" | "off" | "onUnlessPressed" | "offUnlessPressed"
+  "editor.inlayHints.enabled": "on",
+
+  // ── Fonts ─────────────────────────────────────────────────────────────
+  // kissaten italicizes comments and keywords: pick a font with a real
+  // italic (see the font guide). The screenshots use JetBrains Mono Nerd Font.
+  // Default: Menlo (macOS), Consolas (Windows), Droid Sans Mono (Linux)
+  "editor.fontFamily": "Menlo, Monaco, 'Courier New', monospace",
+  "editor.fontSize": 12, // 12 on macOS, 14 elsewhere
+  "editor.fontLigatures": false,
+
+  // ── Terminal ──────────────────────────────────────────────────────────
+  // VS Code nudges terminal text to this contrast. kissaten's 16 terminal
+  // colors already meet it, so they show as designed; 1 turns it off.
+  "terminal.integrated.minimumContrastRatio": 4.5,
+
+  // ── Your own changes ──────────────────────────────────────────────────
+  // Change single colors, for every theme or for one (in square brackets).
+  // Workbench color ids: https://code.visualstudio.com/api/references/theme-color
+  "workbench.colorCustomizations": {
+    // "[Kissaten Evening]": { "editorCursor.foreground": "#f7a46f" }
+  },
+  // TextMate token colors: "comments", "strings", "keywords", "numbers",
+  // "types", "functions", "variables", or "textMateRules" for any scope
+  "editor.tokenColorCustomizations": {
+    // "[Kissaten Evening]": { "comments": "#8a91b8" }
+  },
+  // Semantic token colors, e.g. parameters or read-only variables
+  "editor.semanticTokenColorCustomizations": {
+    // "[Kissaten Evening]": { "rules": { "parameter": { "italic": true } } }
+  }
 }
 ```
 
@@ -95,13 +152,4 @@ This is the VS Code version of the auto dark mode recipe in the main README. Add
 - Comments and keywords are italic, like the Neovim defaults. Whether that shows depends on your font: pick one with a real italic. The [font guide](../fonts/README.md) has suggestions.
 - Bracket pairs are colored in rainbow-delimiters' order. VS Code turns this on by default (`editor.bracketPairColorization.enabled`).
 - Like every extra, the themes are built with kissaten's default options. Neovim options such as `accent`, `colorblind` or `saturation` don't apply here.
-- To change single colors, use VS Code's own overrides, for example:
-
-  ```jsonc
-  "workbench.colorCustomizations": {
-    "[Kissaten Evening]": { "editorCursor.foreground": "#f7a46f" }
-  },
-  "editor.tokenColorCustomizations": {
-    "[Kissaten Evening]": { "comments": "#8a91b8" }
-  }
-  ```
+- To change single colors, see the overrides at the end of [Settings](#settings).
