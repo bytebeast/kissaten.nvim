@@ -75,7 +75,7 @@ You can also set it in `settings.json`: `"workbench.colorTheme": "Kissaten Eveni
 
 ### Update or uninstall
 
-- **Update:** pull the latest repo, then repeat step 2. With Option A, delete the old `bytebeast.kissaten` folder first.
+- **Update:** pull the latest repo, then repeat step 2. With Option A, delete the old `bytebeast.kissaten` folder first, then restart the editor. Changes to the extension itself, such as its icon, only show after that restart.
 - **Uninstall:** with Option A, delete the `bytebeast.kissaten` folder and restart. With Option B, run `code --uninstall-extension bytebeast.kissaten`, or uninstall it from the Extensions view.
 
 ## Settings

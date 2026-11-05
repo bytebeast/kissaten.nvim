@@ -1507,6 +1507,17 @@ test("vscode: valid JSON, every color id exists in VS Code, translucent where VS
     truthy(vim.fn.filereadable("extras/vscode/" .. t.path:sub(3)) == 1, t.path .. " exists")
   end
   eq(manifest.version, require("kissaten.config").version, "extension version follows the plugin")
+  -- the extension icon: a PNG of at least 128x128 (VS Code and vsce need PNG)
+  eq(manifest.icon, "icon.png")
+  local f = assert(io.open("extras/vscode/icon.png", "rb"))
+  local head = f:read(24)
+  f:close()
+  eq(head:sub(1, 8), "\137PNG\r\n\26\n", "icon is a PNG")
+  local function u32(i)
+    local a, b, c, d = head:byte(i, i + 3)
+    return ((a * 256 + b) * 256 + c) * 256 + d
+  end
+  truthy(u32(17) >= 128 and u32(17) == u32(21), "icon is square and at least 128px")
 end)
 
 test("vscode: same colors as Neovim (editor, tokens, semantic, translucent highlights)", function()

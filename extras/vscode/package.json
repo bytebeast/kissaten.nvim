@@ -4,6 +4,7 @@
   "description": "A coffee-house color theme in five styles, from paper-light to black. Every syntax color meets WCAG AA. Generated from kissaten.nvim.",
   "version": "1.0.0",
   "publisher": "bytebeast",
+  "icon": "icon.png",
   "license": "MIT",
   "repository": {
     "type": "git",
