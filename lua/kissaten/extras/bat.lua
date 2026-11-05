@@ -100,7 +100,7 @@ local function esc(s)
 end
 
 --- fontStyle from a rule's style: an opts.styles category or literal words.
-local function font_style(style, styles)
+function M.font_style(style, styles)
   if not style then
     return nil
   end
@@ -117,7 +117,7 @@ local function font_style(style, styles)
   return style
 end
 
-local function resolve(c, role)
+function M.resolve(c, role)
   if role:sub(1, 1) == "@" then
     local v = c
     for part in role:sub(2):gmatch("[^%.]+") do
@@ -190,7 +190,7 @@ function M.generate(c)
 
   for _, rule in ipairs(M.rules) do
     local name, scope, role, style = rule[1], rule[2], rule[3], rule[4]
-    local color = resolve(c, role)
+    local color = M.resolve(c, role)
     assert(Util.is_hex(color), ("bat: rule '%s' has no color for role '%s'"):format(name, role))
     out[#out + 1] = "\t\t<dict>"
     out[#out + 1] = ("\t\t\t<key>name</key>\n\t\t\t<string>%s</string>"):format(esc(name))
@@ -198,7 +198,7 @@ function M.generate(c)
     out[#out + 1] = "\t\t\t<key>settings</key>"
     out[#out + 1] = "\t\t\t<dict>"
     out[#out + 1] = setting("foreground", color)
-    local fs = font_style(style, c._styles)
+    local fs = M.font_style(style, c._styles)
     if fs then -- always write it, even empty, so a broader rule's style can't leak in
       out[#out + 1] = setting("fontStyle", fs)
     end

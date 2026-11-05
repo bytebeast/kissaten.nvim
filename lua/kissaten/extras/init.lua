@@ -23,6 +23,7 @@ M.extras = {
   kitty     = { ext = "conf", label = "Kitty" },
   lazygit   = { ext = "yml", label = "lazygit" },
   tmux      = { ext = "tmux", label = "tmux" },
+  vscode    = { ext = "json", label = "VS Code" },
   wezterm   = { ext = "toml", label = "WezTerm" },
   zettlr    = { ext = "css", label = "Zettlr" },
 }
@@ -64,6 +65,15 @@ function M.template(str, tbl)
       return v ~= nil and tostring(v) or ("${" .. path .. "}")
     end)
   )
+end
+
+--- Files an extra needs besides its per-style themes (e.g. VS Code's
+--- package.json), from the generator's optional `static()`.
+---@param name string
+---@return table<string, string> path (relative to extras/<name>) -> content
+function M.static(name)
+  local gen = require("kissaten.extras." .. name)
+  return gen.static and gen.static() or {}
 end
 
 ---@param name string

@@ -843,6 +843,7 @@ Matching themes for your terminal and tools live in [`extras/`](extras), generat
 | [Kitty](https://sw.kovidgoyal.net/kitty/) | `extras/kitty/*.conf` | `include …/kissaten_evening.conf` |
 | [lazygit](https://github.com/jesseduffield/lazygit) | `extras/lazygit/*.yml` | merge into `config.yml` |
 | [tmux](https://github.com/tmux/tmux) | `extras/tmux/*.tmux` | `source-file …/kissaten_evening.tmux` |
+| [VS Code](https://code.visualstudio.com) | `extras/vscode/` (an extension folder) | copy the folder to `~/.vscode/extensions/`, then pick **Kissaten Evening** in Color Theme ([setup](extras/vscode/README.md)) |
 | [WezTerm](https://wezterm.org) | `extras/wezterm/*.toml` | copy to `~/.config/wezterm/colors/`, then `color_scheme = "Kissaten Evening"` |
 | [Zettlr](https://www.zettlr.com) | `extras/zettlr/*.css` | paste into Custom CSS ([setup](extras/zettlr/README.md)) |
 
