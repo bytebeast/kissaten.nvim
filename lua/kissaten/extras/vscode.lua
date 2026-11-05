@@ -791,6 +791,8 @@ function M.static()
       '  "description": "A coffee-house color theme in five styles, from paper-light to black. Every syntax color meets WCAG AA. Generated from kissaten.nvim.",',
       ('  "version": %s,'):format(str(version)),
       '  "publisher": "bytebeast",',
+      -- extras/vscode/icon.png, drawn from assets/src/vscode-icon.svg
+      '  "icon": "icon.png",',
       '  "license": "MIT",',
       '  "repository": {',
       '    "type": "git",',

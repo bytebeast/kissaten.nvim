@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#272a40"/>
+      <stop offset="1" stop-color="#13141f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.62" r="0.5">
+      <stop offset="0" stop-color="#f7a46f" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#f7a46f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f4ead9"/>
+      <stop offset="0.55" stop-color="#e9dccb"/>
+      <stop offset="1" stop-color="#c9b9a6"/>
+    </linearGradient>
+    <linearGradient id="coffee" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a5636"/>
+      <stop offset="1" stop-color="#4a2c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+  <rect width="256" height="256" rx="56" fill="url(#glow)"/>
+  <rect x="2" y="2" width="252" height="252" rx="54" fill="none" stroke="#3f4463" stroke-width="4"/>
+  <g transform="translate(128 132) scale(1.14) translate(-128 -132)">
+  <!-- steam: three accent colors from the palette -->
+  <g fill="none" stroke-linecap="round" stroke-width="11">
+    <path d="M94 104 c-14 -16 14 -26 0 -44" stroke="#82aaff"/>
+    <path d="M128 100 c-14 -18 14 -30 0 -52" stroke="#f5bde6"/>
+    <path d="M162 104 c-14 -16 14 -26 0 -44" stroke="#f7a46f"/>
+  </g>
+  <!-- saucer -->
+  <ellipse cx="128" cy="202" rx="88" ry="16" fill="#c9b9a6"/>
+  <ellipse cx="128" cy="198" rx="88" ry="14" fill="#e9dccb"/>
+  <!-- handle -->
+  <path d="M182 136 h10 a24 24 0 0 1 0 48 h-14" fill="none" stroke="#d9cbb8" stroke-width="13"/>
+  <!-- cup body -->
+  <path d="M60 124 h136 v28 a58 46 0 0 1 -58 46 h-20 a58 46 0 0 1 -58 -46 z" fill="url(#cup)"/>
+  <!-- coffee surface -->
+  <ellipse cx="128" cy="124" rx="68" ry="12" fill="url(#coffee)"/>
+  <ellipse cx="128" cy="124" rx="68" ry="12" fill="none" stroke="#f4ead9" stroke-width="4"/>
+  </g>
+</svg>
