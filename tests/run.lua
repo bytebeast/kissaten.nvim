@@ -1444,6 +1444,171 @@ test("integrations: new groups stay readable and distinct on every style", funct
   reset()
 end)
 
+-- ── VS Code ──────────────────────────────────────────────────────────────
+local function vscode_registry()
+  local ids, translucent = {}, {}
+  for line in io.lines("tests/fixtures/vscode-colors.txt") do
+    local id, flag = line:match("^([%w.]+)%s*(%S*)$")
+    if id and not line:find("^#") then
+      ids[id] = true
+      translucent[id] = flag == "transparent" or nil
+    end
+  end
+  return ids, translucent
+end
+
+--- `#rrggbbaa` composited over `bg`, as VS Code draws it.
+local function composite(color, bg)
+  local alpha = #color == 9 and tonumber(color:sub(8, 9), 16) / 255 or 1
+  return Util.blend(color:sub(1, 7), bg, alpha)
+end
+
+test("vscode: valid JSON, every color id exists in VS Code, translucent where VS Code requires", function()
+  local ids, translucent = vscode_registry()
+  truthy(vim.tbl_count(ids) > 900, "registry fixture loaded")
+  for _, style in ipairs(styles) do
+    local theme = vim.json.decode(require("kissaten.extras").render("vscode", style))
+    eq(theme.type, style == "morning" and "light" or "dark", style .. ": theme type")
+    truthy(theme.semanticHighlighting, style .. ": semantic highlighting on")
+    local n = 0
+    for id, value in pairs(theme.colors) do
+      n = n + 1
+      truthy(ids[id], ("%s: '%s' is not a VS Code color"):format(style, id))
+      truthy(
+        value:match("^#%x%x%x%x%x%x$") or value:match("^#%x%x%x%x%x%x%x%x$"),
+        style .. ": " .. id .. " = " .. value
+      )
+      if translucent[id] then
+        truthy(
+          #value == 9 and value:sub(8):lower() ~= "ff",
+          ("%s: %s must be translucent (%s)"):format(style, id, value)
+        )
+      end
+    end
+    truthy(n > 400, style .. ": workbench colors")
+    -- no id listed twice (JSON would silently keep the last one)
+    local seen = {}
+    for _, kv in ipairs(require("kissaten.extras.vscode").workbench(require("kissaten").colors(style))) do
+      truthy(not seen[kv[1]], style .. ": duplicate " .. kv[1])
+      seen[kv[1]] = true
+    end
+    eq(#theme.tokenColors, #require("kissaten.extras.bat").rules, style .. ": one token rule per bat rule")
+    for _, rule in ipairs(theme.tokenColors) do
+      truthy(rule.settings.foreground:match("^#%x+$"), style .. ": token rule " .. rule.name)
+    end
+  end
+  -- the manifest lists every style, light ones as "vs"
+  local manifest = vim.json.decode(require("kissaten.extras").static("vscode")["package.json"])
+  eq(#manifest.contributes.themes, #styles, "package.json lists every style")
+  for i, style in ipairs(styles) do
+    local t = manifest.contributes.themes[i]
+    eq(t.path, "./kissaten_" .. style .. ".json")
+    eq(t.uiTheme, style == "morning" and "vs" or "vs-dark", style .. " uiTheme")
+    truthy(vim.fn.filereadable("extras/vscode/" .. t.path:sub(3)) == 1, t.path .. " exists")
+  end
+  eq(manifest.version, require("kissaten.config").version, "extension version follows the plugin")
+end)
+
+test("vscode: same colors as Neovim (editor, tokens, semantic, translucent highlights)", function()
+  for _, style in ipairs(styles) do
+    load(style, { plugins = { all = true } })
+    local theme = vim.json.decode(require("kissaten.extras").render("vscode", style))
+    local col, sem = theme.colors, theme.semanticTokenColors
+    local function fg(name)
+      return hex(hl(name).fg)
+    end
+    local function sfg(sel)
+      local v = sem[sel]
+      return type(v) == "table" and v.foreground or v
+    end
+    local bg = hex(hl("Normal").bg)
+    eq(col["editor.background"], bg, style .. ": editor background")
+    eq(col["editor.foreground"], hex(hl("Normal").fg), style .. ": editor foreground")
+    eq(col["editor.selectionBackground"], hex(hl("Visual").bg), style .. ": selection")
+    eq(col["editorLineNumber.foreground"], fg("LineNr"), style .. ": line numbers")
+    eq(col["sideBar.background"], hex(hl("NvimTreeNormal").bg), style .. ": sidebar shade")
+    eq(sfg("function"), fg("@function"), style .. ": semantic function")
+    eq(sfg("parameter"), fg("@variable.parameter"), style .. ": semantic parameter")
+    eq(sfg("namespace"), fg("@module"), style .. ": semantic namespace")
+    eq(sfg("function.defaultLibrary"), fg("@function.builtin"), style .. ": semantic builtin function")
+    eq(sem["interface"].italic, true, style .. ": interfaces italic, as in Neovim")
+    eq(col["editorBracketHighlight.foreground1"], fg("RainbowDelimiterRed"), style .. ": bracket pairs")
+    eq(col["gitDecoration.addedResourceForeground"], fg("GitSignsAdd"), style .. ": git add")
+    eq(col["terminal.ansiRed"], vim.g.terminal_color_1, style .. ": terminal red")
+    -- translucent highlights land on the exact solid color Neovim uses
+    for id, group in pairs({
+      ["editor.wordHighlightBackground"] = "LspReferenceText",
+      ["editor.wordHighlightStrongBackground"] = "LspReferenceWrite",
+      ["editor.findMatchHighlightBackground"] = "Search",
+      ["diffEditor.insertedLineBackground"] = "DiffAdd",
+      ["diffEditor.removedLineBackground"] = "DiffDelete",
+    }) do
+      local want, got = hex(hl(group).bg), composite(col[id], bg)
+      truthy(Util.distance(want, got) < 1, ("%s: %s draws %s, Neovim's %s is %s"):format(style, id, got, group, want))
+    end
+    -- conflict sides match git-conflict.nvim
+    truthy(
+      Util.distance(composite(col["merge.currentContentBackground"], bg), hex(hl("GitConflictCurrent").bg)) < 1,
+      style .. ": merge current"
+    )
+    truthy(
+      Util.distance(composite(col["merge.incomingContentBackground"], bg), hex(hl("GitConflictIncoming").bg)) < 1,
+      style .. ": merge incoming"
+    )
+    -- italic comments and keywords, like the Neovim defaults
+    for _, rule in ipairs(theme.tokenColors) do
+      if rule.name == "Comment" or rule.name == "Keyword" then
+        truthy((rule.settings.fontStyle or ""):find("italic"), style .. ": " .. rule.name .. " italic")
+      end
+    end
+  end
+  for _, mode in ipairs({ "vivid", "mono" }) do
+    reset()
+    require("kissaten").setup({ rainbow = mode })
+    local c = require("kissaten").colors("evening")
+    local wb = {}
+    for _, kv in ipairs(require("kissaten.extras.vscode").workbench(c)) do
+      wb[kv[1]] = kv[2]
+    end
+    eq(wb["editorBracketHighlight.foreground3"], c.brackets.blue, mode .. ": brackets follow `rainbow`")
+  end
+  reset()
+end)
+
+test("vscode: text and badges stay readable on every style", function()
+  for _, style in ipairs(styles) do
+    local col = vim.json.decode(require("kissaten.extras").render("vscode", style)).colors
+    local bg = col["editor.background"]
+    local function ratio(fgk, bgk)
+      return Util.contrast(composite(col[fgk], bg), composite(col[bgk], bg))
+    end
+    for _, pair in ipairs({
+      { "button.foreground", "button.background", 4.5 },
+      { "badge.foreground", "badge.background", 4.5 },
+      { "statusBarItem.remoteForeground", "statusBarItem.remoteBackground", 4.5 },
+      { "statusBar.debuggingForeground", "statusBar.debuggingBackground", 4.5 },
+      { "statusBarItem.errorForeground", "statusBarItem.errorBackground", 4.5 },
+      { "extensionButton.prominentForeground", "extensionButton.prominentBackground", 4.5 },
+      { "sideBar.foreground", "sideBar.background", 4.5 },
+      { "statusBar.foreground", "statusBar.background", 4.5 },
+      { "tab.activeForeground", "tab.activeBackground", 4.5 },
+      { "list.activeSelectionForeground", "list.activeSelectionBackground", 4.5 },
+      { "editorSuggestWidget.foreground", "editorSuggestWidget.background", 4.5 },
+      { "editorSuggestWidget.highlightForeground", "editorSuggestWidget.selectedBackground", 3 },
+      { "tab.inactiveForeground", "tab.inactiveBackground", 3 },
+      { "editorLineNumber.activeForeground", "editor.background", 3 },
+      { "input.placeholderForeground", "input.background", 3 },
+      { "editor.foreground", "editor.findMatchHighlightBackground", 4.5 },
+      { "editor.foreground", "editor.wordHighlightStrongBackground", 4.5 },
+      { "editor.foreground", "diffEditor.insertedTextBackground", 4.5 },
+      { "editor.foreground", "merge.incomingHeaderBackground", 4.5 },
+    }) do
+      local r = ratio(pair[1], pair[2])
+      truthy(r >= pair[3], ("%s: %s on %s is %.2f:1"):format(style, pair[1], pair[2], r))
+    end
+  end
+end)
+
 test(":checkhealth kissaten runs", function()
   local text = checkhealth("kissaten")
   truthy(text:find("kissaten.nvim"), "health output")

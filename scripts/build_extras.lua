@@ -16,5 +16,11 @@ for name in pairs(Extras.extras) do
       count = count + 1
     end
   end
+  for file, content in pairs(Extras.static(name)) do
+    local f = assert(io.open(("extras/%s/%s"):format(name, file), "w"))
+    f:write(content)
+    f:close()
+    count = count + 1
+  end
 end
 print(("wrote %d files to ./extras"):format(count))

@@ -1,0 +1,46 @@
+{
+  "name": "kissaten",
+  "displayName": "Kissaten",
+  "description": "A coffee-house color theme in five styles, from paper-light to black. Every syntax color meets WCAG AA. Generated from kissaten.nvim.",
+  "version": "1.0.0",
+  "publisher": "bytebeast",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bytebeast/kissaten.nvim"
+  },
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": ["Themes"],
+  "keywords": ["theme", "color-theme", "dark", "light", "kissaten", "neovim"],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Kissaten Morning",
+        "uiTheme": "vs",
+        "path": "./kissaten_morning.json"
+      },
+      {
+        "label": "Kissaten Afternoon",
+        "uiTheme": "vs-dark",
+        "path": "./kissaten_afternoon.json"
+      },
+      {
+        "label": "Kissaten Evening",
+        "uiTheme": "vs-dark",
+        "path": "./kissaten_evening.json"
+      },
+      {
+        "label": "Kissaten Midnight",
+        "uiTheme": "vs-dark",
+        "path": "./kissaten_midnight.json"
+      },
+      {
+        "label": "Kissaten Graveyard",
+        "uiTheme": "vs-dark",
+        "path": "./kissaten_graveyard.json"
+      }
+    ]
+  }
+}
