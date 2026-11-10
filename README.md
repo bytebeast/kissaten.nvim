@@ -841,16 +841,23 @@ Matching themes for your terminal and tools live in [`extras/`](extras), generat
 | --- | --- | --- |
 | [Alacritty](https://alacritty.org) | `extras/alacritty/*.toml` | `[general] import = ["…/kissaten_evening.toml"]` |
 | [bat](https://github.com/sharkdp/bat) | `extras/bat/*.tmTheme` | copy to `"$(bat --config-dir)/themes"`, run `bat cache --build`, then `--theme="kissaten_evening"` ([setup](extras/bat/README.md)) |
+| [btop](https://github.com/aristocratos/btop) | `extras/btop/*.theme` | copy to `~/.config/btop/themes/`, then `color_theme = "kissaten_evening"` |
 | [delta](https://github.com/dandavison/delta) | `extras/delta/*.gitconfig` | `[include] path = …` then `features = kissaten-evening` |
 | [eza](https://eza.rocks) | `extras/eza/*.yml` | save as `~/.config/eza/theme.yml` ([setup](extras/eza/README.md)) |
+| [foot](https://codeberg.org/dnkl/foot) | `extras/foot/*.ini` | `include=~/…/kissaten_evening.ini` at the top of `foot.ini` (morning fills `[colors-light]`: add `initial-color-theme=light`) |
 | [fzf](https://github.com/junegunn/fzf) | `extras/fzf/*.sh` | `source …/kissaten_evening.sh` in your shell rc |
 | [Ghostty](https://ghostty.org) | `extras/ghostty/*` | copy to `~/.config/ghostty/themes/`, then `theme = kissaten_evening` |
+| [Helix](https://helix-editor.com) | `extras/helix/*.toml` | copy to `~/.config/helix/themes/`, then `theme = "kissaten_evening"` (or `[theme] dark = … light = "kissaten_morning"`) |
+| [iTerm2](https://iterm2.com) | `extras/iterm2/*.itermcolors` | Settings → Profiles → Colors → Color Presets… → Import |
 | [k9s](https://k9scli.io) | `extras/k9s/*.yaml` | copy to k9s's `skins/` dir, then `k9s.ui.skin: kissaten_evening` ([setup](extras/k9s/README.md)) |
 | [Kitty](https://sw.kovidgoyal.net/kitty/) | `extras/kitty/*.conf` | `include …/kissaten_evening.conf` |
 | [lazygit](https://github.com/jesseduffield/lazygit) | `extras/lazygit/*.yml` | merge into `config.yml` |
 | [tmux](https://github.com/tmux/tmux) | `extras/tmux/*.tmux` | `source-file …/kissaten_evening.tmux` |
 | [VS Code](https://code.visualstudio.com) | `extras/vscode/` (an extension folder) | copy the folder to `~/.vscode/extensions/`, then pick **Kissaten Evening** in Color Theme ([setup](extras/vscode/README.md)) |
 | [WezTerm](https://wezterm.org) | `extras/wezterm/*.toml` | copy to `~/.config/wezterm/colors/`, then `color_scheme = "Kissaten Evening"` |
+| [Windows Terminal](https://github.com/microsoft/terminal) | `extras/windows-terminal/*.json` | add the object to `"schemes"` in `settings.json`, then `"colorScheme": "Kissaten Evening"` |
+| [Yazi](https://yazi-rs.github.io) | `extras/yazi/kissaten-*.yazi/` (flavors) | copy the folder to `~/.config/yazi/flavors/`, then `[flavor] dark = "kissaten-evening"` in `theme.toml` |
+| [Zed](https://zed.dev) | `extras/zed/*.json` | copy to `~/.config/zed/themes/`, then pick **Kissaten Evening** in the theme selector |
 | [Zettlr](https://www.zettlr.com) | `extras/zettlr/*.css` | paste into Custom CSS ([setup](extras/zettlr/README.md)) |
 
 Looking for a font to go with the theme? See the **[font guide](extras/fonts/README.md)**.

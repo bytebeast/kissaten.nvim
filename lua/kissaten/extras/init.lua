@@ -10,21 +10,30 @@ local M = {}
 ---   variants optional { [suffix] = variant }: one extra file per style and
 ---            variant, named kissaten_<style><suffix>.<ext>; the generator
 ---            receives the variant as its second argument
+---   per_style false when the extra only writes the files from its
+---            `static()` (yazi's flavor folders)
 --- }
 -- stylua: ignore
 M.extras = {
   alacritty = { ext = "toml", label = "Alacritty" },
   bat       = { ext = "tmTheme", label = "bat" },
+  btop      = { ext = "theme", label = "btop" },
   delta     = { ext = "gitconfig", label = "delta (git pager)" },
   eza       = { ext = "yml", label = "eza" },
+  foot      = { ext = "ini", label = "foot" },
   fzf       = { ext = "sh", label = "fzf" },
   ghostty   = { ext = "", label = "Ghostty" },
+  helix     = { ext = "toml", label = "Helix" },
+  iterm2    = { ext = "itermcolors", label = "iTerm2" },
   k9s       = { ext = "yaml", label = "k9s", variants = { [""] = "default", ["_transparent"] = "transparent" } },
   kitty     = { ext = "conf", label = "Kitty" },
   lazygit   = { ext = "yml", label = "lazygit" },
   tmux      = { ext = "tmux", label = "tmux" },
   vscode    = { ext = "json", label = "VS Code" },
   wezterm   = { ext = "toml", label = "WezTerm" },
+  ["windows-terminal"] = { ext = "json", label = "Windows Terminal" },
+  yazi      = { ext = "toml", label = "Yazi", per_style = false },
+  zed       = { ext = "json", label = "Zed" },
   zettlr    = { ext = "css", label = "Zettlr" },
 }
 
@@ -32,6 +41,9 @@ M.extras = {
 ---@param name string
 ---@return {[1]: string, [2]: string}[]
 function M.files(name)
+  if M.extras[name].per_style == false then
+    return {}
+  end
   local variants = M.extras[name].variants
   if not variants then
     return { { "", "default" } }

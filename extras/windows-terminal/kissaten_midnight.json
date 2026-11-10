@@ -1,0 +1,23 @@
+{
+  "name": "Kissaten Midnight",
+  "background": "#16161f",
+  "foreground": "#c8d0f0",
+  "cursorColor": "#c8d0f0",
+  "selectionBackground": "#2c354f",
+  "black": "#2a2c42",
+  "red": "#f38ba8",
+  "green": "#a6d98a",
+  "yellow": "#e6c56f",
+  "blue": "#7aa2f7",
+  "purple": "#f5c2e7",
+  "cyan": "#73daca",
+  "white": "#a9b1d6",
+  "brightBlack": "#575d82",
+  "brightRed": "#f8a0b8",
+  "brightGreen": "#b4e29a",
+  "brightYellow": "#edcf81",
+  "brightBlue": "#8fb2fb",
+  "brightPurple": "#cab0fb",
+  "brightCyan": "#97d8ff",
+  "brightWhite": "#c8d0f0"
+}

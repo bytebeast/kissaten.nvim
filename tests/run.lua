@@ -609,6 +609,241 @@ local function load(style, opts)
   vim.cmd.colorscheme("kissaten-" .. style)
 end
 
+-- ── Extras added after 1.0: each checked against the tool's own source ──
+
+--- Non-comment lines of a fixture file, optionally under one `[section]`.
+local function fixture(path, section)
+  local out, current = {}, nil
+  for line in io.lines(path) do
+    local sec = line:match("^%[(.+)%]$")
+    if sec then
+      current = sec
+    elseif line ~= "" and not line:find("^#") and (not section or current == section) then
+      out[line] = true
+    end
+  end
+  return out
+end
+
+local function is_color(v, alpha)
+  return type(v) == "string" and (v:match("^#%x%x%x%x%x%x$") or (alpha and v:match("^#%x%x%x%x%x%x%x%x$"))) ~= nil
+end
+
+test("windows-terminal: exactly the scheme keys the settings schema allows", function()
+  -- microsoft/terminal doc/cascadia/profiles.schema.json, SchemeList (additionalProperties: false)
+  local keys = {}
+  for k in
+    (
+      "name background black blue brightBlack brightBlue brightCyan brightGreen brightPurple brightRed brightWhite "
+      .. "brightYellow cursorColor cyan foreground green purple red selectionBackground white yellow"
+    ):gmatch("%S+")
+  do
+    keys[k] = true
+  end
+  for _, style in ipairs(styles) do
+    local scheme = vim.json.decode(require("kissaten.extras").render("windows-terminal", style))
+    local c = colors(style)
+    eq(vim.tbl_count(scheme), vim.tbl_count(keys), style .. ": every key set")
+    for k, v in pairs(scheme) do
+      truthy(keys[k], style .. ": unknown key " .. k)
+      truthy(k == "name" or is_color(v), ("%s: %s = %s"):format(style, k, tostring(v)))
+    end
+    eq(scheme.background, c.bg, style .. ": background")
+    eq(scheme.selectionBackground, c.ui.bg_visual, style .. ": selection as in Neovim")
+  end
+end)
+
+test("iterm2: valid plist, iTerm2's own profile keys, sRGB components that round-trip", function()
+  -- gnachman/iTerm2 sources/Settings/Profiles/ITAddressBookMgr.h (KEY_*_COLOR)
+  local keys = {}
+  for i = 0, 15 do
+    keys[("Ansi %d Color"):format(i)] = true
+  end
+  for _, k in ipairs({
+    "Background Color",
+    "Foreground Color",
+    "Bold Color",
+    "Cursor Color",
+    "Cursor Text Color",
+    "Selection Color",
+    "Selected Text Color",
+    "Link Color",
+    "Match Background Color",
+    "Cursor Guide Color",
+    "Badge Color",
+  }) do
+    keys[k] = true
+  end
+  for _, style in ipairs(styles) do
+    local xml = require("kissaten.extras").render("iterm2", style)
+    local c = colors(style)
+    eq(select(2, xml:gsub("<dict>", "")), select(2, xml:gsub("</dict>", "")), style .. ": balanced dicts")
+    local seen = {}
+    for key, body in xml:gmatch("\t<key>([^<]+)</key>\n\t<dict>(.-)\t</dict>") do
+      truthy(keys[key], style .. ": unknown key " .. key)
+      truthy(body:find("<key>Color Space</key>\n\t\t<string>sRGB</string>", 1, true), style .. ": sRGB " .. key)
+      local comp = {}
+      for name, v in body:gmatch("<key>(%a+) Component</key>\n\t\t<real>([%d.]+)</real>") do
+        comp[name] = tonumber(v)
+        truthy(comp[name] >= 0 and comp[name] <= 1, ("%s: %s %s out of range"):format(style, key, name))
+      end
+      seen[key] = Util.hex(comp.Red * 255, comp.Green * 255, comp.Blue * 255)
+    end
+    eq(vim.tbl_count(seen), vim.tbl_count(keys), style .. ": every key set")
+    eq(seen["Background Color"], c.bg, style .. ": background round-trips")
+    eq(seen["Ansi 1 Color"], c.terminal.red, style .. ": red round-trips")
+  end
+end)
+
+test("foot: the right color section per style, keys foot's parser accepts", function()
+  -- dnkl/foot config.c parse_color_theme() plus regularN/brightN/dimN/N (foot.ini(5))
+  local keys = {}
+  for k in
+    (
+      "foreground background cursor selection-foreground selection-background urls flash flash-alpha "
+      .. "jump-labels scrollback-indicator search-box-match search-box-no-match"
+    ):gmatch("%S+")
+  do
+    keys[k] = true
+  end
+  local pairs_of = { cursor = true, ["jump-labels"] = true, ["scrollback-indicator"] = true }
+  pairs_of["search-box-match"], pairs_of["search-box-no-match"] = true, true
+  for _, style in ipairs(styles) do
+    local text = require("kissaten.extras").render("foot", style)
+    local sections = {}
+    for sec in text:gmatch("\n%[([%w-]+)%]") do
+      sections[#sections + 1] = sec
+    end
+    eq(sections, { style == "morning" and "colors-light" or "colors-dark" }, style .. ": section")
+    for k, v in text:gmatch("\n([%w-]+)=([^\n]+)") do
+      truthy(keys[k] or k:match("^regular[0-7]$") or k:match("^bright[0-7]$") or k:match("^%d+$"), style .. ": " .. k)
+      local n = 0
+      for color in v:gmatch("%S+") do
+        truthy(color:match("^%x%x%x%x%x%x$"), ("%s: %s=%s (RRGGBB, no #)"):format(style, k, v))
+        n = n + 1
+      end
+      eq(n, pairs_of[k] and 2 or 1, style .. ": value count for " .. k)
+    end
+    eq(text:match("\nbackground=(%x+)"), colors(style).bg:sub(2), style .. ": background")
+  end
+end)
+
+test("btop: exactly btop's theme keys, every value a color", function()
+  -- aristocratos/btop src/btop_theme.cpp Default_theme
+  local keys = {}
+  for k in
+    (
+      "main_bg main_fg title hi_fg selected_bg selected_fg inactive_fg graph_text meter_bg proc_misc cpu_box mem_box "
+      .. "net_box proc_box div_line temp_start temp_mid temp_end cpu_start cpu_mid cpu_end free_start free_mid "
+      .. "free_end cached_start cached_mid cached_end available_start available_mid available_end used_start "
+      .. "used_mid used_end download_start download_mid download_end upload_start upload_mid upload_end "
+      .. "process_start process_mid process_end proc_pause_bg proc_follow_bg proc_banner_bg proc_banner_fg "
+      .. "followed_bg followed_fg"
+    ):gmatch("%S+")
+  do
+    keys[k] = true
+  end
+  for _, style in ipairs(styles) do
+    local seen = {}
+    for k, v in require("kissaten.extras").render("btop", style):gmatch('theme%[([%w_]+)%]="([^"]*)"') do
+      truthy(keys[k], style .. ": unknown key " .. k)
+      truthy(is_color(v), ("%s: %s=%s"):format(style, k, v))
+      seen[k] = true
+    end
+    eq(vim.tbl_count(seen), vim.tbl_count(keys), style .. ": every key set")
+  end
+end)
+
+test("helix: every key is documented, styles are valid, colors match Neovim", function()
+  local keys = fixture("tests/fixtures/helix-keys.txt")
+  local mods = {}
+  for m in ("bold dim italic underlined slow_blink rapid_blink reversed hidden crossed_out"):gmatch("%S+") do
+    mods[m] = true
+  end
+  local curls = { line = true, curl = true, dashed = true, dotted = true, double_line = true }
+  for _, style in ipairs(styles) do
+    load(style)
+    local text = require("kissaten.extras").render("helix", style)
+    local theme = {}
+    for k, v in text:gmatch('\n"([%w.%-]+)" = ([^\n]+)') do
+      truthy(keys[k], style .. ": undocumented key " .. k)
+      theme[k] = v
+      for color in v:gmatch('"(#%x+)"') do
+        truthy(is_color(color), ("%s: %s color %s"):format(style, k, color))
+      end
+      for list in v:gmatch("modifiers = %[([^%]]*)%]") do
+        for m in list:gmatch('"([%w_]+)"') do
+          truthy(mods[m], ("%s: %s modifier %s"):format(style, k, m))
+        end
+      end
+      local curl = v:match('style = "([%w_]+)"')
+      truthy(not curl or curls[curl], ("%s: %s underline style %s"):format(style, k, tostring(curl)))
+    end
+    truthy(text:find('\nrainbow = %["#'), style .. ": rainbow brackets")
+    eq(theme["ui.selection"]:match('bg = "(#%x+)"'), hex(hl("Visual").bg), style .. ": selection as in Neovim")
+    eq(theme["function"]:match("#%x+"), hex(hl("@function").fg), style .. ": functions as in Neovim")
+    eq(theme["diff.plus"]:match("#%x+"), hex(hl("Added").fg), style .. ": added as in Neovim")
+  end
+end)
+
+test("zed: every key exists in Zed's theme content, colors match Neovim", function()
+  local style_keys = fixture("tests/fixtures/zed-keys.txt", "style")
+  local syntax_keys = fixture("tests/fixtures/zed-keys.txt", "syntax")
+  for _, style in ipairs(styles) do
+    load(style)
+    local family = vim.json.decode(require("kissaten.extras").render("zed", style))
+    eq(family["$schema"], "https://zed.dev/schema/themes/v0.2.0.json", style .. ": schema")
+    eq(#family.themes, 1, style .. ": one theme per file")
+    local theme = family.themes[1]
+    eq(theme.appearance, style == "morning" and "light" or "dark", style .. ": appearance")
+    for k, v in pairs(theme.style) do
+      if k == "syntax" then
+        for capture, hs in pairs(v) do
+          truthy(syntax_keys[capture], style .. ": unknown syntax capture " .. capture)
+          truthy(is_color(hs.color), ("%s: syntax %s color"):format(style, capture))
+          truthy(hs.font_style == nil or hs.font_style == "italic", style .. ": font_style " .. capture)
+        end
+      elseif k == "players" or k == "accents" then
+        truthy(#v > 0, style .. ": " .. k)
+      else
+        truthy(style_keys[k], style .. ": unknown style key " .. k)
+        truthy(is_color(v, true), ("%s: %s = %s"):format(style, k, tostring(v)))
+      end
+    end
+    local s = theme.style
+    eq(s["editor.background"], hex(hl("Normal").bg), style .. ": editor background")
+    eq(s["editor.active_line.background"], hex(hl("CursorLine").bg), style .. ": current line")
+    eq(s["element.selection_background"], hex(hl("Visual").bg), style .. ": selection")
+    eq(s["editor.diff_hunk.added.background"], hex(hl("DiffAdd").bg), style .. ": added lines")
+    eq(s.syntax["function"].color, hex(hl("@function").fg), style .. ": functions")
+  end
+end)
+
+test("yazi: a flavor folder per style, preset keys only, previews use the bat theme", function()
+  local keys = fixture("tests/fixtures/yazi-keys.txt")
+  local Extras = require("kissaten.extras")
+  local files = Extras.static("yazi")
+  eq(#Extras.files("yazi"), 0, "no flat per-style files")
+  for _, style in ipairs(styles) do
+    local dir = "kissaten-" .. style .. ".yazi/"
+    eq(files[dir .. "tmtheme.xml"], Extras.render("bat", style), style .. ": tmtheme.xml is the bat theme")
+    local flavor = assert(files[dir .. "flavor.toml"], style .. ": flavor.toml")
+    local section
+    for line in flavor:gmatch("[^\n]+") do
+      local sec = line:match("^%[(%w+)%]$")
+      local key = line:match("^([%w_]+) = ")
+      if sec then
+        section = sec
+      elseif key then
+        truthy(keys[section .. "." .. key], ("%s: unknown key %s.%s"):format(style, section, key))
+      end
+      for color in line:gmatch('"(#%x+)"') do
+        truthy(is_color(color), ("%s: color %s"):format(style, color))
+      end
+    end
+  end
+end)
+
 --- Color vision deficiency simulation (Machado, Oliveira & Fernandes 2009,
 --- severity 1.0) and OKLab distance x100, to check colors stay apart.
 local CVD = {

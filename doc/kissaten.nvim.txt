@@ -316,8 +316,9 @@ Lualine themes: `kissaten` (follows the active style) and
 ==============================================================================
 9. EXTRAS                                                     *kissaten-extras*
 
-Matching themes for Alacritty, bat, delta, eza, fzf, Ghostty, k9s, Kitty,
-lazygit, tmux, VS Code, WezTerm and Zettlr live in `extras/`, in all five
+Matching themes for Alacritty, bat, btop, delta, eza, foot, fzf, Ghostty,
+Helix, iTerm2, k9s, Kitty, lazygit, tmux, VS Code, WezTerm, Windows Terminal,
+Yazi, Zed and Zettlr live in `extras/`, in all five
 styles (k9s also has `_transparent` skins; `extras/vscode` is an installable
 VS Code extension). Install steps are in the README, with full guides for
 bat, eza, k9s, VS Code and Zettlr in `extras/<tool>/README.md`;
