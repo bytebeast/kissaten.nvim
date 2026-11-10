@@ -750,16 +750,20 @@ opts = { style = "midnight", light_style = "morning" }
 With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations only for plugins you actually have. Run `:checkhealth kissaten` to see which ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and `:terminal` are always covered.
 
 <details>
-<summary><b>All 55 integrations</b></summary>
+<summary><b>All 60 integrations</b></summary>
 
 | Plugin | Module |
 | --- | --- |
 | [aerial.nvim](https://github.com/stevearc/aerial.nvim) | `aerial` |
 | [alpha-nvim](https://github.com/goolord/alpha-nvim) | `alpha` |
+| [avante.nvim](https://github.com/yetone/avante.nvim) | `avante` |
 | [barbar.nvim](https://github.com/romgrk/barbar.nvim) | `barbar` |
 | [blink.cmp](https://github.com/Saghen/blink.cmp) | `blink` |
 | [blink.pairs](https://github.com/saghen/blink.pairs) | `blink-pairs` |
 | [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) (also under its old name, nvim-bufferline.lua) | `bufferline` |
+| [codecompanion.nvim](https://github.com/olimorris/codecompanion.nvim) | `codecompanion` |
+| [dropbar.nvim](https://github.com/Bekaboo/dropbar.nvim) | `dropbar` |
+| [markview.nvim](https://github.com/OXY2DEV/markview.nvim) | `markview` |
 | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | `cmp` |
 | [codediff.nvim](https://github.com/esmuellert/codediff.nvim) | `codediff` |
 | [copilot.lua / copilot.vim](https://github.com/zbirenbaum/copilot.lua) | `copilot` |
@@ -791,6 +795,7 @@ With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations
 | [noice.nvim](https://github.com/folke/noice.nvim) | `noice` |
 | [nvim-notify](https://github.com/rcarriga/nvim-notify) | `notify` |
 | [octo.nvim](https://github.com/pwntester/octo.nvim) | `octo` |
+| [oil.nvim](https://github.com/stevearc/oil.nvim) | `oil` |
 | [outline.nvim](https://github.com/hedyhli/outline.nvim) | `outline` |
 | [overseer.nvim](https://github.com/stevearc/overseer.nvim) | `overseer` |
 | [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim) | `rainbow` |
@@ -822,6 +827,7 @@ A few plugins draw some colors themselves; these work as-is, and one option hand
 | virt-column.nvim | draws with `NonText` by default | `highlight = "VirtColumn"` (the indent-guide color) |
 | codediff.nvim | derives its line/character diff colors from kissaten's `DiffAdd`/`DiffDelete` | nothing to do; everything else (signs, explorer, help) is themed |
 | hlargs.nvim | its `highlight` option replaces the group outright | leave `highlight` unset; arguments then match parameters |
+| tiny-inline-diagnostic.nvim | rebuilds its colors from kissaten's `Diagnostic*`, `CursorLine` and `Normal` on every colorscheme load (so `colorblind` applies) | nothing to do |
 
 </details>
 

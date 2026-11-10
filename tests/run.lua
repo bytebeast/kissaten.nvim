@@ -1418,6 +1418,24 @@ local PLUGIN_GROUPS = {
   ["copilot.lua"] = { "CopilotSuggestion" },
   ["nvim-ufo"] = { "UfoFoldedBg", "UfoCursorFoldedLine" },
   ["virt-column.nvim"] = { "VirtColumn" },
+  ["oil.nvim"] = { "OilHidden", "OilLinkTarget", "OilCreate", "OilDelete", "OilMove" },
+  ["dropbar.nvim"] = { "DropBarIconUISeparator", "DropBarIconKindDefault", "DropBarIconKindFunction" },
+  ["markview.nvim"] = {
+    "MarkviewPalette1",
+    "MarkviewPalette1Fg",
+    "MarkviewPalette6Bg",
+    "MarkviewCode",
+    "MarkviewBlockQuoteError",
+    "MarkviewCheckboxChecked",
+  },
+  ["avante.nvim"] = {
+    "AvanteTitle",
+    "AvanteSuggestion",
+    "AvanteConflictCurrent",
+    "AvanteStateSpinnerGenerating",
+    "AvanteLogoLine1",
+  },
+  ["codecompanion.nvim"] = { "CodeCompanionChatTokens", "CodeCompanionVirtualText", "CodeCompanionDiffTextDelete" },
 }
 
 test("integrations: every supported plugin's groups are themed on every style", function()
@@ -1429,6 +1447,32 @@ test("integrations: every supported plugin's groups are themed on every style", 
         truthy(h.fg or h.bg or h.sp, ("%s: %s (%s) has no colors"):format(style, name, plugin))
       end
     end
+  end
+  reset()
+end)
+
+test("integrations: oil, dropbar, markview, avante and codecompanion fix what their defaults get wrong", function()
+  for _, style in ipairs(styles) do
+    -- their defaults link quiet text to Comment, which subtle_comments fades
+    load(style, { plugins = { all = true }, subtle_comments = 1 })
+    local c = require("kissaten").colors(style)
+    for _, name in ipairs({ "OilHidden", "OilLinkTarget", "DropBarIconUISeparator", "CodeCompanionChatTokens" }) do
+      local r = Util.contrast(hex(hl(name).fg), c.bg)
+      truthy(r >= 2.5, ("%s: %s fades with comments (%.2f:1)"):format(style, name, r))
+    end
+    -- avante's grey logo vanished on the light style
+    for i = 1, 14 do
+      local r = Util.contrast(hex(hl("AvanteLogoLine" .. i).fg), c.bg)
+      truthy(r >= 2.5, ("%s: AvanteLogoLine%d at %.2f:1"):format(style, i, r))
+    end
+    -- meaning follows the roles (and so `colorblind`), not heading slots
+    load(style, { plugins = { all = true }, colorblind = "red-green" })
+    c = require("kissaten").colors(style)
+    eq(hex(hl("MarkviewBlockQuoteError").fg), c.diag.error, style .. ": markview error callout")
+    eq(hex(hl("MarkviewBlockQuoteOk").fg), c.diag.ok, style .. ": markview ok callout")
+    eq(hex(hl("OilCreate").fg), c.git.add, style .. ": oil create")
+    eq(hex(hl("OilDelete").fg), c.git.delete, style .. ": oil delete")
+    eq(hl("CodeCompanionDiffTextDelete").bg, hl("DiffDelete").bg, style .. ": codecompanion deleted text shows")
   end
   reset()
 end)

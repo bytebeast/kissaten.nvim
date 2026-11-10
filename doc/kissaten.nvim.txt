@@ -289,7 +289,7 @@ integration is loaded. Force one on or off by module or repo name: >lua
 <
 Run |:checkhealth| kissaten to see which integrations are active.
 
-55 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
+60 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
 Treesitter, built-in LSP (nvim-lspconfig included) and lualine are always
 covered. Renamed and companion repos are recognized too (nvim-bufferline.lua,
 telescope-file-browser.nvim).
