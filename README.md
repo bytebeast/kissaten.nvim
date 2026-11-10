@@ -900,9 +900,9 @@ nvim --headless -u NONE -i NONE -l scripts/build_extras.lua
 # format
 stylua lua plugin colors tests scripts/build_extras.lua
 
-# screenshots: drives a real Neovim through its UI protocol (needs pynvim, pillow, a Nerd Font)
-python3 scripts/screenshot.py --scenario my_scenario.lua --out shots --frame
-python3 scripts/make_assets.py --shots shots
+# screenshots and the images built from them: drives a real LazyVim (borrowed offline from
+# your install) through Neovim's UI protocol (needs uv, node, JetBrains Mono Nerd Font)
+scripts/screenshots/run.sh
 
 # social preview background: a made-up siphon still life rendered in Blender (pip install bpy)
 python3 scripts/social_scene.py render.png 1280 128
