@@ -40,7 +40,7 @@ M.colorblind = {
     diff = { add = "blue", change = "teal", delete = "orange" },
     diag = {
       dark = { error = "red", warn = "yellow", ok = "blue", info = "lavender", hint = "sky" },
-      light = { error = "pink", warn = "orange", ok = "blue", info = "cyan", hint = "maroon" },
+      light = { error = "pink", warn = "orange", ok = "blue", info = "cyan", hint = "purple" },
     },
   },
   ["blue-yellow"] = {
@@ -57,6 +57,14 @@ M.STATUS_SATURATION = 0.7
 --- Diff backgrounds mix in a little more color in colorblind mode, so added
 --- and deleted lines stay as far apart as they are for normal color vision.
 M.COLORBLIND_DIFF_BOOST = 1.25
+
+--- Syntax roles that are meant to recede, so they don't set how strong the
+--- cursorline, selection and diff tints may be (see the cap in M.setup).
+M.SOFT_ROLES = { comment = true, deprecated = true, tag_delimiter = true, string_doc = true }
+
+--- Changed text (DiffText) is at least this much stronger than its changed
+--- line (DiffChange), in contrast against the editor.
+M.DIFF_TEXT_GAP = 1.15
 
 --- How much stronger write references are than reads (contrast factor).
 M.WRITE_STRENGTH = 1.3
@@ -451,7 +459,48 @@ function M.setup(opts)
     delete = Util.tint(hue.delete, c.bg, diff_alpha),
     change = Util.tint(hue.change, c.bg, (light and 0.14 or 0.12) * boost),
     text = Util.tint(hue.change, c.bg, (light and 0.3 or 0.32) * boost),
+    text_add = Util.tint(c.git.add, c.bg, 0.32), -- added text inside a changed line (inline diff)
   }
+
+  -- Code stays AA on the backgrounds it's read on. Text and these tints sit
+  -- on the same side of `bg`, so code on a tint has exactly (code contrast) /
+  -- (tint contrast): no tint may be stronger than the weakest code color
+  -- over 4.5 allows. Never below 1.1, so an `on_palette` with weak inks
+  -- fades the tints instead of erasing them.
+  local weakest = math.huge
+  for role, color in pairs(c.syn) do
+    if not M.SOFT_ROLES[role] and Util.is_hex(color) then
+      weakest = math.min(weakest, Util.contrast(color, c.bg))
+    end
+  end
+  local cap = math.max(1.1, weakest / 4.5)
+  -- Lightness moves to the cap and chroma stays, so capped tints keep their
+  -- color (and stay apart from each other, which colorblind diffs rely on).
+  -- match_contrast lands just above its target, and one hex step near a dark
+  -- bg is worth more than 1% contrast: then bisect for the side below it.
+  local function fit(color)
+    if Util.contrast(color, c.bg) <= cap then
+      return color
+    end
+    color = Util.match_contrast(color, c.bg, cap)
+    local lo, hi = 0, 1 -- amount of `color` kept; `lo` is always within the cap
+    for _ = 1, 24 do
+      local mid = (lo + hi) / 2
+      if Util.contrast(Util.blend(color, c.bg, mid), c.bg) <= cap then
+        lo = mid
+      else
+        hi = mid
+      end
+    end
+    return Util.blend(color, c.bg, lo)
+  end
+  c.ui.bg_cursorline = fit(c.ui.bg_cursorline)
+  c.ui.bg_visual = fit(c.ui.bg_visual)
+  for kind, color in pairs(c.diff) do
+    c.diff[kind] = fit(color)
+  end
+  -- the cap can pull changed text down to its line's tint: keep them apart
+  c.diff.change = Util.reduce_contrast(c.diff.change, c.bg, Util.contrast(c.diff.text, c.bg) / M.DIFF_TEXT_GAP)
 
   -- Rainbow order is chosen so neighbours never share a hue family.
   c.rainbow = { c.blue, c.yellow, c.green, c.teal, c.purple, c.orange, c.pink, c.cyan }

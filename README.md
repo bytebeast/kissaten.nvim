@@ -45,7 +45,7 @@ Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color 
 Tokyonight and Catppuccin are both excellent, and kissaten borrows from each on purpose. It tries to fix the things people most often complain about:
 
 - **Readable comments and line numbers.** Tokyonight's comments sit at 2.4 to 3.1:1 contrast. Kissaten keeps comments at 4.3:1 or better and line numbers at 2.6 to 2.9:1, so they're quieter than code but never invisible.
-- **A light style that actually passes.** Every syntax role in `kissaten-morning` meets WCAG AA (4.5:1). Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
+- **A light style that actually passes.** Every syntax role in `kissaten-morning` is at 6:1 or better, so code stays above WCAG AA (4.5:1) even on the cursorline, the selection and diff backgrounds, in every style. Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
 - **Color carries meaning.** Structure (keywords, functions, operators) is cool. Data (strings, numbers, types) is warm. Parameters get their own hue, distinct from both numbers and builtin variables (checked with CIEDE2000), so `f(x, 42, self)` reads as three different things at a glance.
 - **Color vision support.** `colorblind = "red-green"` or `"blue-yellow"` remaps the colors that carry meaning on their own (diff and git status, diagnostics) to pairs chosen by simulating each type of color blindness on every style. With the default colors, deuteranopes see "added" and "changed" as the same yellow; in red-green mode they're blue and teal.
 - **JetBrains-style semantic highlighting.** `rainbow_variables` gives every local variable and parameter its own color, the way JetBrains IDEs do, from a set tuned per style so every color meets WCAG AA. Optional styles for `readonly`, `static`, global and mutable symbols use what your language server knows. And symbol references show reads and writes in different colors.
@@ -60,10 +60,10 @@ Ratios against each theme's own `Normal` background, read from the live highligh
 
 | Tier | Theme | Lowest syntax role | Comments | Line numbers |
 | --- | --- | --- | --- | --- |
-| Light | **kissaten-morning** | **4.6** | **4.3** | **2.6** |
+| Light | **kissaten-morning** | **6.0** | **4.3** | **2.6** |
 | | tokyonight-day | 3.1 | 2.5 | 1.7 |
 | | catppuccin-latte | 2.3 | 3.5 | 1.6 |
-| Mid | **kissaten-afternoon** | **5.9** | 4.5 | **2.9** |
+| Mid | **kissaten-afternoon** | **6.3** | 4.5 | **2.9** |
 | | tokyonight-storm | 4.4 | 2.4 | 1.5 |
 | | catppuccin-frappe | 5.3 | 4.5 | 1.7 |
 | Dark | **kissaten-evening** | **6.9** | 4.5 | **2.8** |

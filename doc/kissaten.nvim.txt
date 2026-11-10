@@ -18,8 +18,9 @@ CONTENTS                                                    *kissaten-contents*
 
 Kissaten combines Tokyonight's crisp cool backgrounds and clear structure
 colors with Catppuccin's softer warm accents and layered surfaces. Every
-syntax color is checked against WCAG AA (4.5:1) in every style, and comments
-are kept at 4:1 or better so they stay readable on any screen.
+syntax color is checked against WCAG AA (4.5:1) in every style, also on the
+cursorline, the selection and diff backgrounds, and comments are kept at 4:1
+or better so they stay readable on any screen.
 
 Requires Neovim 0.9 or newer. Tested on 0.9, 0.10, 0.11 and 0.12.
 

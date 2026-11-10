@@ -23,7 +23,7 @@
   line-numbers-plus-style = "#b5e08d"
   minus-style = syntax "#453549"
   minus-emph-style = syntax "#69485e"
-  plus-style = syntax "#3a4343"
+  plus-style = syntax "#394142"
   plus-emph-style = syntax "#546453"
   map-styles = bold purple => syntax "#323650", bold cyan => syntax "#272a40"
   blame-palette = "#1f2133" "#191a2a" "#272a40"

@@ -134,6 +134,7 @@
 ---@field delete string
 ---@field change string
 ---@field text string
+---@field text_add string
 
 ---@class kissaten.TerminalColors
 ---@field black string

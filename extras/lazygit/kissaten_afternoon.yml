@@ -6,7 +6,7 @@ gui:
   nerdFontsVersion: "3"
   theme:
     activeBorderColor:
-      - "#84a8f8"
+      - "#89aefe"
       - bold
     inactiveBorderColor:
       - "#4a506b"
@@ -14,7 +14,7 @@ gui:
       - "#f3a06c"
       - bold
     optionsTextColor:
-      - "#84a8f8"
+      - "#89aefe"
     selectedLineBgColor:
       - "#31354b"
     inactiveViewSelectedLineBgColor:
@@ -28,7 +28,7 @@ gui:
     markedBaseCommitBgColor:
       - "#3c4159"
     unstagedChangesColor:
-      - "#ef8aa6"
+      - "#f690ac"
     defaultFgColor:
       - "#cdd5f6"
   authorColors:

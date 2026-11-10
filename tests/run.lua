@@ -836,6 +836,46 @@ test("window separators are as visible as indent guides on every style", functio
   end
 end)
 
+test("code stays AA on cursorline, selection and diff backgrounds; the tints stay visible", function()
+  local soft = { comment = true, deprecated = true, tag_delimiter = true, string_doc = true }
+  local combos = {
+    {},
+    { contrast = "high" },
+    { colorblind = "red-green" },
+    { colorblind = "blue-yellow" },
+    { saturation = 0.3 },
+    { transparent = true },
+  }
+  for _, style in ipairs(styles) do
+    for _, opts in ipairs(combos) do
+      local label = style .. " " .. vim.inspect(opts, { newline = "", indent = "" })
+      load(style, opts)
+      local c = require("kissaten").colors()
+      local bgs = {}
+      for _, group in ipairs({
+        "CursorLine",
+        "Visual",
+        "DiffAdd",
+        "DiffDelete",
+        "DiffChange",
+        "DiffText",
+        "DiffTextAdd",
+      }) do
+        bgs[group] = hex(hl(group).bg)
+        truthy(Util.contrast(bgs[group], c.bg) >= 1.1, ("%s: %s barely visible"):format(label, group))
+        for role, color in pairs(c.syn) do
+          if not soft[role] then
+            local r = Util.contrast(color, bgs[group])
+            truthy(r >= 4.5, ("%s: syn.%s on %s is %.2f:1"):format(label, role, group, r))
+          end
+        end
+      end
+      local text, change = Util.contrast(bgs.DiffText, c.bg), Util.contrast(bgs.DiffChange, c.bg)
+      truthy(text / change >= 1.1, ("%s: DiffText %.3f too close to DiffChange %.3f"):format(label, text, change))
+    end
+  end
+end)
+
 test("rainbow: vivid, dimmed and mono brackets", function()
   for _, style in ipairs(styles) do
     local vivid = colors(style)

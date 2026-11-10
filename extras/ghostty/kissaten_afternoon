@@ -3,18 +3,18 @@
 # Copy to ~/.config/ghostty/themes/ and set `theme = <file name>`
 
 palette = 0=#3c4159
-palette = 1=#ef8aa6
+palette = 1=#f690ac
 palette = 2=#a9d881
 palette = 3=#e8c47e
-palette = 4=#84a8f8
+palette = 4=#89aefe
 palette = 5=#f4b8e4
 palette = 6=#7fd3c4
 palette = 7=#b0b9dd
 palette = 8=#6a7194
-palette = 9=#f59eb6
+palette = 9=#faa5bd
 palette = 10=#b6e291
 palette = 11=#efcf90
-palette = 12=#9ab8fc
+palette = 12=#a2bfff
 palette = 13=#d4b5fa
 palette = 14=#93dbf6
 palette = 15=#cdd5f6
@@ -23,6 +23,6 @@ background = #282b3e
 foreground = #cdd5f6
 cursor-color = #cdd5f6
 cursor-text = #282b3e
-selection-background = #3c4767
+selection-background = #374260
 selection-foreground = #cdd5f6
 split-divider-color = #3c4159
