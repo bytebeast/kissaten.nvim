@@ -285,8 +285,13 @@ function M.setup(opts)
     whitespace = Util.blend(c.overlay0, c.bg, 0.7),
     indent = Util.blend(c.overlay0, c.bg, 0.45),
     indent_scope = Util.blend(c.lavender, c.bg, 0.65),
-    border = light and c.surface2 or c.crust,
+    border = c.surface2,
   }
+  -- Splits as visible as indent guides. On dark styles `crust` sits within
+  -- ~1.1:1 of the editor, which left window separators all but invisible.
+  if not light then
+    c.ui.border = c.ui.indent
+  end
   -- `accent`: titles, matches, badges and the normal-mode statusline.
   local accent = c[opts.accent] or c.blue
   c.ui.accent = accent

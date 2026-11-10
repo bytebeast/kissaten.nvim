@@ -59,7 +59,7 @@ function M.workbench(c)
   local bg, mantle, crust = c.bg, ui.bg_sidebar, c.crust
   local accent, on_badge = ui.accent, ui.on_badge
   local float, popup = ui.bg_float, ui.bg_popup
-  local border = ui.border -- the crust line between panes, as in Neovim
+  local border = ui.border -- the line between panes, as in Neovim
   local b = c.brackets
   local t = c.terminal
   local function tint(color, amount)

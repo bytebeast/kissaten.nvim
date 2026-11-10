@@ -729,6 +729,8 @@ test("colorblind: highlight groups and plugins follow the remapped roles", funct
   eq(hex(hl("MasonError").fg), c.diag.error, "mason uses the diagnostic role")
   eq(hex(hl("OctoStateOpen").fg), c.diag.ok, "octo open pill")
   eq(hex(hl("NeotestPassed").fg), c.diag.ok, "neotest passed")
+  eq(hex(hl("diffOldFile").fg), c.git.delete, "diff old file header")
+  eq(hex(hl("diffNewFile").fg), c.git.add, "diff new file header")
   -- syntax keeps its colors: strings are still green
   eq(c.syn.string, c.green, "syntax untouched")
   -- on_colors still has the last word
@@ -822,6 +824,15 @@ test("badges: text on every colored badge meets 4.5:1 in every style", function(
       end
     end
     truthy(n > 30, style .. ": found the badges")
+  end
+end)
+
+test("window separators are as visible as indent guides on every style", function()
+  for _, style in ipairs(styles) do
+    load(style)
+    local bg = hex(hl("Normal").bg)
+    local sep = Util.contrast(hex(hl("WinSeparator").fg), bg)
+    truthy(sep >= 1.4, ("%s: WinSeparator at %.2f:1"):format(style, sep))
   end
 end)
 
