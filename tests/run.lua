@@ -183,6 +183,19 @@ test("invalid options warn and fall back instead of erroring", function()
   eq(opts.transparent, false)
 end)
 
+test("invalid `styles` attribute tables warn instead of erroring", function()
+  for _, key in ipairs({ "comments", "keywords", "functions", "variables", "types", "strings", "constants" }) do
+    for _, bad in ipairs({ "italic", true }) do
+      reset()
+      require("kissaten").setup({ styles = { [key] = bad } })
+      local ok, err = pcall(vim.cmd.colorscheme, "kissaten")
+      truthy(ok, ("styles.%s = %s: %s"):format(key, vim.inspect(bad), tostring(err)))
+      truthy(#warnings >= 1, ("styles.%s = %s should warn"):format(key, vim.inspect(bad)))
+      eq(require("kissaten.config").options.styles[key], require("kissaten.config").defaults.styles[key])
+    end
+  end
+end)
+
 test("'background' switching swaps variants and remembers them", function()
   reset()
   require("kissaten").setup({})
@@ -193,6 +206,26 @@ test("'background' switching swaps variants and remembers them", function()
   eq(vim.g.colors_name, "kissaten-midnight", "returns to the last dark variant")
   vim.cmd.colorscheme("kissaten")
   eq(vim.g.colors_name, "kissaten-midnight")
+end)
+
+test("'background' switching after setup() works when starting light", function()
+  reset()
+  require("kissaten").setup({ style = "midnight" })
+  vim.o.background = "light"
+  vim.cmd.colorscheme("kissaten")
+  eq(vim.g.colors_name, "kissaten-morning")
+  vim.o.background = "dark"
+  eq(vim.g.colors_name, "kissaten-midnight", "configured dark style")
+  eq(vim.o.background, "dark")
+end)
+
+test("load() and colors() never change the configured options", function()
+  reset()
+  require("kissaten").setup({ style = "midnight" })
+  vim.cmd.colorscheme("kissaten-afternoon")
+  require("kissaten").colors("graveyard")
+  require("kissaten.lualine").theme("morning")
+  eq(require("kissaten.config").options.style, "midnight")
 end)
 
 test("plugin selection: explicit on/off by module or repo name", function()
