@@ -559,7 +559,7 @@ opts = { rainbow_variables = true }
 Every local variable and parameter gets a color picked from its name, so `sum` is the same color everywhere it appears and `sum`, `raw` and `cart` are easy to tell apart. Properties, functions and types keep their usual colors, and library globals like `console` are skipped.
 
 - **Needs** an LSP that sends semantic tokens: vtsls, rust-analyzer, clangd, LuaLS, basedpyright, gopls (with its `semanticTokens = true` setting, which LazyVim's Go extra turns on), and others. Treesitter alone doesn't know which names are variables.
-- **12 colors**, evenly spaced hues in two lightness tiers, tuned to each style's own accents. All meet WCAG AA, and the nearest two are at least 6.5 apart in OKLab (3 is about the smallest difference you can see side by side).
+- **12 colors**, evenly spaced hues in two lightness tiers, tuned to each style's own accents. All meet WCAG AA on the editor background and on the cursorline (the dimmer tier can still dip below it on the selection), and the nearest two are at least 6.5 apart in OKLab (3 is about the smallest difference you can see side by side).
 - **With `colorblind`**, it uses 6 colors on the hues that type keeps apart (blue and yellow for red-green, red and teal for blue-yellow), at three lightness steps.
 - Two different names can land on the same color, since 12 colors cover any number of names. JetBrains IDEs share this limit.
 - `:checkhealth kissaten` shows whether it's active.

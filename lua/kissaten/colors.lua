@@ -109,26 +109,29 @@ end
 ---@param c kissaten.Colors|kissaten.Palette
 ---@param colorblind? false|"red-green"|"blue-yellow"
 ---@return string[]
-function M.variable_colors(c, colorblind)
+function M.variable_colors(c, colorblind, floor)
+  floor = floor or 4.5
   local chromas, ratios = {}, {}
   for _, key in ipairs(ACCENTS) do
     local _, a, b = Util.to_oklab(c[key])
     chromas[#chromas + 1] = math.sqrt(a * a + b * b)
     ratios[#ratios + 1] = Util.contrast(c[key], c.bg)
   end
-  local chroma, ratio = median(chromas), math.max(4.5, median(ratios))
+  local chroma, ratio = median(chromas), math.max(floor, median(ratios))
   local fg_ratio = Util.contrast(c.fg, c.bg)
   -- the second tier goes toward the background where there's room (dark
-  -- styles), otherwise away from it (the light style's inks sit near 4.5)
+  -- styles), otherwise it stops at the floor or goes away from the background,
+  -- whichever leaves the wider gap (stepping away can land on plain text)
   local function tier(k) -- k = 0, 1, 2 steps away from the main tier
     if k == 0 then
       return ratio
     end
     local down = ratio * M.VARIABLE_TIER ^ k
-    if down >= 4.5 then
+    if down >= floor then
       return down
     end
-    return math.min(ratio / M.VARIABLE_TIER ^ k, fg_ratio * 0.95)
+    local up = math.min(ratio / M.VARIABLE_TIER ^ k, fg_ratio * 0.95)
+    return ratio / floor >= up / ratio and floor or up
   end
   local L = Util.to_oklab(c.fg)
   local function color(hue, target)
@@ -140,7 +143,7 @@ function M.variable_colors(c, colorblind)
   if axis then
     -- three lightness steps spread over the whole readable range, from just
     -- above AA to just below the text color
-    local lo, hi = 4.6, fg_ratio * 0.95
+    local lo, hi = floor + 0.1, fg_ratio * 0.95
     for _, target in ipairs({ lo, math.sqrt(lo * hi), hi }) do
       for _, hue in ipairs(axis) do
         out[#out + 1] = color(hue, target)
@@ -328,16 +331,6 @@ function M.setup(opts)
   c.ui.bg_read = c.surface1
   c.ui.bg_write = M.tint_to(c.pink, c.bg, Util.contrast(c.surface1, c.bg) * M.WRITE_STRENGTH)
 
-  -- `rainbow_variables`: like status colors, per-variable colors carry
-  -- meaning, so they read from the status palette (hue kept under saturation)
-  if opts.rainbow_variables then
-    local base = { bg = c.bg, fg = c.fg }
-    for _, key in ipairs(ACCENTS) do
-      base[key] = s[key]
-    end
-    c.variables = M.variable_colors(base, opts.colorblind)
-  end
-
   -- `borderless`: picker panels told apart by shade instead of lines (the
   -- Kanagawa recipe): prompt a step lighter than the editor, list on the
   -- usual float shade, preview the deepest. Always solid, even with
@@ -501,6 +494,19 @@ function M.setup(opts)
   end
   -- the cap can pull changed text down to its line's tint: keep them apart
   c.diff.change = Util.reduce_contrast(c.diff.change, c.bg, Util.contrast(c.diff.text, c.bg) / M.DIFF_TEXT_GAP)
+
+  -- `rainbow_variables`: like status colors, per-variable colors carry
+  -- meaning, so they read from the status palette (hue kept under saturation).
+  -- None goes below AA on the cursorline. The selection is left out: its tint
+  -- sits at the cap, and clearing it would squeeze the colors together.
+  if opts.rainbow_variables then
+    local base = { bg = c.bg, fg = c.fg }
+    for _, key in ipairs(ACCENTS) do
+      base[key] = s[key]
+    end
+    local floor = math.max(4.5, 4.5 * Util.contrast(c.ui.bg_cursorline, c.bg))
+    c.variables = M.variable_colors(base, opts.colorblind, floor)
+  end
 
   -- Rainbow order is chosen so neighbours never share a hue family.
   c.rainbow = { c.blue, c.yellow, c.green, c.teal, c.purple, c.orange, c.pink, c.cyan }

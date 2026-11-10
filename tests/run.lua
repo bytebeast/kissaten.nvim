@@ -1086,6 +1086,8 @@ test("rainbow_variables: distinct, readable colors on every style", function()
     eq(#c.variables, C.VARIABLE_COLORS, style .. ": 12 colors")
     for i, color in ipairs(c.variables) do
       truthy(Util.contrast(color, c.bg) >= 4.5, ("%s: variable %d below AA"):format(style, i))
+      local cl = Util.contrast(color, c.ui.bg_cursorline)
+      truthy(cl >= 4.5, ("%s: variable %d at %.2f:1 on the cursorline"):format(style, i, cl))
       truthy(distance(color, c.fg) >= 4, ("%s: variable %d too close to plain text"):format(style, i))
     end
     local list = {}
@@ -1104,6 +1106,10 @@ test("rainbow_variables: distinct, readable colors on every style", function()
       list = {}
       for i, color in ipairs(cb.variables) do
         truthy(Util.contrast(color, cb.bg) >= 4.5, ("%s %s: variable %d below AA"):format(style, mode, i))
+        truthy(
+          Util.contrast(color, cb.ui.bg_cursorline) >= 4.5,
+          ("%s %s: variable %d below AA on the cursorline"):format(style, mode, i)
+        )
         list[i] = { "v" .. i, color }
       end
       d, w = separation(list, kinds)
