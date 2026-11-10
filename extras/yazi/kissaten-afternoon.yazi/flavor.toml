@@ -1,0 +1,105 @@
+# Kissaten Afternoon: https://github.com/bytebeast/kissaten.nvim
+
+[mgr]
+cwd = { fg = "#7fd3c4" }
+find_keyword = { fg = "#e8c47e", bold = true, italic = true, underline = true }
+find_position = { fg = "#f4b8e4", bg = "reset", bold = true, italic = true }
+symlink_target = { fg = "#7fd3c4", italic = true }
+marker_copied = { fg = "#a9d881", bg = "#a9d881" }
+marker_cut = { fg = "#f690ac", bg = "#f690ac" }
+marker_marked = { fg = "#7fd3c4", bg = "#7fd3c4" }
+marker_selected = { fg = "#e8c47e", bg = "#e8c47e" }
+count_copied = { fg = "#1a1c2a", bg = "#a9d881", bold = true }
+count_cut = { fg = "#1a1c2a", bg = "#f690ac", bold = true }
+count_selected = { fg = "#1a1c2a", bg = "#e8c47e", bold = true }
+border_style = { fg = "#464b65" }
+
+[tabs]
+active = { fg = "#1a1c2a", bg = "#89aefe", bold = true }
+inactive = { fg = "#8890b6", bg = "#212435" }
+
+[mode]
+normal_main = { fg = "#1a1c2a", bg = "#89aefe", bold = true }
+normal_alt = { fg = "#89aefe", bg = "#31354b" }
+select_main = { fg = "#1a1c2a", bg = "#c6a0f6", bold = true }
+select_alt = { fg = "#c6a0f6", bg = "#31354b" }
+unset_main = { fg = "#1a1c2a", bg = "#f690ac", bold = true }
+unset_alt = { fg = "#f690ac", bg = "#31354b" }
+
+[indicator]
+current = { bg = "#3c4159", bold = true }
+
+[status]
+perm_sep = { fg = "#6a7194" }
+perm_type = { fg = "#89aefe" }
+perm_read = { fg = "#e8c47e" }
+perm_write = { fg = "#f690ac" }
+perm_exec = { fg = "#a9d881" }
+progress_label = { fg = "#cdd5f6", bold = true }
+progress_normal = { fg = "#89aefe", bg = "#3c4159" }
+progress_error = { fg = "#f690ac", bg = "#3c4159" }
+
+[which]
+border = { fg = "#5d73a8" }
+mask = { bg = "#212435" }
+cand = { fg = "#7fd3c4" }
+rest = { fg = "#6a7194" }
+desc = { fg = "#c6a0f6" }
+separator_style = { fg = "#6a7194" }
+
+[confirm]
+border = { fg = "#5d73a8" }
+title = { fg = "#89aefe", bold = true }
+btn_yes = { fg = "#1a1c2a", bg = "#89aefe", bold = true }
+btn_no = { fg = "#b0b9dd" }
+
+[spot]
+border = { fg = "#5d73a8" }
+title = { fg = "#89aefe", bold = true }
+tbl_col = { fg = "#89aefe" }
+tbl_cell = { bg = "#3c4159" }
+
+[notify]
+title_info = { fg = "#abd6ee" }
+title_warn = { fg = "#e8c47e" }
+title_error = { fg = "#f690ac" }
+
+[pick]
+border = { fg = "#5d73a8" }
+active = { fg = "#89aefe", bold = true }
+
+[input]
+border = { fg = "#5d73a8" }
+title = { fg = "#89aefe" }
+value = { fg = "#cdd5f6" }
+hint = { fg = "#8890b6", italic = true }
+selected = { bg = "#374260" }
+
+[cmp]
+border = { fg = "#5d73a8" }
+active = { bg = "#3c4159", bold = true }
+
+[tasks]
+border = { fg = "#5d73a8" }
+title = { fg = "#89aefe" }
+hovered = { fg = "#89aefe", bold = true }
+
+[help]
+border = { fg = "#5d73a8" }
+chord = { fg = "#7fd3c4" }
+hovered = { bg = "#3c4159", bold = true }
+
+[filetype]
+rules = [
+	{ mime = "**/image/*", fg = "#e8c47e" },
+	{ mime = "**/{audio,video}/*", fg = "#c6a0f6" },
+	{ mime = "**/application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#f690ac" },
+	{ mime = "**/application/{pdf,doc,rtf}", fg = "#7fd3c4" },
+	{ mime = "vfs/{absent,stale}", fg = "#6a7194" },
+	{ url = "*", is = "orphan", fg = "#f690ac" },
+	{ url = "*", is = "exec", fg = "#a9d881" },
+	{ url = "*", is = "dummy", fg = "#f690ac" },
+	{ url = "*/", is = "dummy", fg = "#f690ac" },
+	{ url = "*", fg = "#cdd5f6" },
+	{ url = "*/", fg = "#89aefe" },
+]

@@ -1,0 +1,23 @@
+{
+  "name": "Kissaten Evening",
+  "background": "#1f2133",
+  "foreground": "#cad3f5",
+  "cursorColor": "#cad3f5",
+  "selectionBackground": "#353f60",
+  "black": "#323650",
+  "red": "#f28fad",
+  "green": "#b5e08d",
+  "yellow": "#ebcf8c",
+  "blue": "#82aaff",
+  "purple": "#f5bde6",
+  "cyan": "#7fd8c8",
+  "white": "#aeb7dc",
+  "brightBlack": "#5f668d",
+  "brightRed": "#f7a3bd",
+  "brightGreen": "#c2e89e",
+  "brightYellow": "#f2d99f",
+  "brightBlue": "#9cbbff",
+  "brightPurple": "#d4c0ff",
+  "brightCyan": "#a3e4ff",
+  "brightWhite": "#cad3f5"
+}

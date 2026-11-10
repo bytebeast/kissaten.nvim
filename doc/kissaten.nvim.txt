@@ -18,8 +18,9 @@ CONTENTS                                                    *kissaten-contents*
 
 Kissaten combines Tokyonight's crisp cool backgrounds and clear structure
 colors with Catppuccin's softer warm accents and layered surfaces. Every
-syntax color is checked against WCAG AA (4.5:1) in every style, and comments
-are kept at 4:1 or better so they stay readable on any screen.
+syntax color is checked against WCAG AA (4.5:1) in every style, also on the
+cursorline, the selection and diff backgrounds, and comments are kept at 4:1
+or better so they stay readable on any screen.
 
 Requires Neovim 0.9 or newer. Tested on 0.9, 0.10, 0.11 and 0.12.
 
@@ -288,7 +289,7 @@ integration is loaded. Force one on or off by module or repo name: >lua
 <
 Run |:checkhealth| kissaten to see which integrations are active.
 
-55 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
+60 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
 Treesitter, built-in LSP (nvim-lspconfig included) and lualine are always
 covered. Renamed and companion repos are recognized too (nvim-bufferline.lua,
 telescope-file-browser.nvim).
@@ -315,8 +316,9 @@ Lualine themes: `kissaten` (follows the active style) and
 ==============================================================================
 9. EXTRAS                                                     *kissaten-extras*
 
-Matching themes for Alacritty, bat, delta, eza, fzf, Ghostty, k9s, Kitty,
-lazygit, tmux, VS Code, WezTerm and Zettlr live in `extras/`, in all five
+Matching themes for Alacritty, bat, btop, delta, eza, foot, fzf, Ghostty,
+Helix, iTerm2, k9s, Kitty, lazygit, tmux, VS Code, WezTerm, Windows Terminal,
+Yazi, Zed and Zettlr live in `extras/`, in all five
 styles (k9s also has `_transparent` skins; `extras/vscode` is an installable
 VS Code extension). Install steps are in the README, with full guides for
 bat, eza, k9s, VS Code and Zettlr in `extras/<tool>/README.md`;

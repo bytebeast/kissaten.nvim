@@ -45,7 +45,7 @@ Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color 
 Tokyonight and Catppuccin are both excellent, and kissaten borrows from each on purpose. It tries to fix the things people most often complain about:
 
 - **Readable comments and line numbers.** Tokyonight's comments sit at 2.4 to 3.1:1 contrast. Kissaten keeps comments at 4.3:1 or better and line numbers at 2.6 to 2.9:1, so they're quieter than code but never invisible.
-- **A light style that actually passes.** Every syntax role in `kissaten-morning` meets WCAG AA (4.5:1). Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
+- **A light style that actually passes.** Every syntax role in `kissaten-morning` is at 6:1 or better, so code stays above WCAG AA (4.5:1) even on the cursorline, the selection and diff backgrounds, in every style. Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
 - **Color carries meaning.** Structure (keywords, functions, operators) is cool. Data (strings, numbers, types) is warm. Parameters get their own hue, distinct from both numbers and builtin variables (checked with CIEDE2000), so `f(x, 42, self)` reads as three different things at a glance.
 - **Color vision support.** `colorblind = "red-green"` or `"blue-yellow"` remaps the colors that carry meaning on their own (diff and git status, diagnostics) to pairs chosen by simulating each type of color blindness on every style. With the default colors, deuteranopes see "added" and "changed" as the same yellow; in red-green mode they're blue and teal.
 - **JetBrains-style semantic highlighting.** `rainbow_variables` gives every local variable and parameter its own color, the way JetBrains IDEs do, from a set tuned per style so every color meets WCAG AA. Optional styles for `readonly`, `static`, global and mutable symbols use what your language server knows. And symbol references show reads and writes in different colors.
@@ -60,10 +60,10 @@ Ratios against each theme's own `Normal` background, read from the live highligh
 
 | Tier | Theme | Lowest syntax role | Comments | Line numbers |
 | --- | --- | --- | --- | --- |
-| Light | **kissaten-morning** | **4.6** | **4.3** | **2.6** |
+| Light | **kissaten-morning** | **6.0** | **4.3** | **2.6** |
 | | tokyonight-day | 3.1 | 2.5 | 1.7 |
 | | catppuccin-latte | 2.3 | 3.5 | 1.6 |
-| Mid | **kissaten-afternoon** | **5.9** | 4.5 | **2.9** |
+| Mid | **kissaten-afternoon** | **6.3** | 4.5 | **2.9** |
 | | tokyonight-storm | 4.4 | 2.4 | 1.5 |
 | | catppuccin-frappe | 5.3 | 4.5 | 1.7 |
 | Dark | **kissaten-evening** | **6.9** | 4.5 | **2.8** |
@@ -559,7 +559,7 @@ opts = { rainbow_variables = true }
 Every local variable and parameter gets a color picked from its name, so `sum` is the same color everywhere it appears and `sum`, `raw` and `cart` are easy to tell apart. Properties, functions and types keep their usual colors, and library globals like `console` are skipped.
 
 - **Needs** an LSP that sends semantic tokens: vtsls, rust-analyzer, clangd, LuaLS, basedpyright, gopls (with its `semanticTokens = true` setting, which LazyVim's Go extra turns on), and others. Treesitter alone doesn't know which names are variables.
-- **12 colors**, evenly spaced hues in two lightness tiers, tuned to each style's own accents. All meet WCAG AA, and the nearest two are at least 6.5 apart in OKLab (3 is about the smallest difference you can see side by side).
+- **12 colors**, evenly spaced hues in two lightness tiers, tuned to each style's own accents. All meet WCAG AA on the editor background and on the cursorline (the dimmer tier can still dip below it on the selection), and the nearest two are at least 6.5 apart in OKLab (3 is about the smallest difference you can see side by side).
 - **With `colorblind`**, it uses 6 colors on the hues that type keeps apart (blue and yellow for red-green, red and teal for blue-yellow), at three lightness steps.
 - Two different names can land on the same color, since 12 colors cover any number of names. JetBrains IDEs share this limit.
 - `:checkhealth kissaten` shows whether it's active.
@@ -750,16 +750,20 @@ opts = { style = "midnight", light_style = "morning" }
 With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations only for plugins you actually have. Run `:checkhealth kissaten` to see which ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and `:terminal` are always covered.
 
 <details>
-<summary><b>All 55 integrations</b></summary>
+<summary><b>All 60 integrations</b></summary>
 
 | Plugin | Module |
 | --- | --- |
 | [aerial.nvim](https://github.com/stevearc/aerial.nvim) | `aerial` |
 | [alpha-nvim](https://github.com/goolord/alpha-nvim) | `alpha` |
+| [avante.nvim](https://github.com/yetone/avante.nvim) | `avante` |
 | [barbar.nvim](https://github.com/romgrk/barbar.nvim) | `barbar` |
 | [blink.cmp](https://github.com/Saghen/blink.cmp) | `blink` |
 | [blink.pairs](https://github.com/saghen/blink.pairs) | `blink-pairs` |
 | [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) (also under its old name, nvim-bufferline.lua) | `bufferline` |
+| [codecompanion.nvim](https://github.com/olimorris/codecompanion.nvim) | `codecompanion` |
+| [dropbar.nvim](https://github.com/Bekaboo/dropbar.nvim) | `dropbar` |
+| [markview.nvim](https://github.com/OXY2DEV/markview.nvim) | `markview` |
 | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) | `cmp` |
 | [codediff.nvim](https://github.com/esmuellert/codediff.nvim) | `codediff` |
 | [copilot.lua / copilot.vim](https://github.com/zbirenbaum/copilot.lua) | `copilot` |
@@ -791,6 +795,7 @@ With lazy.nvim, and with `vim.pack` on Neovim 0.12+, kissaten loads integrations
 | [noice.nvim](https://github.com/folke/noice.nvim) | `noice` |
 | [nvim-notify](https://github.com/rcarriga/nvim-notify) | `notify` |
 | [octo.nvim](https://github.com/pwntester/octo.nvim) | `octo` |
+| [oil.nvim](https://github.com/stevearc/oil.nvim) | `oil` |
 | [outline.nvim](https://github.com/hedyhli/outline.nvim) | `outline` |
 | [overseer.nvim](https://github.com/stevearc/overseer.nvim) | `overseer` |
 | [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim) | `rainbow` |
@@ -822,6 +827,7 @@ A few plugins draw some colors themselves; these work as-is, and one option hand
 | virt-column.nvim | draws with `NonText` by default | `highlight = "VirtColumn"` (the indent-guide color) |
 | codediff.nvim | derives its line/character diff colors from kissaten's `DiffAdd`/`DiffDelete` | nothing to do; everything else (signs, explorer, help) is themed |
 | hlargs.nvim | its `highlight` option replaces the group outright | leave `highlight` unset; arguments then match parameters |
+| tiny-inline-diagnostic.nvim | rebuilds its colors from kissaten's `Diagnostic*`, `CursorLine` and `Normal` on every colorscheme load (so `colorblind` applies) | nothing to do |
 
 </details>
 
@@ -835,16 +841,23 @@ Matching themes for your terminal and tools live in [`extras/`](extras), generat
 | --- | --- | --- |
 | [Alacritty](https://alacritty.org) | `extras/alacritty/*.toml` | `[general] import = ["…/kissaten_evening.toml"]` |
 | [bat](https://github.com/sharkdp/bat) | `extras/bat/*.tmTheme` | copy to `"$(bat --config-dir)/themes"`, run `bat cache --build`, then `--theme="kissaten_evening"` ([setup](extras/bat/README.md)) |
+| [btop](https://github.com/aristocratos/btop) | `extras/btop/*.theme` | copy to `~/.config/btop/themes/`, then `color_theme = "kissaten_evening"` |
 | [delta](https://github.com/dandavison/delta) | `extras/delta/*.gitconfig` | `[include] path = …` then `features = kissaten-evening` |
 | [eza](https://eza.rocks) | `extras/eza/*.yml` | save as `~/.config/eza/theme.yml` ([setup](extras/eza/README.md)) |
+| [foot](https://codeberg.org/dnkl/foot) | `extras/foot/*.ini` | `include=~/…/kissaten_evening.ini` at the top of `foot.ini` (morning fills `[colors-light]`: add `initial-color-theme=light`) |
 | [fzf](https://github.com/junegunn/fzf) | `extras/fzf/*.sh` | `source …/kissaten_evening.sh` in your shell rc |
 | [Ghostty](https://ghostty.org) | `extras/ghostty/*` | copy to `~/.config/ghostty/themes/`, then `theme = kissaten_evening` |
+| [Helix](https://helix-editor.com) | `extras/helix/*.toml` | copy to `~/.config/helix/themes/`, then `theme = "kissaten_evening"` (or `[theme] dark = … light = "kissaten_morning"`) |
+| [iTerm2](https://iterm2.com) | `extras/iterm2/*.itermcolors` | Settings → Profiles → Colors → Color Presets… → Import |
 | [k9s](https://k9scli.io) | `extras/k9s/*.yaml` | copy to k9s's `skins/` dir, then `k9s.ui.skin: kissaten_evening` ([setup](extras/k9s/README.md)) |
 | [Kitty](https://sw.kovidgoyal.net/kitty/) | `extras/kitty/*.conf` | `include …/kissaten_evening.conf` |
 | [lazygit](https://github.com/jesseduffield/lazygit) | `extras/lazygit/*.yml` | merge into `config.yml` |
 | [tmux](https://github.com/tmux/tmux) | `extras/tmux/*.tmux` | `source-file …/kissaten_evening.tmux` |
 | [VS Code](https://code.visualstudio.com) | `extras/vscode/` (an extension folder) | copy the folder to `~/.vscode/extensions/`, then pick **Kissaten Evening** in Color Theme ([setup](extras/vscode/README.md)) |
 | [WezTerm](https://wezterm.org) | `extras/wezterm/*.toml` | copy to `~/.config/wezterm/colors/`, then `color_scheme = "Kissaten Evening"` |
+| [Windows Terminal](https://github.com/microsoft/terminal) | `extras/windows-terminal/*.json` | add the object to `"schemes"` in `settings.json`, then `"colorScheme": "Kissaten Evening"` |
+| [Yazi](https://yazi-rs.github.io) | `extras/yazi/kissaten-*.yazi/` (flavors) | copy the folder to `~/.config/yazi/flavors/`, then `[flavor] dark = "kissaten-evening"` in `theme.toml` |
+| [Zed](https://zed.dev) | `extras/zed/*.json` | copy to `~/.config/zed/themes/`, then pick **Kissaten Evening** in the theme selector |
 | [Zettlr](https://www.zettlr.com) | `extras/zettlr/*.css` | paste into Custom CSS ([setup](extras/zettlr/README.md)) |
 
 Looking for a font to go with the theme? See the **[font guide](extras/fonts/README.md)**.
@@ -887,9 +900,9 @@ nvim --headless -u NONE -i NONE -l scripts/build_extras.lua
 # format
 stylua lua plugin colors tests scripts/build_extras.lua
 
-# screenshots: drives a real Neovim through its UI protocol (needs pynvim, pillow, a Nerd Font)
-python3 scripts/screenshot.py --scenario my_scenario.lua --out shots --frame
-python3 scripts/make_assets.py --shots shots
+# screenshots and the images built from them: drives a real LazyVim (borrowed offline from
+# your install) through Neovim's UI protocol (needs uv, node, JetBrains Mono Nerd Font)
+scripts/screenshots/run.sh
 
 # social preview background: a made-up siphon still life rendered in Blender (pip install bpy)
 python3 scripts/social_scene.py render.png 1280 128

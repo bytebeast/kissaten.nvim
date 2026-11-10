@@ -1,0 +1,23 @@
+{
+  "name": "Kissaten Afternoon",
+  "background": "#282b3e",
+  "foreground": "#cdd5f6",
+  "cursorColor": "#cdd5f6",
+  "selectionBackground": "#374260",
+  "black": "#3c4159",
+  "red": "#f690ac",
+  "green": "#a9d881",
+  "yellow": "#e8c47e",
+  "blue": "#89aefe",
+  "purple": "#f4b8e4",
+  "cyan": "#7fd3c4",
+  "white": "#b0b9dd",
+  "brightBlack": "#6a7194",
+  "brightRed": "#faa5bd",
+  "brightGreen": "#b6e291",
+  "brightYellow": "#efcf90",
+  "brightBlue": "#a2bfff",
+  "brightPurple": "#d4b5fa",
+  "brightCyan": "#93dbf6",
+  "brightWhite": "#cdd5f6"
+}

@@ -17,7 +17,9 @@ for name in pairs(Extras.extras) do
     end
   end
   for file, content in pairs(Extras.static(name)) do
-    local f = assert(io.open(("extras/%s/%s"):format(name, file), "w"))
+    local path = ("extras/%s/%s"):format(name, file)
+    vim.fn.mkdir(vim.fs.dirname(path), "p")
+    local f = assert(io.open(path, "w"))
     f:write(content)
     f:close()
     count = count + 1

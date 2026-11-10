@@ -13,7 +13,7 @@ return {
   comment = "#8890b6", -- comments (contrast-tuned)
   subtext = "#b0b9dd", -- dimmed text, punctuation
   fg = "#cdd5f6", -- default text
-  red = "#ef8aa6", -- errors, builtin variables (self/this), tags
+  red = "#f690ac", -- errors, builtin variables (self/this), tags
   maroon = "#eca7a1", -- parameters
   orange = "#f3a06c", -- numbers, constants, booleans
   yellow = "#e8c47e", -- types, classes, warnings
@@ -21,7 +21,7 @@ return {
   teal = "#7fd3c4", -- properties, fields, hints
   cyan = "#7fd1f0", -- builtin functions, regex
   sky = "#abd6ee", -- operators (a soft cyan tint)
-  blue = "#84a8f8", -- functions, methods, directories
+  blue = "#89aefe", -- functions, methods, directories
   lavender = "#b5bff8", -- modules, namespaces
   purple = "#c6a0f6", -- keywords
   pink = "#f4b8e4", -- macros, decorators, escapes, preprocessor

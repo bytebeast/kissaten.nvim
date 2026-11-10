@@ -162,29 +162,76 @@ local function table_or_nil(v)
   return v == nil or type(v) == "table"
 end
 
---- Options checked by a simple rule: { dotted path, test, what's expected }.
---- An invalid value is reported once and replaced by its default.
+local function is_boolean(v)
+  return type(v) == "boolean"
+end
+
+local function is_function(v)
+  return type(v) == "function"
+end
+
+local styles_list = "one of " .. table.concat(M.styles, ", ")
+local backgrounds = one_of({ "dark", "normal", "transparent" })
+
+--- Every option check: { dotted path, test, what's expected }. An invalid
+--- value is reported once and replaced by its default. Parents come before
+--- their children, so a replaced parent leaves valid children behind.
 -- stylua: ignore
 local rules = {
+  { "style", one_of(M.styles), styles_list },
+  { "light_style", one_of(M.styles), styles_list },
+  { "contrast", one_of({ "normal", "high" }), '"normal" or "high"' },
+  { "subtle_comments", function(v) return v == false or v == nil or M.subtle_comments({ subtle_comments = v }) ~= nil end, "false, true, a number from 0 to 1, or { fade = 0..1, docstrings = boolean }" },
   { "colorblind", function(v) return v == false or v == "red-green" or v == "blue-yellow" end, 'false, "red-green" or "blue-yellow"' },
   { "saturation", function(v) return type(v) == "number" and v == v and v >= 0 and v <= 1 end, "a number from 0 to 1" },
   { "accent", one_of(M.accents), "a palette accent (" .. table.concat(M.accents, ", ") .. ")" },
   { "rainbow", one_of({ "vivid", "dimmed", "mono" }), '"vivid", "dimmed" or "mono"' },
-  { "borderless", function(v) return type(v) == "boolean" end, "boolean" },
-  { "rainbow_variables", function(v) return type(v) == "boolean" end, "boolean" },
   { "diagnostics", is_table, "table" },
   { "diagnostics.underline", function(v) return v == false or v == "undercurl" or v == "underline" end, '"undercurl", "underline" or false' },
   { "diagnostics.virtual_text", one_of({ "tinted", "plain" }), '"tinted" or "plain"' },
   { "inlay_hints", one_of({ "tinted", "plain" }), '"tinted" or "plain"' },
+  { "styles", is_table, "table" },
+  { "styles.sidebars", backgrounds, '"dark", "normal" or "transparent"' },
+  { "styles.floats", backgrounds, '"dark", "normal" or "transparent"' },
   { "styles.conditionals", table_or_nil, "table of highlight attributes" },
   { "styles.loops", table_or_nil, "table of highlight attributes" },
-  { "styles.virtual_text", is_table, "table of highlight attributes" },
-  { "styles.inlay_hints", is_table, "table of highlight attributes" },
-  { "styles.mutable", is_table, "table of highlight attributes" },
-  { "styles.readonly", is_table, "table of highlight attributes" },
-  { "styles.statics", is_table, "table of highlight attributes" },
-  { "styles.globals", is_table, "table of highlight attributes" },
+  { "plugins", is_table, "table" },
 }
+for _, k in ipairs({
+  "transparent",
+  "terminal_colors",
+  "dim_inactive",
+  "no_italic",
+  "no_bold",
+  "no_underline",
+  "bright_borders",
+  "lualine_bold",
+  "borderless",
+  "rainbow_variables",
+}) do
+  rules[#rules + 1] = { k, is_boolean, "boolean" }
+end
+for _, k in ipairs({
+  "comments",
+  "keywords",
+  "virtual_text",
+  "inlay_hints",
+  "mutable",
+  "readonly",
+  "statics",
+  "globals",
+  "functions",
+  "variables",
+  "parameters",
+  "types",
+  "strings",
+  "constants",
+}) do
+  rules[#rules + 1] = { "styles." .. k, is_table, "table of highlight attributes" }
+end
+for _, k in ipairs({ "on_palette", "on_colors", "on_highlights" }) do
+  rules[#rules + 1] = { k, is_function, "function" }
+end
 
 local function get(t, path)
   for key in path:gmatch("[^.]+") do
@@ -217,39 +264,6 @@ end
 ---@return boolean ok, string[] errors
 local function validate(opts)
   local e = {}
-  local styles = table.concat(M.styles, ", ")
-  check(e, "style", vim.tbl_contains(M.styles, opts.style), "one of " .. styles)
-  check(e, "light_style", vim.tbl_contains(M.styles, opts.light_style), "one of " .. styles)
-  check(e, "contrast", opts.contrast == "normal" or opts.contrast == "high", '"normal" or "high"')
-  for _, k in ipairs({
-    "transparent",
-    "terminal_colors",
-    "dim_inactive",
-    "no_italic",
-    "no_bold",
-    "no_underline",
-    "bright_borders",
-    "lualine_bold",
-  }) do
-    check(e, k, type(opts[k]) == "boolean", "boolean")
-  end
-  check(e, "styles", type(opts.styles) == "table", "table")
-  if type(opts.styles) == "table" then
-    for _, k in ipairs({ "sidebars", "floats" }) do
-      local v = opts.styles[k]
-      check(e, "styles." .. k, v == "dark" or v == "normal" or v == "transparent", '"dark", "normal" or "transparent"')
-    end
-  end
-  for _, k in ipairs({ "on_palette", "on_colors", "on_highlights" }) do
-    check(e, k, type(opts[k]) == "function", "function")
-  end
-  check(e, "plugins", type(opts.plugins) == "table", "table")
-  check(
-    e,
-    "subtle_comments",
-    M.subtle_comments(opts) ~= nil or opts.subtle_comments == false or opts.subtle_comments == nil,
-    "false, true, a number from 0 to 1, or { fade = 0..1, docstrings = boolean }"
-  )
   for _, rule in ipairs(rules) do
     -- a non-table parent (e.g. `diagnostics = "x"`) is reported once, by its own rule
     local parent = rule[1]:match("^(.+)%.[^.]+$")
@@ -266,53 +280,9 @@ end
 --- Fix invalid values instead of erroring, so a typo never leaves you with
 --- a broken editor.
 local function sanitize(opts)
-  local d = M.defaults
-  if type(opts.styles) ~= "table" then
-    opts.styles = vim.deepcopy(d.styles)
-  end
-  if not vim.tbl_contains(M.styles, opts.style) then
-    opts.style = d.style
-  end
-  if not vim.tbl_contains(M.styles, opts.light_style) then
-    opts.light_style = d.light_style
-  end
-  if opts.contrast ~= "normal" and opts.contrast ~= "high" then
-    opts.contrast = d.contrast
-  end
-  for _, k in ipairs({ "sidebars", "floats" }) do
-    local v = opts.styles[k]
-    if v ~= "dark" and v ~= "normal" and v ~= "transparent" then
-      opts.styles[k] = d.styles[k]
-    end
-  end
-  for _, k in ipairs({ "on_palette", "on_colors", "on_highlights" }) do
-    if type(opts[k]) ~= "function" then
-      opts[k] = d[k]
-    end
-  end
-  for _, k in ipairs({
-    "transparent",
-    "terminal_colors",
-    "dim_inactive",
-    "no_italic",
-    "no_bold",
-    "no_underline",
-    "bright_borders",
-    "lualine_bold",
-  }) do
-    if type(opts[k]) ~= "boolean" then
-      opts[k] = d[k]
-    end
-  end
-  if type(opts.plugins) ~= "table" then
-    opts.plugins = vim.deepcopy(d.plugins)
-  end
-  if opts.subtle_comments ~= nil and opts.subtle_comments ~= false and not M.subtle_comments(opts) then
-    opts.subtle_comments = d.subtle_comments
-  end
   for _, rule in ipairs(rules) do
     if not rule[2](get(opts, rule[1])) then
-      set(opts, rule[1], get(d, rule[1]))
+      set(opts, rule[1], get(M.defaults, rule[1]))
     end
   end
   return opts
@@ -350,12 +320,14 @@ function M.setup(options)
   end
 end
 
+--- Always a copy: callers set `style` on the result, which must not leak
+--- into `M.options` (it broke light -> dark switching after setup()).
 ---@param opts? kissaten.Config
 ---@return kissaten.Config
 function M.extend(opts)
-  local base = M.options or vim.deepcopy(M.defaults)
+  local base = M.options or M.defaults
   if not opts then
-    return base
+    return vim.deepcopy(base)
   end
   local merged = vim.tbl_deep_extend("force", {}, base, opts)
   if not validate(merged) then

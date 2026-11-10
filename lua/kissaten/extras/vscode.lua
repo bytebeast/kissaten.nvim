@@ -59,7 +59,7 @@ function M.workbench(c)
   local bg, mantle, crust = c.bg, ui.bg_sidebar, c.crust
   local accent, on_badge = ui.accent, ui.on_badge
   local float, popup = ui.bg_float, ui.bg_popup
-  local border = ui.border -- the crust line between panes, as in Neovim
+  local border = ui.border -- the line between panes, as in Neovim
   local b = c.brackets
   local t = c.terminal
   local function tint(color, amount)
@@ -443,28 +443,28 @@ function M.workbench(c)
     { "gitDecoration.stageDeletedResourceForeground", Util.blend(g.delete, mantle, 0.7) },
     { "gitDecoration.submoduleResourceForeground", c.lavender },
     { "git.blame.editorDecorationForeground", c.comment },
-    { "diffEditor.insertedLineBackground", over(c.diff.add, bg, g.add) },
-    { "diffEditor.removedLineBackground", over(c.diff.delete, bg, g.delete) },
+    { "diffEditor.insertedLineBackground", over(c.diff.add, bg) },
+    { "diffEditor.removedLineBackground", over(c.diff.delete, bg) },
     -- changed words: a step deeper than the line, still 4.5:1 for the text on it
     { "diffEditor.insertedTextBackground", over(tint(g.add, 0.28), bg, g.add) },
     { "diffEditor.removedTextBackground", over(tint(g.delete, 0.28), bg, g.delete) },
     { "diffEditor.border", border },
     { "diffEditor.diagonalFill", a(c.surface2, 0.5) },
-    { "diffEditorGutter.insertedLineBackground", over(c.diff.add, bg, g.add) },
-    { "diffEditorGutter.removedLineBackground", over(c.diff.delete, bg, g.delete) },
+    { "diffEditorGutter.insertedLineBackground", over(c.diff.add, bg) },
+    { "diffEditorGutter.removedLineBackground", over(c.diff.delete, bg) },
     { "diffEditor.unchangedRegionBackground", mantle },
     -- merge conflicts: the same sides as the git-conflict.nvim integration
-    { "merge.currentHeaderBackground", a(g.add, (c.light and 0.4 or 0.34) * Util.tint_scale) },
-    { "merge.currentContentBackground", a(g.add, (c.light and 0.2 or 0.17) * Util.tint_scale) },
-    { "merge.incomingHeaderBackground", a(c.orange, (c.light and 0.4 or 0.34) * Util.tint_scale) },
-    { "merge.incomingContentBackground", a(c.orange, (c.light and 0.2 or 0.17) * Util.tint_scale) },
+    { "merge.currentHeaderBackground", a(g.add, 0.34 * Util.tint_scale) },
+    { "merge.currentContentBackground", a(g.add, 0.17 * Util.tint_scale) },
+    { "merge.incomingHeaderBackground", a(c.orange, 0.34 * Util.tint_scale) },
+    { "merge.incomingContentBackground", a(c.orange, 0.17 * Util.tint_scale) },
     { "merge.commonHeaderBackground", over(c.surface2, bg) },
     { "merge.commonContentBackground", over(c.surface2, bg) },
     { "editorOverviewRuler.currentContentForeground", g.add },
     { "editorOverviewRuler.incomingContentForeground", c.orange },
     { "editorOverviewRuler.commonContentForeground", c.surface2 },
-    { "mergeEditor.change.background", over(c.diff.change, bg, g.change) },
-    { "mergeEditor.change.word.background", over(c.diff.text, bg, g.change) },
+    { "mergeEditor.change.background", over(c.diff.change, bg) },
+    { "mergeEditor.change.word.background", over(c.diff.text, bg) },
     { "mergeEditor.conflict.unhandledUnfocused.border", a(g.conflict, 0.5) },
     { "mergeEditor.conflict.unhandledFocused.border", g.conflict },
     { "mergeEditor.conflict.handledUnfocused.border", a(g.add, 0.4) },
@@ -587,8 +587,8 @@ function M.workbench(c)
     { "inlineChat.border", ui.border_float },
     { "inlineChatInput.background", ui.picker.prompt },
     { "inlineChatInput.border", c.surface1 },
-    { "inlineChatDiff.inserted", over(c.diff.add, bg, g.add) },
-    { "inlineChatDiff.removed", over(c.diff.delete, bg, g.delete) },
+    { "inlineChatDiff.inserted", over(c.diff.add, bg) },
+    { "inlineChatDiff.removed", over(c.diff.delete, bg) },
   }
 end
 

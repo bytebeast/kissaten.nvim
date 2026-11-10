@@ -12,7 +12,7 @@ M.url = "https://github.com/akinsho/git-conflict.nvim"
 --- <<<<<<< / >>>>>>> lines) are a step deeper.
 ---@type kissaten.HighlightsFn
 function M.get(c)
-  local alpha = c.light and 0.2 or 0.17
+  local alpha = 0.17
   local function side(name, color)
     return {
       ["GitConflict" .. name] = { bg = Util.tint(color, c.bg, alpha) },

@@ -40,7 +40,7 @@ M.colorblind = {
     diff = { add = "blue", change = "teal", delete = "orange" },
     diag = {
       dark = { error = "red", warn = "yellow", ok = "blue", info = "lavender", hint = "sky" },
-      light = { error = "pink", warn = "orange", ok = "blue", info = "cyan", hint = "maroon" },
+      light = { error = "pink", warn = "orange", ok = "blue", info = "cyan", hint = "purple" },
     },
   },
   ["blue-yellow"] = {
@@ -57,6 +57,14 @@ M.STATUS_SATURATION = 0.7
 --- Diff backgrounds mix in a little more color in colorblind mode, so added
 --- and deleted lines stay as far apart as they are for normal color vision.
 M.COLORBLIND_DIFF_BOOST = 1.25
+
+--- Syntax roles that are meant to recede, so they don't set how strong the
+--- cursorline, selection and diff tints may be (see the cap in M.setup).
+M.SOFT_ROLES = { comment = true, deprecated = true, tag_delimiter = true, string_doc = true }
+
+--- Changed text (DiffText) is at least this much stronger than its changed
+--- line (DiffChange), in contrast against the editor.
+M.DIFF_TEXT_GAP = 1.15
 
 --- How much stronger write references are than reads (contrast factor).
 M.WRITE_STRENGTH = 1.3
@@ -101,26 +109,29 @@ end
 ---@param c kissaten.Colors|kissaten.Palette
 ---@param colorblind? false|"red-green"|"blue-yellow"
 ---@return string[]
-function M.variable_colors(c, colorblind)
+function M.variable_colors(c, colorblind, floor)
+  floor = floor or 4.5
   local chromas, ratios = {}, {}
   for _, key in ipairs(ACCENTS) do
     local _, a, b = Util.to_oklab(c[key])
     chromas[#chromas + 1] = math.sqrt(a * a + b * b)
     ratios[#ratios + 1] = Util.contrast(c[key], c.bg)
   end
-  local chroma, ratio = median(chromas), math.max(4.5, median(ratios))
+  local chroma, ratio = median(chromas), math.max(floor, median(ratios))
   local fg_ratio = Util.contrast(c.fg, c.bg)
   -- the second tier goes toward the background where there's room (dark
-  -- styles), otherwise away from it (the light style's inks sit near 4.5)
+  -- styles), otherwise it stops at the floor or goes away from the background,
+  -- whichever leaves the wider gap (stepping away can land on plain text)
   local function tier(k) -- k = 0, 1, 2 steps away from the main tier
     if k == 0 then
       return ratio
     end
     local down = ratio * M.VARIABLE_TIER ^ k
-    if down >= 4.5 then
+    if down >= floor then
       return down
     end
-    return math.min(ratio / M.VARIABLE_TIER ^ k, fg_ratio * 0.95)
+    local up = math.min(ratio / M.VARIABLE_TIER ^ k, fg_ratio * 0.95)
+    return ratio / floor >= up / ratio and floor or up
   end
   local L = Util.to_oklab(c.fg)
   local function color(hue, target)
@@ -132,7 +143,7 @@ function M.variable_colors(c, colorblind)
   if axis then
     -- three lightness steps spread over the whole readable range, from just
     -- above AA to just below the text color
-    local lo, hi = 4.6, fg_ratio * 0.95
+    local lo, hi = floor + 0.1, fg_ratio * 0.95
     for _, target in ipairs({ lo, math.sqrt(lo * hi), hi }) do
       for _, hue in ipairs(axis) do
         out[#out + 1] = color(hue, target)
@@ -285,8 +296,13 @@ function M.setup(opts)
     whitespace = Util.blend(c.overlay0, c.bg, 0.7),
     indent = Util.blend(c.overlay0, c.bg, 0.45),
     indent_scope = Util.blend(c.lavender, c.bg, 0.65),
-    border = light and c.surface2 or c.crust,
+    border = c.surface2,
   }
+  -- Splits as visible as indent guides. On dark styles `crust` sits within
+  -- ~1.1:1 of the editor, which left window separators all but invisible.
+  if not light then
+    c.ui.border = c.ui.indent
+  end
   -- `accent`: titles, matches, badges and the normal-mode statusline.
   local accent = c[opts.accent] or c.blue
   c.ui.accent = accent
@@ -314,16 +330,6 @@ function M.setup(opts)
   -- and the extra strength keeps writes apart with color blindness too.
   c.ui.bg_read = c.surface1
   c.ui.bg_write = M.tint_to(c.pink, c.bg, Util.contrast(c.surface1, c.bg) * M.WRITE_STRENGTH)
-
-  -- `rainbow_variables`: like status colors, per-variable colors carry
-  -- meaning, so they read from the status palette (hue kept under saturation)
-  if opts.rainbow_variables then
-    local base = { bg = c.bg, fg = c.fg }
-    for _, key in ipairs(ACCENTS) do
-      base[key] = s[key]
-    end
-    c.variables = M.variable_colors(base, opts.colorblind)
-  end
 
   -- `borderless`: picker panels told apart by shade instead of lines (the
   -- Kanagawa recipe): prompt a step lighter than the editor, list on the
@@ -446,7 +452,61 @@ function M.setup(opts)
     delete = Util.tint(hue.delete, c.bg, diff_alpha),
     change = Util.tint(hue.change, c.bg, (light and 0.14 or 0.12) * boost),
     text = Util.tint(hue.change, c.bg, (light and 0.3 or 0.32) * boost),
+    text_add = Util.tint(c.git.add, c.bg, 0.32), -- added text inside a changed line (inline diff)
   }
+
+  -- Code stays AA on the backgrounds it's read on. Text and these tints sit
+  -- on the same side of `bg`, so code on a tint has exactly (code contrast) /
+  -- (tint contrast): no tint may be stronger than the weakest code color
+  -- over 4.5 allows. Never below 1.1, so an `on_palette` with weak inks
+  -- fades the tints instead of erasing them.
+  local weakest = math.huge
+  for role, color in pairs(c.syn) do
+    if not M.SOFT_ROLES[role] and Util.is_hex(color) then
+      weakest = math.min(weakest, Util.contrast(color, c.bg))
+    end
+  end
+  local cap = math.max(1.1, weakest / 4.5)
+  -- Lightness moves to the cap and chroma stays, so capped tints keep their
+  -- color (and stay apart from each other, which colorblind diffs rely on).
+  -- match_contrast lands just above its target, and one hex step near a dark
+  -- bg is worth more than 1% contrast: then bisect for the side below it.
+  local function fit(color)
+    if Util.contrast(color, c.bg) <= cap then
+      return color
+    end
+    color = Util.match_contrast(color, c.bg, cap)
+    local lo, hi = 0, 1 -- amount of `color` kept; `lo` is always within the cap
+    for _ = 1, 24 do
+      local mid = (lo + hi) / 2
+      if Util.contrast(Util.blend(color, c.bg, mid), c.bg) <= cap then
+        lo = mid
+      else
+        hi = mid
+      end
+    end
+    return Util.blend(color, c.bg, lo)
+  end
+  c.ui.bg_cursorline = fit(c.ui.bg_cursorline)
+  c.ui.bg_visual = fit(c.ui.bg_visual)
+  for kind, color in pairs(c.diff) do
+    c.diff[kind] = fit(color)
+  end
+  -- the cap can pull changed text down to its line's tint: keep them apart
+  c.diff.change = Util.reduce_contrast(c.diff.change, c.bg, Util.contrast(c.diff.text, c.bg) / M.DIFF_TEXT_GAP)
+
+  -- `rainbow_variables`: like status colors, per-variable colors carry
+  -- meaning, so they read from the status palette (hue kept under saturation).
+  -- None goes below AA on the cursorline. The selection is left out: its tint
+  -- sits at the cap, and clearing it would squeeze the colors together.
+  if opts.rainbow_variables then
+    local base = { bg = c.bg, fg = c.fg }
+    for _, key in ipairs(ACCENTS) do
+      base[key] = s[key]
+    end
+    local floor = math.max(4.5, 4.5 * Util.contrast(c.ui.bg_cursorline, c.bg))
+    c.variables = M.variable_colors(base, opts.colorblind, floor)
+  end
 
   -- Rainbow order is chosen so neighbours never share a hue family.
   c.rainbow = { c.blue, c.yellow, c.green, c.teal, c.purple, c.orange, c.pink, c.cyan }

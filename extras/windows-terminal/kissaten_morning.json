@@ -1,0 +1,23 @@
+{
+  "name": "Kissaten Morning",
+  "background": "#eef0f6",
+  "foreground": "#353a5c",
+  "cursorColor": "#353a5c",
+  "selectionBackground": "#c8d3ef",
+  "black": "#4f5578",
+  "red": "#b7002f",
+  "green": "#24680c",
+  "yellow": "#805000",
+  "blue": "#1d4fcf",
+  "purple": "#9c2d7a",
+  "cyan": "#00656a",
+  "white": "#c2c9dc",
+  "brightBlack": "#686f8e",
+  "brightRed": "#980027",
+  "brightGreen": "#1b4d09",
+  "brightYellow": "#613d00",
+  "brightBlue": "#1945b4",
+  "brightPurple": "#631eca",
+  "brightCyan": "#004b6d",
+  "brightWhite": "#d4d8e4"
+}

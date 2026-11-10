@@ -30,11 +30,11 @@
 				<key>lineHighlight</key>
 				<string>#31354b</string>
 				<key>selection</key>
-				<string>#3c4767</string>
+				<string>#374260</string>
 				<key>selectionBorder</key>
-				<string>#3c4767</string>
+				<string>#374260</string>
 				<key>inactiveSelection</key>
-				<string>#343c57</string>
+				<string>#313952</string>
 				<key>findHighlight</key>
 				<string>#524d4c</string>
 				<key>findHighlightForeground</key>
@@ -246,7 +246,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ef8aa6</string>
+				<string>#f690ac</string>
 				<key>fontStyle</key>
 				<string>italic</string>
 			</dict>
@@ -307,7 +307,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#84a8f8</string>
+				<string>#89aefe</string>
 				<key>fontStyle</key>
 				<string></string>
 			</dict>
@@ -431,7 +431,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ef8aa6</string>
+				<string>#f690ac</string>
 			</dict>
 		</dict>
 		<dict>
@@ -510,7 +510,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ef8aa6</string>
+				<string>#f690ac</string>
 			</dict>
 		</dict>
 		<dict>
@@ -591,7 +591,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#84a8f8</string>
+				<string>#89aefe</string>
 				<key>fontStyle</key>
 				<string>bold</string>
 			</dict>
@@ -724,7 +724,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ef8aa6</string>
+				<string>#f690ac</string>
 			</dict>
 		</dict>
 		<dict>
@@ -757,7 +757,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#84a8f8</string>
+				<string>#89aefe</string>
 			</dict>
 		</dict>
 		<dict>
@@ -768,7 +768,7 @@
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
-				<string>#ef8aa6</string>
+				<string>#f690ac</string>
 				<key>fontStyle</key>
 				<string>underline</string>
 			</dict>

@@ -6,30 +6,30 @@ gui:
   nerdFontsVersion: "3"
   theme:
     activeBorderColor:
-      - "#2a5fe0"
+      - "#1d4fcf"
       - bold
     inactiveBorderColor:
       - "#c2c9dc"
     searchingActiveBorderColor:
-      - "#b25000"
+      - "#9c3c00"
       - bold
     optionsTextColor:
-      - "#2a5fe0"
+      - "#1d4fcf"
     selectedLineBgColor:
       - "#e2e5ee"
     inactiveViewSelectedLineBgColor:
       - "#e2e5ee"
     cherryPickedCommitFgColor:
-      - "#ab3c87"
+      - "#9c2d7a"
     cherryPickedCommitBgColor:
       - "#d3d8e5"
     markedBaseCommitFgColor:
-      - "#8f5f06"
+      - "#805000"
     markedBaseCommitBgColor:
       - "#d3d8e5"
     unstagedChangesColor:
-      - "#c8153c"
+      - "#b7002f"
     defaultFgColor:
       - "#353a5c"
   authorColors:
-    "*": "#5f62a3"
+    "*": "#525494"

@@ -1,0 +1,23 @@
+{
+  "name": "Kissaten Graveyard",
+  "background": "#0a0a0d",
+  "foreground": "#bfc7e6",
+  "cursorColor": "#bfc7e6",
+  "selectionBackground": "#252e46",
+  "black": "#23253b",
+  "red": "#ea83a0",
+  "green": "#9dd081",
+  "yellow": "#ddbc66",
+  "blue": "#739aee",
+  "purple": "#ebb9dd",
+  "cyan": "#69d1c1",
+  "white": "#a1a9cd",
+  "brightBlack": "#51577b",
+  "brightRed": "#f196af",
+  "brightGreen": "#aadb90",
+  "brightYellow": "#e6c777",
+  "brightBlue": "#86a9f4",
+  "brightPurple": "#c2a6f4",
+  "brightCyan": "#89d1fa",
+  "brightWhite": "#bfc7e6"
+}

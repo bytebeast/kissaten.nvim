@@ -12,46 +12,46 @@ k9s:
     bgColor: "#282b3e"
     logoColor: "#c6a0f6"
     logoColorMsg: "#cdd5f6"
-    logoColorInfo: "#84a8f8"
+    logoColorInfo: "#89aefe"
     logoColorWarn: "#e8c47e"
-    logoColorError: "#ef8aa6"
+    logoColorError: "#f690ac"
   prompt:
     fgColor: "#cdd5f6"
     bgColor: "#212435"
     suggestColor: "#8890b6"
     border:
-      command: "#84a8f8"
+      command: "#89aefe"
       default: "#7fd3c4"
   help:
     fgColor: "#cdd5f6"
     bgColor: "#282b3e"
     sectionColor: "#a9d881"
-    keyColor: "#84a8f8"
+    keyColor: "#89aefe"
     numKeyColor: "#f3a06c"
   frame:
     title:
-      fgColor: "#84a8f8"
+      fgColor: "#89aefe"
       bgColor: "#282b3e"
       highlightColor: "#f4b8e4"
       counterColor: "#e8c47e"
       filterColor: "#a9d881"
     border:
       fgColor: "#4a506b"
-      focusColor: "#84a8f8"
+      focusColor: "#89aefe"
     menu:
       fgColor: "#b0b9dd"
-      keyColor: "#84a8f8"
+      keyColor: "#89aefe"
       numKeyColor: "#f3a06c"
     crumbs:
       fgColor: "#1a1c2a"
       bgColor: "#b5bff8"
-      activeColor: "#84a8f8"
+      activeColor: "#89aefe"
     status:
-      newColor: "#84a8f8"
+      newColor: "#89aefe"
       modifyColor: "#b5bff8"
       addColor: "#a9d881"
       pendingColor: "#f3a06c"
-      errorColor: "#ef8aa6"
+      errorColor: "#f690ac"
       highlightColor: "#7fd1f0"
       killColor: "#c6a0f6"
       completedColor: "#8890b6"
@@ -76,7 +76,7 @@ k9s:
     xray:
       fgColor: "#cdd5f6"
       bgColor: "#282b3e"
-      cursorColor: "#84a8f8"
+      cursorColor: "#89aefe"
       cursorTextColor: "#1a1c2a"
       graphicColor: "#c6a0f6"
     charts:
@@ -87,14 +87,14 @@ k9s:
       focusBgColor: "#3c4159"
       defaultDialColors:
         - "#a9d881"
-        - "#ef8aa6"
+        - "#f690ac"
       defaultChartColors:
         - "#a9d881"
-        - "#ef8aa6"
+        - "#f690ac"
       resourceColors:
         cpu:
           - "#c6a0f6"
-          - "#84a8f8"
+          - "#89aefe"
         mem:
           - "#e8c47e"
           - "#f3a06c"
@@ -104,7 +104,7 @@ k9s:
       colonColor: "#b0b9dd"
     picker:
       mainColor: "#cdd5f6"
-      focusColor: "#84a8f8"
+      focusColor: "#89aefe"
       shortcutColor: "#f3a06c"
     logs:
       fgColor: "#cdd5f6"
@@ -120,6 +120,6 @@ k9s:
     buttonFgColor: "#cdd5f6"
     buttonBgColor: "#3c4159"
     buttonFocusFgColor: "#1a1c2a"
-    buttonFocusBgColor: "#84a8f8"
+    buttonFocusBgColor: "#89aefe"
     labelFgColor: "#f3a06c"
     fieldFgColor: "#cdd5f6"
