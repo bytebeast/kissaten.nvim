@@ -194,7 +194,9 @@ from `styles.virtual_text` and `styles.inlay_hints`.
                                                                *kissaten-diff*
 Changed text inside a changed line (`DiffText`) is underlined in the change
 hue as well as tinted, since its tint can only be a little stronger than
-the line's without dropping code below 4.5:1. `no_underline` turns it off.
+the line's without dropping code below 4.5:1. Added text inside a changed
+line (`DiffTextAdd`, Neovim 0.12+ with `diffopt+=inline:char`) is
+underlined in the add hue. `no_underline` turns both off.
 Folded lines sit on the other side of the background from the diff and
 cursorline tints, so a fold never looks like a changed line.
 

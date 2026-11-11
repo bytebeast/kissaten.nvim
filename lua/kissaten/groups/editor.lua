@@ -103,7 +103,7 @@ function M.get(c, opts)
     DiffChange            = { bg = c.diff.change },
     DiffDelete            = { fg = Util.blend(c.git.delete, c.bg, 0.6), bg = c.diff.delete },
     DiffText              = { bg = c.diff.text, underline = true, sp = ui.diff_text_underline },
-    DiffTextAdd           = { bg = c.diff.text_add },
+    DiffTextAdd           = { bg = c.diff.text_add, underline = true, sp = c.git.add },
     Added                 = { fg = c.git.add },
     Changed               = { fg = c.git.change },
     Removed               = { fg = c.git.delete },
