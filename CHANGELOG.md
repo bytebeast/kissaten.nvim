@@ -7,6 +7,8 @@
   nvim-ufo and the VS Code theme too (`colors.ui.bg_fold`).
 - Changed text inside a changed diff line (`DiffText`) is underlined in the change hue,
   so one-character edits stand out (`colors.ui.diff_text_underline`, off with `no_underline`).
+  Added text inside a changed line (`DiffTextAdd`, `diffopt+=inline:char`) is underlined
+  in the add hue.
 - Docs: colored underlines inside tmux need `terminal-features ...:usstyle`.
 
 ## 1.0.0 (2026-10-22)

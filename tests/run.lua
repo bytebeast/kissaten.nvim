@@ -1130,26 +1130,30 @@ test("folded lines stand apart from the cursorline and diff tints", function()
   end
 end)
 
-test("changed text is underlined in the change hue, visible on its tint", function()
+test("changed and added text is underlined in its hue, visible on its tint", function()
   local combos = { {}, { colorblind = "red-green" }, { colorblind = "blue-yellow" }, { saturation = 0.3 } }
   for _, style in ipairs(styles) do
     for _, opts in ipairs(combos) do
       local label = style .. " " .. vim.inspect(opts, { newline = "", indent = "" })
       load(style, opts)
-      local t = hl("DiffText")
-      truthy(t.underline and t.sp, label .. ": DiffText underlined with a color")
-      local r = Util.contrast(hex(t.sp), hex(t.bg))
-      truthy(r >= 3, ("%s: DiffText underline at %.2f:1 on its tint"):format(label, r))
+      for _, group in ipairs({ "DiffText", "DiffTextAdd" }) do
+        local t = hl(group)
+        truthy(t.underline and t.sp, ("%s: %s underlined with a color"):format(label, group))
+        local r = Util.contrast(hex(t.sp), hex(t.bg))
+        truthy(r >= 3, ("%s: %s underline at %.2f:1 on its tint"):format(label, group, r))
+      end
     end
   end
   local c = colors("evening")
   load("evening")
   eq(hex(hl("DiffText").sp), c.blue, "blue by default, like the change tints")
+  eq(hex(hl("DiffTextAdd").sp), c.green, "added text (inline:char) green, like its tint")
   c = colors("evening", { colorblind = "red-green" })
   load("evening", { colorblind = "red-green" })
   eq(hex(hl("DiffText").sp), c.teal, "follows the colorblind change hue")
+  eq(hex(hl("DiffTextAdd").sp), c.blue, "follows the colorblind add hue")
   load("evening", { no_underline = true })
-  truthy(not hl("DiffText").underline, "no_underline turns it off")
+  truthy(not hl("DiffText").underline and not hl("DiffTextAdd").underline, "no_underline turns them off")
 end)
 
 test("rainbow: vivid, dimmed and mono brackets", function()
