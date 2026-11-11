@@ -1,6 +1,8 @@
 # Kissaten Morning for tmux
 # upstream: https://github.com/bytebeast/kissaten.nvim
 # In ~/.tmux.conf:  source-file ~/.config/tmux/<this file>
+# For colored undercurls and underlines in Neovim, also add (tmux 3.2+):
+#   set -as terminal-features ",*:usstyle"
 
 set -g mode-style "fg=#353a5c,bg=#c8d3ef"
 set -g message-style "fg=#353a5c,bg=#e2e5ee"

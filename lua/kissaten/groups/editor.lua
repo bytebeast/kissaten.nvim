@@ -38,7 +38,7 @@ function M.get(c, opts)
     SignColumn            = { fg = ui.fg_gutter, bg = tbg },
     SignColumnSB          = { fg = ui.fg_gutter, bg = ui.bg_sidebar },
     FoldColumn            = { fg = c.comment, bg = tbg },
-    Folded                = { fg = c.blue, bg = Util.blend(c.surface1, c.bg, 0.6) },
+    Folded                = { fg = c.blue, bg = ui.bg_fold },
 
     Conceal               = { fg = c.comment },
     Directory             = { fg = c.blue },
@@ -102,7 +102,7 @@ function M.get(c, opts)
     DiffAdd               = { bg = c.diff.add },
     DiffChange            = { bg = c.diff.change },
     DiffDelete            = { fg = Util.blend(c.git.delete, c.bg, 0.6), bg = c.diff.delete },
-    DiffText              = { bg = c.diff.text },
+    DiffText              = { bg = c.diff.text, underline = true, sp = ui.diff_text_underline },
     DiffTextAdd           = { bg = c.diff.text_add },
     Added                 = { fg = c.git.add },
     Changed               = { fg = c.git.change },

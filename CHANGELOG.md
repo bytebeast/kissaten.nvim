@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Folded lines no longer look like changed lines in a diff: folds now sit on the other
+  side of the background from the diff and cursorline tints, in every style. Applies to
+  nvim-ufo and the VS Code theme too (`colors.ui.bg_fold`).
+- Changed text inside a changed diff line (`DiffText`) is underlined in the change hue,
+  so one-character edits stand out (`colors.ui.diff_text_underline`, off with `no_underline`).
+- Docs: colored underlines inside tmux need `terminal-features ...:usstyle`.
+
 ## 1.0.0 (2026-10-22)
 
 First release.

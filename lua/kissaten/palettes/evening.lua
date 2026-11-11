@@ -7,7 +7,7 @@ return {
   mantle = "#191a2a", -- sidebars, floats, statusline
   bg = "#1f2133", -- editor background
   surface0 = "#272a40", -- cursorline, subtle highlights
-  surface1 = "#323650", -- selection-adjacent: pmenu sel, folds
+  surface1 = "#323650", -- selection-adjacent: pmenu sel
   surface2 = "#3f4463", -- visual selection, search
   overlay0 = "#5f668d", -- line numbers, whitespace, indent guides
   comment = "#7f87b0", -- comments (contrast-tuned)

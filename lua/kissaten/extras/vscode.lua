@@ -215,7 +215,8 @@ function M.workbench(c)
     { "editor.hoverHighlightBackground", over(ui.bg_read, bg) },
     { "editor.symbolHighlightBackground", over(ui.bg_search, bg, c.yellow) },
     { "editor.linkedEditingBackground", a(c.pink, 0.15) },
-    { "editor.foldBackground", over(c.surface0, bg) },
+    -- VS Code wants this translucent; graveyard's fold is pure black, which only an opaque overlay reaches
+    { "editor.foldBackground", over(Util.blend(ui.bg_fold, bg, 0.9), bg) },
     { "editor.foldPlaceholderForeground", c.comment },
     { "editorWhitespace.foreground", ui.whitespace },
     { "editorIndentGuide.background1", ui.indent },

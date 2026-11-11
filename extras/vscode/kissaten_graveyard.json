@@ -141,7 +141,7 @@
     "editor.hoverHighlightBackground": "#8c97fc31",
     "editor.symbolHighlightBackground": "#ddbc6640",
     "editor.linkedEditingBackground": "#ebb9dd26",
-    "editor.foldBackground": "#808afa1c",
+    "editor.foldBackground": "#000000ec",
     "editor.foldPlaceholderForeground": "#7479a1",
     "editorWhitespace.foreground": "#3c405a",
     "editorIndentGuide.background1": "#2a2d3f",

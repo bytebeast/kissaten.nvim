@@ -7,7 +7,7 @@ function M.get(c)
   -- stylua: ignore
   return {
     UfoFoldedFg       = { fg = c.fg },
-    UfoFoldedBg       = { bg = c.surface0 },
+    UfoFoldedBg       = { bg = c.ui.bg_fold },
     UfoFoldedEllipsis = { fg = c.overlay0 },
     UfoPreviewSbar    = { bg = c.surface0 },
     UfoPreviewThumb   = { bg = c.surface2 },

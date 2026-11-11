@@ -46,6 +46,7 @@ Tokyonight and Catppuccin are both excellent, and kissaten borrows from each on 
 
 - **Readable comments and line numbers.** Tokyonight's comments sit at 2.4 to 3.1:1 contrast. Kissaten keeps comments at 4.3:1 or better and line numbers at 2.6 to 2.9:1, so they're quieter than code but never invisible.
 - **A light style that actually passes.** Every syntax role in `kissaten-morning` is at 6:1 or better, so code stays above WCAG AA (4.5:1) even on the cursorline, the selection and diff backgrounds, in every style. Catppuccin Latte drops to 2.3:1 for types and Tokyonight Day to 3.1:1 for functions.
+- **Diffs you can read.** Changed text inside a changed line is underlined as well as tinted, so a one-character edit doesn't disappear. Folded lines sit on the other side of the background from the diff and cursorline tints, so a fold never looks like a change.
 - **Color carries meaning.** Structure (keywords, functions, operators) is cool. Data (strings, numbers, types) is warm. Parameters get their own hue, distinct from both numbers and builtin variables (checked with CIEDE2000), so `f(x, 42, self)` reads as three different things at a glance.
 - **Color vision support.** `colorblind = "red-green"` or `"blue-yellow"` remaps the colors that carry meaning on their own (diff and git status, diagnostics) to pairs chosen by simulating each type of color blindness on every style. With the default colors, deuteranopes see "added" and "changed" as the same yellow; in red-green mode they're blue and teal.
 - **JetBrains-style semantic highlighting.** `rainbow_variables` gives every local variable and parameter its own color, the way JetBrains IDEs do, from a set tuned per style so every color meets WCAG AA. Optional styles for `readonly`, `static`, global and mutable symbols use what your language server knows. And symbol references show reads and writes in different colors.
@@ -530,6 +531,19 @@ opts = {
 ```
 
 Plain underlines help in terminals that draw undercurl poorly (or not at all, as in some tmux setups). `underline = false` leaves only signs and virtual text.
+</details>
+
+<details>
+<summary><b>Colored underlines in tmux</b></summary>
+
+Diagnostic undercurls and the underline on changed diff text are drawn in color. tmux only passes the underline style and color through when it knows the outer terminal supports them. Add this to `~/.tmux.conf` (tmux 3.2+), then detach and reattach:
+
+```tmux
+# Undercurls and colored underlines (diagnostics, changed text in diffs)
+# need tmux to pass underline style and color through to the outer terminal.
+# Without it they can come out as plain underlines in the text color.
+set -as terminal-features ",*:usstyle"
+```
 </details>
 
 <details>

@@ -66,6 +66,9 @@ M.SOFT_ROLES = { comment = true, deprecated = true, tag_delimiter = true, string
 --- line (DiffChange), in contrast against the editor.
 M.DIFF_TEXT_GAP = 1.15
 
+--- Folded lines: contrast against the editor, on the side away from the text.
+M.FOLD_CONTRAST = 1.08
+
 --- How much stronger write references are than reads (contrast factor).
 M.WRITE_STRENGTH = 1.3
 
@@ -298,6 +301,11 @@ function M.setup(opts)
     indent_scope = Util.blend(c.lavender, c.bg, 0.65),
     border = c.surface2,
   }
+  -- Folds sit on the far side of `bg` from the text. The cursorline and diff
+  -- tints all lean toward the text and are capped for code contrast, so a
+  -- lifted fold landed on top of them and changed lines in a diff looked
+  -- folded. Near-black styles run out of room below: pure black is the floor.
+  c.ui.bg_fold = M.tint_to(light and "#ffffff" or "#000000", c.bg, M.FOLD_CONTRAST)
   -- Splits as visible as indent guides. On dark styles `crust` sits within
   -- ~1.1:1 of the editor, which left window separators all but invisible.
   if not light then
@@ -454,6 +462,9 @@ function M.setup(opts)
     text = Util.tint(hue.change, c.bg, (light and 0.3 or 0.32) * boost),
     text_add = Util.tint(c.git.add, c.bg, 0.32), -- added text inside a changed line (inline diff)
   }
+  -- The cap below leaves DiffText only ~1.15-1.3:1 above DiffChange, too
+  -- little to spot one changed character, so it also gets an underline.
+  c.ui.diff_text_underline = hue.change
 
   -- Code stays AA on the backgrounds it's read on. Text and these tints sit
   -- on the same side of `bg`, so code on a tint has exactly (code contrast) /

@@ -1111,6 +1111,47 @@ test("code stays AA on cursorline, selection and diff backgrounds; the tints sta
   end
 end)
 
+test("folded lines stand apart from the cursorline and diff tints", function()
+  local combos =
+    { {}, { contrast = "high" }, { colorblind = "red-green" }, { saturation = 0.3 }, { transparent = true } }
+  for _, style in ipairs(styles) do
+    for _, opts in ipairs(combos) do
+      local label = style .. " " .. vim.inspect(opts, { newline = "", indent = "" })
+      load(style, opts)
+      local c = require("kissaten").colors()
+      local folded = hex(hl("Folded").bg)
+      truthy(Util.contrast(folded, c.bg) >= 1.05, ("%s: Folded barely visible"):format(label))
+      eq(hex(hl("UfoFoldedBg").bg), folded, label .. ": ufo folds match native folds")
+      for _, group in ipairs({ "CursorLine", "DiffAdd", "DiffDelete", "DiffChange" }) do
+        local r = Util.contrast(folded, hex(hl(group).bg))
+        truthy(r >= 1.15, ("%s: Folded only %.3f:1 from %s"):format(label, r, group))
+      end
+    end
+  end
+end)
+
+test("changed text is underlined in the change hue, visible on its tint", function()
+  local combos = { {}, { colorblind = "red-green" }, { colorblind = "blue-yellow" }, { saturation = 0.3 } }
+  for _, style in ipairs(styles) do
+    for _, opts in ipairs(combos) do
+      local label = style .. " " .. vim.inspect(opts, { newline = "", indent = "" })
+      load(style, opts)
+      local t = hl("DiffText")
+      truthy(t.underline and t.sp, label .. ": DiffText underlined with a color")
+      local r = Util.contrast(hex(t.sp), hex(t.bg))
+      truthy(r >= 3, ("%s: DiffText underline at %.2f:1 on its tint"):format(label, r))
+    end
+  end
+  local c = colors("evening")
+  load("evening")
+  eq(hex(hl("DiffText").sp), c.blue, "blue by default, like the change tints")
+  c = colors("evening", { colorblind = "red-green" })
+  load("evening", { colorblind = "red-green" })
+  eq(hex(hl("DiffText").sp), c.teal, "follows the colorblind change hue")
+  load("evening", { no_underline = true })
+  truthy(not hl("DiffText").underline, "no_underline turns it off")
+end)
+
 test("rainbow: vivid, dimmed and mono brackets", function()
   for _, style in ipairs(styles) do
     local vivid = colors(style)
