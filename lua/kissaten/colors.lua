@@ -462,6 +462,9 @@ function M.setup(opts)
     text = Util.tint(hue.change, c.bg, (light and 0.3 or 0.32) * boost),
     text_add = Util.tint(c.git.add, c.bg, 0.32), -- added text inside a changed line (inline diff)
   }
+  -- The cap below leaves DiffText only ~1.15-1.3:1 above DiffChange, too
+  -- little to spot one changed character, so it also gets an underline.
+  c.ui.diff_text_underline = hue.change
 
   -- Code stays AA on the backgrounds it's read on. Text and these tints sit
   -- on the same side of `bg`, so code on a tint has exactly (code contrast) /

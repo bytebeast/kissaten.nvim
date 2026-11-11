@@ -53,6 +53,7 @@
 ---@field bg_cursorline string
 ---@field bg_visual string
 ---@field bg_fold string
+---@field diff_text_underline string
 ---@field bg_search string
 ---@field bg_cursearch string
 ---@field bg_match string

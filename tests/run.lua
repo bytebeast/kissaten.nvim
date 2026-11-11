@@ -1130,6 +1130,28 @@ test("folded lines stand apart from the cursorline and diff tints", function()
   end
 end)
 
+test("changed text is underlined in the change hue, visible on its tint", function()
+  local combos = { {}, { colorblind = "red-green" }, { colorblind = "blue-yellow" }, { saturation = 0.3 } }
+  for _, style in ipairs(styles) do
+    for _, opts in ipairs(combos) do
+      local label = style .. " " .. vim.inspect(opts, { newline = "", indent = "" })
+      load(style, opts)
+      local t = hl("DiffText")
+      truthy(t.underline and t.sp, label .. ": DiffText underlined with a color")
+      local r = Util.contrast(hex(t.sp), hex(t.bg))
+      truthy(r >= 3, ("%s: DiffText underline at %.2f:1 on its tint"):format(label, r))
+    end
+  end
+  local c = colors("evening")
+  load("evening")
+  eq(hex(hl("DiffText").sp), c.blue, "blue by default, like the change tints")
+  c = colors("evening", { colorblind = "red-green" })
+  load("evening", { colorblind = "red-green" })
+  eq(hex(hl("DiffText").sp), c.teal, "follows the colorblind change hue")
+  load("evening", { no_underline = true })
+  truthy(not hl("DiffText").underline, "no_underline turns it off")
+end)
+
 test("rainbow: vivid, dimmed and mono brackets", function()
   for _, style in ipairs(styles) do
     local vivid = colors(style)
