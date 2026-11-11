@@ -11,6 +11,8 @@ function M.generate(c)
 # ${_display} for tmux
 # upstream: ${_upstream}
 # In ~/.tmux.conf:  source-file ~/.config/tmux/<this file>
+# For colored undercurls and underlines in Neovim, also add (tmux 3.2+):
+#   set -as terminal-features ",*:usstyle"
 
 set -g mode-style "fg=${fg},bg=${ui.bg_visual}"
 set -g message-style "fg=${fg},bg=${surface0}"

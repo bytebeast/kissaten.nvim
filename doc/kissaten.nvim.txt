@@ -191,6 +191,21 @@ virtual text only). `diagnostics.virtual_text` and `inlay_hints` are
 "tinted" (subtle colored background) or "plain". Their text attributes come
 from `styles.virtual_text` and `styles.inlay_hints`.
 
+                                                               *kissaten-diff*
+Changed text inside a changed line (`DiffText`) is underlined in the change
+hue as well as tinted, since its tint can only be a little stronger than
+the line's without dropping code below 4.5:1. `no_underline` turns it off.
+Folded lines sit on the other side of the background from the diff and
+cursorline tints, so a fold never looks like a changed line.
+
+Inside tmux, undercurls and colored underlines need this in ~/.tmux.conf
+(tmux 3.2+, then detach and reattach): >tmux
+    # Undercurls and colored underlines (diagnostics, changed text in diffs)
+    # need tmux to pass underline style and color through to the outer terminal.
+    # Without it they can come out as plain underlines in the text color.
+    set -as terminal-features ",*:usstyle"
+<
+
 `styles.conditionals` (if/else/switch) and `styles.loops` (for/while) follow
 `styles.keywords` until you set them. Options merge with the defaults, so to
 turn off an attribute that's on by default, set it to `false`, for example
@@ -273,8 +288,8 @@ string as shorthand for a link: >lua
   colors.syn.macro            pink     macros, decorators, escapes
   colors.syn.operator         sky      operators
 
-Also `colors.ui.*` (including `ui.accent` and `ui.on_badge`, the text color
-for colored badges), `colors.diag.*` (error/warn/info/hint/ok),
+Also `colors.ui.*` (including `ui.accent`, `ui.on_badge`, the text color
+for colored badges, `ui.bg_fold` and `ui.diff_text_underline`), `colors.diag.*` (error/warn/info/hint/ok),
 `colors.git.*`, `colors.diff.*`, `colors.rainbow[1..8]` (headings),
 `colors.brackets.*` and `colors.scopes[1..8]` (follow `rainbow`) and
 `colors.terminal.*`. See `lua/kissaten/colors.lua` for the full list.
