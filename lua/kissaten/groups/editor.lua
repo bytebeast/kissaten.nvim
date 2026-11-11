@@ -38,7 +38,7 @@ function M.get(c, opts)
     SignColumn            = { fg = ui.fg_gutter, bg = tbg },
     SignColumnSB          = { fg = ui.fg_gutter, bg = ui.bg_sidebar },
     FoldColumn            = { fg = c.comment, bg = tbg },
-    Folded                = { fg = c.blue, bg = Util.blend(c.surface1, c.bg, 0.6) },
+    Folded                = { fg = c.blue, bg = ui.bg_fold },
 
     Conceal               = { fg = c.comment },
     Directory             = { fg = c.blue },

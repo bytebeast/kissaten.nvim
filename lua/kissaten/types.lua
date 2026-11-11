@@ -9,7 +9,7 @@
 ---@field mantle string sidebars, floats, statusline
 ---@field bg string editor background
 ---@field surface0 string cursorline, subtle highlights
----@field surface1 string menu selection, folds, references
+---@field surface1 string menu selection, references
 ---@field surface2 string strong surfaces: scrollbar thumbs, match parens
 ---@field overlay0 string line numbers, whitespace, indent guides
 ---@field comment string comments (>= 4:1 contrast)
@@ -52,6 +52,7 @@
 ---@field bg_statusline string
 ---@field bg_cursorline string
 ---@field bg_visual string
+---@field bg_fold string
 ---@field bg_search string
 ---@field bg_cursearch string
 ---@field bg_match string

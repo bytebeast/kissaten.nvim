@@ -1111,6 +1111,25 @@ test("code stays AA on cursorline, selection and diff backgrounds; the tints sta
   end
 end)
 
+test("folded lines stand apart from the cursorline and diff tints", function()
+  local combos =
+    { {}, { contrast = "high" }, { colorblind = "red-green" }, { saturation = 0.3 }, { transparent = true } }
+  for _, style in ipairs(styles) do
+    for _, opts in ipairs(combos) do
+      local label = style .. " " .. vim.inspect(opts, { newline = "", indent = "" })
+      load(style, opts)
+      local c = require("kissaten").colors()
+      local folded = hex(hl("Folded").bg)
+      truthy(Util.contrast(folded, c.bg) >= 1.05, ("%s: Folded barely visible"):format(label))
+      eq(hex(hl("UfoFoldedBg").bg), folded, label .. ": ufo folds match native folds")
+      for _, group in ipairs({ "CursorLine", "DiffAdd", "DiffDelete", "DiffChange" }) do
+        local r = Util.contrast(folded, hex(hl(group).bg))
+        truthy(r >= 1.15, ("%s: Folded only %.3f:1 from %s"):format(label, r, group))
+      end
+    end
+  end
+end)
+
 test("rainbow: vivid, dimmed and mono brackets", function()
   for _, style in ipairs(styles) do
     local vivid = colors(style)

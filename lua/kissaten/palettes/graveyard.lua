@@ -12,7 +12,7 @@ return {
   mantle = "#050507", -- sidebars, floats, statusline
   bg = "#0a0a0d", -- editor background
   surface0 = "#171827", -- cursorline, subtle highlights
-  surface1 = "#23253b", -- selection-adjacent: pmenu sel, folds
+  surface1 = "#23253b", -- selection-adjacent: pmenu sel
   surface2 = "#30344f", -- visual selection, search
   overlay0 = "#51577b", -- line numbers, whitespace, indent guides
   comment = "#7479a1", -- comments (contrast-tuned)
