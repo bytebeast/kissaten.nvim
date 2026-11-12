@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kissaten.nvim · a coffee-house colorscheme for Neovim</title>
+<meta name="description" content="A coffee-house colorscheme for Neovim and LazyVim. Five styles, every syntax color checked for contrast.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="kissaten.nvim">
+<meta property="og:description" content="A coffee-house colorscheme for Neovim and LazyVim. Five styles, every syntax color checked for contrast.">
+<meta property="og:url" content="https://bytebeast.github.io/kissaten.nvim/">
+<meta property="og:image" content="https://bytebeast.github.io/kissaten.nvim/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>
+  // Runs before first paint so the page never flashes the wrong style.
+  // Same rule as :colorscheme kissaten: light background gets morning, dark gets evening.
+  (function () {
+    var styles = ["morning", "afternoon", "evening", "midnight", "graveyard"], s;
+    try { s = localStorage.getItem("kissaten-style"); } catch (e) {}
+    if (styles.indexOf(s) < 0) s = matchMedia("(prefers-color-scheme: light)").matches ? "morning" : "evening";
+    document.documentElement.dataset.style = s;
+    document.documentElement.classList.add("js");
+  })();
+</script>
+<link rel="stylesheet" href="colors.css">
+<link rel="stylesheet" href="style.css">
+<script src="main.js" defer></script>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="#top"><img src="favicon.svg" width="28" height="28" alt=""><span>kissaten<span class="dim">.nvim</span></span></a>
+  <nav>
+    <a href="#styles">Styles</a>
+    <a href="#why">Why</a>
+    <a href="#features">Features</a>
+    <a href="#try">Try it</a>
+    <a class="gh" href="https://github.com/bytebeast/kissaten.nvim">GitHub</a>
+  </nav>
+</header>
+
+<main id="top">
+
+<section class="hero wrap">
+  <div class="pitch">
+    <p class="eyebrow">喫茶店 · a traditional Japanese coffee house</p>
+    <h1>Dim, cozy,<br>a little retro.<br><span class="accent">And easy on the eyes.</span></h1>
+    <p class="lede">A coffee-house colorscheme for Neovim and LazyVim. Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color checked for contrast.</p>
+    <div class="cta">
+      <a class="btn primary" href="#try">Try it</a>
+      <a class="btn" href="https://github.com/bytebeast/kissaten.nvim">View on GitHub</a>
+    </div>
+  </div>
+  <img class="photo" src="assets/src/social-background.jpg" width="1280" height="640" alt="A glass coffee siphon over a candle and a cup of coffee on a café counter">
+</section>
+
+<section class="demo wrap" aria-label="Live preview">
+  <div class="switcher" role="group" aria-label="Pick a style">
+    <button data-pick="morning" data-style="morning" aria-pressed="false">morning</button>
+    <button data-pick="afternoon" data-style="afternoon" aria-pressed="false">afternoon</button>
+    <button data-pick="evening" data-style="evening" aria-pressed="true">evening</button>
+    <button data-pick="midnight" data-style="midnight" aria-pressed="false">midnight</button>
+    <button data-pick="graveyard" data-style="graveyard" aria-pressed="false">graveyard</button>
+  </div>
+  <p class="hint">Pick one. The whole page switches.</p>
+
+  <div class="editor" aria-label="Lua code highlighted with kissaten">
+    <div class="titlebar">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="tab active">brew.lua</span><span class="tab">init.lua</span>
+    </div>
+<pre><code><span class="line"><span class="c">-- brew a cup, the kissaten way</span></span>
+<span class="line"><span class="kw">local</span> <span class="v">M</span> <span class="op">=</span> <span class="pu">{}</span></span>
+<span class="line"></span>
+<span class="line"><span class="c">---<span class="kd">@param</span> <span class="pa">beans</span> <span class="t">string</span></span></span>
+<span class="line"><span class="c">---<span class="kd">@param</span> <span class="pa">grams</span><span class="pu">?</span> <span class="t">number</span></span></span>
+<span class="line"><span class="kw">function</span> <span class="v">M</span><span class="pu">.</span><span class="fn">brew</span><span class="pu">(</span><span class="pa">beans</span><span class="pu">,</span> <span class="pa">grams</span><span class="pu">)</span></span>
+<span class="line add">  <span class="kw">local</span> <span class="v">cup</span> <span class="op">=</span> <span class="pu">{</span> <span class="pr">beans</span> <span class="op">=</span> <span class="pa">beans</span><span class="pu">,</span> <span class="pr">grams</span> <span class="op">=</span> <span class="pa">grams</span> <span class="kw">or</span> <span class="n">18</span><span class="pu">,</span> <span class="pr">hot</span> <span class="op">=</span> <span class="b">true</span> <span class="pu">}</span></span>
+<span class="line add">  <span class="kw">if not</span> <span class="v">cup</span><span class="pu">.</span><span class="pr">beans</span><span class="pu">:</span><span class="fn">match</span><span class="pu">(</span><span class="s">"^<span class="e">%a</span>+$"</span><span class="pu">)</span> <span class="kw">then</span></span>
+<span class="line">    <span class="fb">error</span><span class="pu">((</span><span class="s">"unknown beans: <span class="e">%s</span>"</span><span class="pu">):</span><span class="fn">format</span><span class="pu">(</span><span class="pa">beans</span><span class="pu">))</span></span>
+<span class="line">  <span class="kw">end</span></span>
+<span class="line chg cur">  <span class="m">vim</span><span class="pu">.</span><span class="fn">notify</span><span class="pu">(</span><span class="s">"brewing "</span> <span class="op">..</span> <span class="pa">beans</span><span class="pu">,</span> <span class="m">vim</span><span class="pu">.</span><span class="pr">log</span><span class="pu">.</span><span class="pr">levels</span><span class="pu">.</span><span class="k">INFO</span><span class="cursor">)</span></span>
+<span class="line">  <span class="kw">return</span> <span class="fb">setmetatable</span><span class="pu">(</span><span class="v">cup</span><span class="pu">,</span> <span class="pu">{</span> <span class="pr">__index</span> <span class="op">=</span> <span class="v">M</span> <span class="pu">})</span></span>
+<span class="line"><span class="kw">end</span></span>
+<span class="line"></span>
+<span class="line"><span class="kw">return</span> <span class="v">M</span></span></code></pre>
+    <div class="statusline">
+      <span class="mode">NORMAL</span>
+      <span class="seg">main</span>
+      <span class="seg file">brew.lua</span>
+      <span class="spacer"></span>
+      <span class="seg">lua</span>
+      <span class="seg pos">11:54</span>
+    </div>
+  </div>
+</section>
+
+<section id="styles" class="wrap">
+  <p class="eyebrow">-- styles</p>
+  <h2>Five styles, morning to graveyard</h2>
+  <p class="sub">Real LazyVim sessions. <code>:colorscheme kissaten</code> follows <code>background</code> and remembers which one you used last.</p>
+
+  <figure class="shot">
+    <img id="shot" src="assets/screenshots/evening.png" width="1520" height="1214" alt="kissaten-evening in LazyVim">
+    <figcaption><code id="shot-name">kissaten-evening</code> <span id="shot-desc">Cool navy with warm café accents. The default.</span></figcaption>
+  </figure>
+
+  <div class="cards">
+    <button class="card" data-pick="morning" data-style="morning" aria-pressed="false">
+      <span class="swatches"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <code><span class="kw">local</span> <span class="v">cup</span> <span class="op">=</span> <span class="s">"pour over"</span></code>
+      <strong>morning</strong><span class="desc">Bright paper, deep inks</span>
+    </button>
+    <button class="card" data-pick="afternoon" data-style="afternoon" aria-pressed="false">
+      <span class="swatches"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <code><span class="kw">local</span> <span class="v">cup</span> <span class="op">=</span> <span class="s">"cortado"</span></code>
+      <strong>afternoon</strong><span class="desc">Slate blue, a softer mid-tone</span>
+    </button>
+    <button class="card" data-pick="evening" data-style="evening" aria-pressed="true">
+      <span class="swatches"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <code><span class="kw">local</span> <span class="v">cup</span> <span class="op">=</span> <span class="s">"siphon"</span></code>
+      <strong>evening</strong><span class="desc">Cool navy, warm accents</span>
+    </button>
+    <button class="card" data-pick="midnight" data-style="midnight" aria-pressed="false">
+      <span class="swatches"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <code><span class="kw">local</span> <span class="v">cup</span> <span class="op">=</span> <span class="s">"espresso"</span></code>
+      <strong>midnight</strong><span class="desc">Near-black, for low light</span>
+    </button>
+    <button class="card" data-pick="graveyard" data-style="graveyard" aria-pressed="false">
+      <span class="swatches"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      <code><span class="kw">local</span> <span class="v">cup</span> <span class="op">=</span> <span class="s">"ristretto"</span></code>
+      <strong>graveyard</strong><span class="desc">True black, for OLED</span>
+    </button>
+  </div>
+</section>
+
+<section id="why" class="wrap">
+  <p class="eyebrow">-- why kissaten</p>
+  <h2>Pretty, and you can actually read it</h2>
+  <div class="why">
+    <ul class="reasons">
+      <li><strong>Comments you can read.</strong> 4.3:1 or better. Tokyonight's sit at 2.4 to 3.1.</li>
+      <li><strong>A light style that passes.</strong> Every syntax color in morning is 6:1 or better, and stays above 4.5:1 even on the cursorline, selection and diffs.</li>
+      <li><strong>Diffs you can read.</strong> Changed text is underlined too, so a one-character edit doesn't vanish.</li>
+      <li><strong>Color means something.</strong> Structure is cool, data is warm, and parameters get their own hue.</li>
+      <li><strong>Built for color blindness.</strong> Red-green and blue-yellow modes remap diffs, git signs and diagnostics.</li>
+      <li><strong>Roles, not 1,600 hex codes.</strong> Change <code>colors.syn.parameter</code> once and every language follows.</li>
+      <li><strong>Fast, nothing to go stale.</strong> All groups rebuild in about 1 ms, so your changes always show up.</li>
+    </ul>
+    <figure class="contrast">
+      <figcaption>Lowest syntax contrast, light themes</figcaption>
+      <div class="bars">
+        <div class="bar best" style="--r: 6.0"><span class="name">kissaten-morning</span><span class="val">6.0</span></div>
+        <div class="bar" style="--r: 3.1"><span class="name">tokyonight-day</span><span class="val">3.1</span></div>
+        <div class="bar" style="--r: 2.3"><span class="name">catppuccin-latte</span><span class="val">2.3</span></div>
+        <span class="aa">WCAG AA 4.5</span>
+      </div>
+      <p class="note">Measured from the live highlight groups. Higher is more readable.</p>
+    </figure>
+  </div>
+</section>
+
+<section id="features" class="wrap">
+  <p class="eyebrow">-- features</p>
+  <h2>Everything you'd expect, and a few things you wouldn't</h2>
+  <ul class="features">
+    <li><strong>60+ plugin integrations</strong>Auto-detected from lazy.nvim or vim.pack</li>
+    <li><strong>20 tool themes</strong>Terminals, CLI tools, VS Code, Zed, Helix</li>
+    <li><strong>Colorblind modes</strong><code>"red-green"</code> or <code>"blue-yellow"</code></li>
+    <li><strong>High contrast</strong>Brighter comments, line numbers and hints</li>
+    <li><strong>Subtle comments</strong>Fade comments behind code, optionally keep docstrings</li>
+    <li><strong>Saturation and accent</strong>Mute the colors, keep the contrast, pick any accent</li>
+    <li><strong>Transparent and borderless</strong>For terminal blur and shade-framed pickers</li>
+    <li><strong>Rainbow variables</strong>A color per local variable, JetBrains-style</li>
+    <li><strong>Three hooks</strong><code>on_palette</code>, <code>on_colors</code>, <code>on_highlights</code></li>
+    <li><strong>Lualine themes</strong>One per style, plus one that follows yours</li>
+    <li><strong><code>:checkhealth</code></strong>Warns when your overrides break contrast</li>
+    <li><strong>Tested 0.9 to nightly</strong>CI on every Neovim from 0.9.5 to nightly</li>
+  </ul>
+
+  <p class="tools-label">Matching themes for</p>
+  <ul class="tools">
+    <li>Alacritty</li><li>bat</li><li>btop</li><li>delta</li><li>eza</li><li>foot</li><li>fzf</li><li>Ghostty</li><li>Helix</li><li>iTerm2</li><li>k9s</li><li>Kitty</li><li>lazygit</li><li>tmux</li><li>VS Code</li><li>WezTerm</li><li>Windows Terminal</li><li>Yazi</li><li>Zed</li><li>Zettlr</li>
+  </ul>
+
+  <div class="gallery">
+    <figure><img src="assets/screenshots/picker.png" width="1520" height="1214" loading="lazy" alt="snacks picker in kissaten-midnight"><figcaption>Picker · midnight</figcaption></figure>
+    <figure><img src="assets/screenshots/light.png" width="1520" height="1214" loading="lazy" alt="LSP hover and diagnostics in kissaten-morning"><figcaption>Diagnostics and hover · morning</figcaption></figure>
+    <figure><img src="assets/screenshots/dashboard.png" width="1520" height="1214" loading="lazy" alt="dashboard in kissaten-evening"><figcaption>Dashboard · evening</figcaption></figure>
+    <figure><img src="assets/screenshots/rainbow-variables.png" width="1520" height="1214" loading="lazy" alt="rainbow variables in kissaten"><figcaption>Rainbow variables</figcaption></figure>
+  </div>
+</section>
+
+<section id="try" class="wrap">
+  <p class="eyebrow">-- try it</p>
+  <h2>Pull up a chair</h2>
+  <p class="sub">Neovim 0.9+ and a true-color terminal. Every option is in the <a href="https://github.com/bytebeast/kissaten.nvim#configuration">README</a>.</p>
+
+  <div class="install">
+    <div class="tablist" role="tablist" aria-label="Plugin manager">
+      <button role="tab" data-tab="lazyvim" aria-selected="true">LazyVim</button>
+      <button role="tab" data-tab="lazy" aria-selected="false">lazy.nvim</button>
+      <button role="tab" data-tab="pack" aria-selected="false">vim.pack</button>
+    </div>
+    <div class="panel" data-panel="lazyvim">
+      <button class="copy" data-copy>copy</button>
+<pre><code><span class="c">-- ~/.config/nvim/lua/plugins/colorscheme.lua</span>
+<span class="kw">return</span> <span class="pu">{</span>
+  <span class="pu">{</span> <span class="s">"bytebeast/kissaten.nvim"</span><span class="pu">,</span> <span class="pr">lazy</span> <span class="op">=</span> <span class="b">false</span><span class="pu">,</span> <span class="pr">priority</span> <span class="op">=</span> <span class="n">1000</span><span class="pu">,</span> <span class="pr">opts</span> <span class="op">=</span> <span class="pu">{}</span> <span class="pu">},</span>
+  <span class="pu">{</span> <span class="s">"LazyVim/LazyVim"</span><span class="pu">,</span> <span class="pr">opts</span> <span class="op">=</span> <span class="pu">{</span> <span class="pr">colorscheme</span> <span class="op">=</span> <span class="s">"kissaten"</span> <span class="pu">}</span> <span class="pu">},</span>
+<span class="pu">}</span></code></pre>
+    </div>
+    <div class="panel" data-panel="lazy">
+      <button class="copy" data-copy>copy</button>
+<pre><code><span class="pu">{</span>
+  <span class="s">"bytebeast/kissaten.nvim"</span><span class="pu">,</span>
+  <span class="pr">lazy</span> <span class="op">=</span> <span class="b">false</span><span class="pu">,</span>
+  <span class="pr">priority</span> <span class="op">=</span> <span class="n">1000</span><span class="pu">,</span>
+  <span class="pr">config</span> <span class="op">=</span> <span class="kw">function</span><span class="pu">()</span>
+    <span class="fb">require</span><span class="pu">(</span><span class="s">"kissaten"</span><span class="pu">).</span><span class="fn">setup</span><span class="pu">({</span> <span class="pr">style</span> <span class="op">=</span> <span class="s">"evening"</span> <span class="pu">})</span>
+    <span class="m">vim</span><span class="pu">.</span><span class="pr">cmd</span><span class="pu">.</span><span class="fn">colorscheme</span><span class="pu">(</span><span class="s">"kissaten"</span><span class="pu">)</span>
+  <span class="kw">end</span><span class="pu">,</span>
+<span class="pu">}</span></code></pre>
+    </div>
+    <div class="panel" data-panel="pack">
+      <button class="copy" data-copy>copy</button>
+<pre><code><span class="c">-- Neovim 0.12+</span>
+<span class="m">vim</span><span class="pu">.</span><span class="pr">pack</span><span class="pu">.</span><span class="fn">add</span><span class="pu">({</span> <span class="s">"https://github.com/bytebeast/kissaten.nvim"</span> <span class="pu">})</span>
+<span class="m">vim</span><span class="pu">.</span><span class="pr">cmd</span><span class="pu">.</span><span class="fn">colorscheme</span><span class="pu">(</span><span class="s">"kissaten-midnight"</span><span class="pu">)</span></code></pre>
+    </div>
+  </div>
+  <p class="star">Like it? A <a href="https://github.com/bytebeast/kissaten.nvim/stargazers">star on GitHub</a> helps other people find it.</p>
+</section>
+
+</main>
+
+<footer class="wrap">
+  <span>MIT licensed · borrows from <a href="https://github.com/folke/tokyonight.nvim">Tokyonight</a> and <a href="https://github.com/catppuccin/nvim">Catppuccin</a></span>
+  <a href="https://github.com/bytebeast/kissaten.nvim">github.com/bytebeast/kissaten.nvim</a>
+</footer>
+
+</body>
+</html>
