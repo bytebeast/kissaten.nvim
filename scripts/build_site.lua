@@ -7,6 +7,7 @@ local Colors = require("kissaten.colors")
 local out = "_site"
 local images = {
   "assets/social-preview.png",
+  "assets/src/social-background.jpg",
   "assets/screenshots/morning.png",
   "assets/screenshots/afternoon.png",
   "assets/screenshots/evening.png",

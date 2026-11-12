@@ -67,9 +67,30 @@ h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.15; margin: 0.2rem 
 /* hero */
 .hero {
   display: grid; grid-template-columns: minmax(0, 1fr); gap: 3.5rem; align-items: center;
-  padding: clamp(3rem, 8vw, 6.5rem) 0 4rem;
+  padding: clamp(2rem, 6vw, 5rem) 0 2rem;
 }
-@media (min-width: 1000px) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); } }
+@media (min-width: 1000px) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+/* the siphon still life from the social preview (scripts/social_scene.py) */
+.photo {
+  width: 100%; aspect-ratio: 11 / 10; object-fit: cover; object-position: 50% 60%;
+  /* dark styles: fade the edges so the scene sinks into the page */
+  -webkit-mask-image: linear-gradient(to right, transparent, black 32%, black 68%, transparent), linear-gradient(to bottom, transparent, black 28%, black 70%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, black 32%, black 68%, transparent), linear-gradient(to bottom, transparent, black 28%, black 70%, transparent);
+  mask-composite: intersect;
+}
+/* a night scene can't fade into a light page, so morning shows it as a framed print */
+[data-style="morning"] .photo {
+  -webkit-mask-image: none; mask-image: none;
+  border-radius: var(--radius); border: 1px solid var(--ui-border);
+  box-shadow: 0 30px 70px -35px color-mix(in oklab, var(--p-crust) 90%, transparent);
+}
+@media (max-width: 999px) { .photo { order: -1; aspect-ratio: 16 / 10; } }
+
+.demo { display: grid; justify-items: center; gap: 0.9rem; padding-bottom: 2rem; }
+.demo .editor { width: min(900px, 100%); margin-top: 0.6rem; }
+.demo .hint { margin: 0; }
 
 .cta { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 2.2rem; }
 .btn {
@@ -87,7 +108,7 @@ h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.15; margin: 0.2rem 
 .js .copy { display: block; }
 
 .switcher {
-  flex-wrap: wrap; gap: 4px; padding: 4px;
+  flex-wrap: wrap; justify-content: center; gap: 4px; padding: 4px;
   border: 1px solid var(--ui-border); border-radius: 12px; background: var(--p-crust);
 }
 .switcher button {
