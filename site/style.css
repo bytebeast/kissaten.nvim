@@ -24,7 +24,9 @@ img { max-width: 100%; height: auto; display: block; }
 a { color: var(--ui-accent); text-underline-offset: 3px; }
 code { font-family: var(--mono); font-size: 0.9em; }
 ::selection { background: var(--ui-bg-visual); }
-:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: 3px; }
+/* Switcher buttons and cards carry their own data-style, so pin the ring to the page's accent. */
+html { --focus: var(--ui-accent); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 button { font: inherit; color: inherit; cursor: pointer; }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -56,7 +58,8 @@ h1, h2 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; c
 h1 { font-size: clamp(2.3rem, 4.6vw, 3.2rem); line-height: 1.06; margin: 0.4rem 0 1.2rem; }
 h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.15; margin: 0.2rem 0 0.8rem; }
 .accent { color: var(--p-orange); }
-.eyebrow { font: italic 0.95rem var(--mono); color: var(--syn-comment); margin: 0; }
+/* fg-dim, not the comment color: comments sit under 4.5:1 on mantle in morning */
+.eyebrow { font: italic 0.95rem var(--mono); color: var(--ui-fg-dim); margin: 0; }
 .hero .eyebrow { font-style: normal; color: var(--p-orange); letter-spacing: 0.02em; }
 .lede { font-size: 1.15rem; color: var(--ui-fg-dim); max-width: 34rem; margin: 0 0 2rem; }
 .sub { color: var(--ui-fg-dim); max-width: 44rem; margin: 0 0 2.2rem; }
@@ -212,7 +215,7 @@ section[id] { padding: 4.5rem 0; }
 .features li { padding: 1rem 1.15rem; border-radius: 12px; background: var(--ui-bg); border: 1px solid var(--ui-border); color: var(--ui-fg-dim); font-size: 0.92rem; }
 .features strong { display: block; color: var(--ui-fg); font-size: 1rem; margin-bottom: 0.2rem; }
 
-.tools-label { font: italic 0.95rem var(--mono); color: var(--syn-comment); margin: 0 0 0.8rem; }
+.tools-label { font: italic 0.95rem var(--mono); color: var(--ui-fg-dim); margin: 0 0 0.8rem; }
 .tools { list-style: none; margin: 0 0 3rem; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .tools li { padding: 0.3rem 0.85rem; border-radius: 999px; border: 1px solid var(--ui-border); font: 0.85rem var(--mono); color: var(--ui-fg-dim); }
 
