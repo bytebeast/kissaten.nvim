@@ -9,6 +9,8 @@
 Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color
 checked for contrast.
 
+**[Try every style live on the website](https://bytebeast.github.io/kissaten.nvim/)**
+
 [![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-57A143?style=for-the-badge&logo=neovim&logoColor=white&labelColor=1f2133)](https://neovim.io)
 [![LazyVim](https://img.shields.io/badge/LazyVim-ready-82aaff?style=for-the-badge&labelColor=1f2133)](https://www.lazyvim.org)
 [![Lua](https://img.shields.io/badge/Made%20with-Lua-c3a6ff?style=for-the-badge&logo=lua&logoColor=white&labelColor=1f2133)](https://www.lua.org)
