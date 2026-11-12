@@ -1,4 +1,4 @@
--- Zettlr theme as Custom CSS (https://docs.zettlr.com/en/guides/custom-css/).
+-- Zettlr theme as Custom CSS (https://docs.zettlr.com/en/guides/custom-css.html).
 -- Uses Zettlr's documented editor variables (--zettlr-editor-*) plus the
 -- CodeMirror classes Zettlr assigns for syntax highlighting. Selectors are
 -- prefixed with `html body` so they outrank Zettlr's built-in rules.
