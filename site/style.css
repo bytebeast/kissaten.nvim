@@ -244,6 +244,14 @@ section[id] { padding: 4.5rem 0; }
 .gallery figure { margin: 0; }
 .gallery img { border-radius: 10px; border: 1px solid var(--ui-border); }
 .gallery figcaption { font-size: 0.85rem; color: var(--ui-fg-dim); margin-top: 0.5rem; }
+.zoom { display: block; width: 100%; padding: 0; border: 0; background: none; border-radius: 10px; cursor: zoom-in; }
+.zoom:hover img { border-color: var(--ui-accent); }
+#lightbox { max-width: none; max-height: none; padding: 0; border: 0; background: none; color: var(--ui-fg); cursor: zoom-out; }
+#lightbox::backdrop { background: color-mix(in oklab, var(--p-crust) 85%, transparent); }
+/* contain keeps the aspect ratio while filling 80% of whichever viewport side runs out first */
+#lightbox img { width: 80vw; height: 80vh; object-fit: contain; }
+#lightbox p { margin: 0.6rem 0 0; text-align: center; font-size: 0.9rem; }
+html:has(#lightbox[open]) { overflow: hidden; }
 
 /* try it */
 .install { max-width: 52rem; }
