@@ -7,6 +7,7 @@ const DESCRIPTIONS = {
 };
 
 const shot = document.getElementById("shot");
+const lightbox = document.getElementById("lightbox");
 
 function apply(style, save) {
   if (!(style in DESCRIPTIONS)) return;
@@ -42,6 +43,17 @@ document.addEventListener("click", async (e) => {
 
   const tab = e.target.closest("[data-tab]");
   if (tab) return selectTab(tab.dataset.tab);
+
+  const zoom = e.target.closest("[data-zoom]");
+  if (zoom) {
+    const img = zoom.querySelector("img");
+    lightbox.querySelector("img").src = img.src;
+    lightbox.querySelector("img").alt = img.alt;
+    lightbox.querySelector("p").textContent = zoom.nextElementSibling.textContent;
+    return lightbox.showModal();
+  }
+  // any click on the open lightbox, image or backdrop, closes it; Esc is handled by <dialog>
+  if (e.target.closest("#lightbox")) return lightbox.close();
 
   const copy = e.target.closest("[data-copy]");
   if (copy) {
