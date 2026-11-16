@@ -1,0 +1,49 @@
+#   gitleaks  committed secrets, across the full history
+#   zizmor    GitHub Actions workflow auditing (policy in .github/zizmor.yml)
+#
+# Python static analysis is ruff's "S" rules, run by the ruff job in ci.yml.
+# There is no pip-audit job: nothing here declares Python dependencies.
+
+name: security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # gitleaks and zizmor ship new rules between pushes. Monday 07:00 UTC.
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  secrets:
+    name: Secret scanning (gitleaks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so the scan covers every commit, not just the tip.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  workflows:
+    name: Workflow auditing (zizmor)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install zizmor==1.32.0
+      - run: zizmor --persona regular --format github .github/workflows/

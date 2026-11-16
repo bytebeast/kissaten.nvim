@@ -5,17 +5,23 @@ on:
     branches: [main]
   pull_request:
 
+permissions: {}
+
 jobs:
   test:
     name: test (nvim ${{ matrix.nvim }})
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         nvim: [v0.9.5, v0.10.4, v0.11.5, stable, nightly]
     steps:
       - uses: actions/checkout@v4
-      - uses: rhysd/action-setup-vim@v1
+        with:
+          persist-credentials: false
+      - uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1.6.1
         with:
           neovim: true
           version: ${{ matrix.nvim }}
@@ -24,20 +30,47 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: JohnnyMorganz/stylua-action@v4
+        with:
+          persist-credentials: false
+      - uses: JohnnyMorganz/stylua-action@479972f01e665acfcba96ada452c36608bdbbb5e # v4.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
           args: --check lua plugin colors tests scripts/build_extras.lua
 
+  # Lint and security scan in one: pyproject.toml selects ruff's "S" rules
+  # (a port of Bandit), so a local `ruff check` gives the same answer as CI.
+  ruff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      # Pinned so a new ruff release cannot fail CI on a PR that touched no
+      # Python.
+      - run: pip install ruff==0.17.5
+      - run: ruff check --output-format github .
+      - run: ruff format --check --diff .
+
   extras:
     name: extras are up to date
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: rhysd/action-setup-vim@v1
+        with:
+          persist-credentials: false
+      - uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1.6.1
         with:
           neovim: true
           version: stable

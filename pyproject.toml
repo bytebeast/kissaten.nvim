@@ -1,0 +1,38 @@
+# Tooling config only. The Python here is release automation plus the scripts
+# that build README images; none of it is installed or shipped.
+
+[project]
+name = "kissaten-nvim"
+# Owned by .github/scripts/release.py, like M.version in lua/kissaten/config.lua.
+version = "1.0.0"
+# No [tool.ruff] target-version: ruff takes the lower bound of this range, so
+# the two can never disagree.
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 120
+# Demo project rendered into the screenshots. Linting or formatting it would
+# change the images.
+extend-exclude = ["scripts/screenshots/samples"]
+
+[tool.ruff.lint]
+# E4/E7/E9 rather than all of E: drops E501, which the formatter cannot fix on
+# comment lines. "S" is flake8-bandit, so `ruff check` is the security scan.
+select = ["E4", "E7", "E9", "F", "W", "I", "UP", "B", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+# S603 flags every subprocess call that is not shell=True. The arguments are
+# hardcoded git invocations from this file, with no user input reaching them.
+".github/scripts/release.py" = ["S603"]
+
+# README image scripts, run by hand on a trusted checkout. Lambdas and zips
+# over equal-length lists are deliberate, the assert is a size sanity check,
+# random seeds the bokeh lights, and nvim is called by name on purpose.
+"scripts/*.py" = ["E731", "B023", "B905", "S101", "S110", "S311", "S607"]
+# Blender script, read top to bottom: imports sit next to the scene section
+# that uses them.
+"scripts/social_scene.py" = ["E402"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

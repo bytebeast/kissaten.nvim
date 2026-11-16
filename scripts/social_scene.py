@@ -10,9 +10,11 @@
 import math
 import sys
 
-import bpy  # noqa: I001 (bmesh needs bpy loaded first)
+import bpy
+
+# isort: split
+# bmesh needs bpy loaded first.
 import bmesh
-from mathutils import Vector
 
 out = sys.argv[1] if len(sys.argv) > 1 else "render.png"
 width = int(sys.argv[2]) if len(sys.argv) > 2 else 640
@@ -21,9 +23,22 @@ samples = int(sys.argv[3]) if len(sys.argv) > 3 else 32
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
 
+
 # ── helpers ─────────────────────────────────────────────────────────────
-def mat(name, color=(0.8, 0.8, 0.8), rough=0.4, metal=0.0, transmission=0.0, ior=1.45, coat=0.0,
-        sss=0.0, sss_radius=(1, 0.5, 0.25), emission=None, strength=0.0, alpha=1.0):
+def mat(
+    name,
+    color=(0.8, 0.8, 0.8),
+    rough=0.4,
+    metal=0.0,
+    transmission=0.0,
+    ior=1.45,
+    coat=0.0,
+    sss=0.0,
+    sss_radius=(1, 0.5, 0.25),
+    emission=None,
+    strength=0.0,
+    alpha=1.0,
+):
     m = bpy.data.materials.new(name)
     m.use_nodes = True
     b = m.node_tree.nodes["Principled BSDF"]
@@ -210,8 +225,10 @@ bpy.ops.mesh.primitive_torus_add(major_radius=0.02, minor_radius=0.003, location
 link(smooth(bpy.context.object), metal)
 
 # candle (heat source) under the flask
-candle = lathe("candle", [(0.0, 0.012), (0.026, 0.012), (0.026, 0.044), (0.024, 0.0465), (0.016, 0.045),
-                          (0.004, 0.0425), (0.0, 0.0425)])
+candle = lathe(
+    "candle",
+    [(0.0, 0.012), (0.026, 0.012), (0.026, 0.044), (0.024, 0.0465), (0.016, 0.045), (0.004, 0.0425), (0.0, 0.0425)],
+)
 candle.location = (SX, SY, 0)
 link(candle, wax)
 wk = cyl("wick", 0.0011, 0.011, (SX, SY, 0.047), verts=12)
@@ -225,8 +242,8 @@ for v in fl.data.vertices:
     t = v.co.z / 0.0052  # -1 (bottom) .. 1 (top)
     if t > 0:
         # stretch the upper half and narrow it to a point
-        v.co.x *= 1 - 0.85 * t ** 1.4
-        v.co.y *= 1 - 0.85 * t ** 1.4
+        v.co.x *= 1 - 0.85 * t**1.4
+        v.co.y *= 1 - 0.85 * t**1.4
         v.co.z *= 3.2
 link(fl, flame)
 bpy.ops.object.light_add(type="POINT", location=(SX, SY, 0.062))
@@ -245,14 +262,31 @@ link(liq, coffee)
 # upper bowl: revolved profile with a tube down into the flask
 bowl = lathe(
     "bowl",
-    [(0.006, FZ - 0.03), (0.007, FZ + 0.09), (0.012, FZ + 0.105), (0.03, FZ + 0.125), (0.047, FZ + 0.165),
-     (0.054, FZ + 0.215), (0.055, FZ + 0.245), (0.058, FZ + 0.25)],
+    [
+        (0.006, FZ - 0.03),
+        (0.007, FZ + 0.09),
+        (0.012, FZ + 0.105),
+        (0.03, FZ + 0.125),
+        (0.047, FZ + 0.165),
+        (0.054, FZ + 0.215),
+        (0.055, FZ + 0.245),
+        (0.058, FZ + 0.25),
+    ],
     thickness=0.002,
 )
 bowl.location = (SX, SY, 0)
 link(bowl, glass)
-up = lathe("coffee_up", [(0.0, FZ + 0.106), (0.011, FZ + 0.107), (0.029, FZ + 0.127), (0.046, FZ + 0.167),
-                         (0.0505, FZ + 0.19), (0.0, FZ + 0.19)])
+up = lathe(
+    "coffee_up",
+    [
+        (0.0, FZ + 0.106),
+        (0.011, FZ + 0.107),
+        (0.029, FZ + 0.127),
+        (0.046, FZ + 0.167),
+        (0.0505, FZ + 0.19),
+        (0.0, FZ + 0.19),
+    ],
+)
 up.location = (SX, SY, 0)
 link(up, coffee)
 foam = cyl("foam", 0.0505, 0.004, (SX, SY, FZ + 0.191))
@@ -263,21 +297,37 @@ CX, CY = -0.13, -0.05
 saucer = lathe("saucer", [(0.0, 0.002), (0.045, 0.002), (0.062, 0.006), (0.078, 0.014), (0.08, 0.016)], thickness=0.004)
 saucer.location = (CX, CY, 0)
 link(saucer, ceramic)
-cup = lathe("cup", [(0.0, 0.012), (0.028, 0.012), (0.034, 0.016), (0.042, 0.04), (0.046, 0.065), (0.047, 0.072)],
-            thickness=0.004)
+cup = lathe(
+    "cup",
+    [(0.0, 0.012), (0.028, 0.012), (0.034, 0.016), (0.042, 0.04), (0.046, 0.065), (0.047, 0.072)],
+    thickness=0.004,
+)
 cup.location = (CX, CY, 0)
 link(cup, ceramic)
 surface = cyl("coffee_cup", 0.0425, 0.003, (CX, CY, 0.064))
 link(surface, crema)
-bpy.ops.mesh.primitive_torus_add(major_radius=0.017, minor_radius=0.0045, location=(CX + 0.058, CY, 0.044),
-                                 rotation=(math.radians(90), 0, 0), major_segments=64, minor_segments=24)
+bpy.ops.mesh.primitive_torus_add(
+    major_radius=0.017,
+    minor_radius=0.0045,
+    location=(CX + 0.058, CY, 0.044),
+    rotation=(math.radians(90), 0, 0),
+    major_segments=64,
+    minor_segments=24,
+)
 link(smooth(bpy.context.object), ceramic)
 
 # ── background: café lights, far enough to melt into bokeh ──────────────
 import random
 
 rnd = random.Random(5)
-palette = [(1.0, 0.55, 0.22), (1.0, 0.68, 0.32), (1.0, 0.48, 0.25), (0.95, 0.60, 0.40), (0.62, 0.58, 1.0), (1.0, 0.75, 0.45)]
+palette = [
+    (1.0, 0.55, 0.22),
+    (1.0, 0.68, 0.32),
+    (1.0, 0.48, 0.25),
+    (0.95, 0.60, 0.40),
+    (0.62, 0.58, 1.0),
+    (1.0, 0.75, 0.45),
+]
 for i in range(30):
     x = rnd.uniform(-1.9, 1.9)
     y = rnd.uniform(2.2, 3.0)
@@ -301,6 +351,7 @@ rim.data.energy = 4
 rim.data.size = 0.3
 rim.data.color = (0.75, 0.78, 1.0)
 rim.rotation_euler = (math.radians(70), 0, math.radians(125))
+
 
 def softbox(name, loc, rot, size, color, strength):
     bpy.ops.mesh.primitive_plane_add(size=1, location=loc, rotation=rot)
@@ -349,6 +400,7 @@ scene.view_settings.view_transform = "AgX"
 scene.view_settings.look = "AgX - Medium High Contrast"
 scene.view_settings.exposure = 0.0
 import os
+
 if os.environ.get("BORDER"):
     x0, x1, y0, y1 = map(float, os.environ["BORDER"].split(","))
     scene.render.use_border = True
