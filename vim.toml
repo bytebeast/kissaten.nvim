@@ -1,0 +1,8 @@
+# Neovim runs LuaJIT, so Lua 5.1 plus the `vim` global. `any = true` accepts
+# every field on it; checking the API itself is lua-language-server's job.
+[selene]
+base = "lua51"
+name = "vim"
+
+[vim]
+any = true

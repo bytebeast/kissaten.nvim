@@ -2,6 +2,9 @@
 -- one at a time on the event loop, so typed keys (completion, picker queries)
 -- are processed between them. A step may return a function: the next step
 -- waits until it returns true (or 15 s pass). Errors go to $KISSATEN_SHOT_LOG.
+
+-- `Snacks` is the global snacks.nvim sets up inside LazyVim.
+--# selene: allow(undefined_variable)
 local steps = {}
 local function step(fn)
   steps[#steps + 1] = fn

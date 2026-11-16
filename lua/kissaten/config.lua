@@ -120,12 +120,17 @@ M.defaults = {
   --- Bold the mode section of the bundled lualine themes.
   lualine_bold = false,
 
+  -- Hook parameters are named so the defaults read as documentation (the
+  -- README and vimdoc quote them).
+  -- selene: allow(unused_variable)
   --- Change palette colors before anything is derived from them.
   ---@type fun(palette: kissaten.Palette, style: kissaten.Style)
   on_palette = function(palette, style) end,
+  -- selene: allow(unused_variable)
   --- Change semantic roles (colors.syn.*, colors.diag.*, colors.git.*, ...).
   ---@type fun(colors: kissaten.Colors)
   on_colors = function(colors) end,
+  -- selene: allow(unused_variable)
   --- Final say over any highlight group.
   ---@type fun(highlights: kissaten.Highlights, colors: kissaten.Colors)
   on_highlights = function(highlights, colors) end,

@@ -41,6 +41,19 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
           args: --check lua plugin colors tests scripts/build_extras.lua
+      # Release binary checked against the sha256 GitHub publishes for it.
+      - name: Install selene
+        env:
+          VERSION: 0.32.0
+          SHA256: d3773393578580074386e69337d35b7acddfbaa9fc38964c07fa3e28436ade9b
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/selene.zip" \
+            "https://github.com/Kampfkarren/selene/releases/download/$VERSION/selene-$VERSION-linux.zip"
+          echo "$SHA256  $RUNNER_TEMP/selene.zip" | sha256sum -c -
+          unzip -q -j "$RUNNER_TEMP/selene.zip" -d "$RUNNER_TEMP/selene"
+          chmod +x "$RUNNER_TEMP/selene/selene"
+          echo "$RUNNER_TEMP/selene" >> "$GITHUB_PATH"
+      - run: selene lua plugin colors tests scripts
 
   # Lint and security scan in one: pyproject.toml selects ruff's "S" rules
   # (a port of Bandit), so a local `ruff check` gives the same answer as CI.
