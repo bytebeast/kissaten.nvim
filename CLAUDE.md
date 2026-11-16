@@ -16,6 +16,9 @@ nvim --headless -u NONE -i NONE -l scripts/build_extras.lua
 # format (CI runs this with --check)
 stylua lua plugin colors tests scripts/build_extras.lua
 
+# Python lint, format and security (ruff "S" rules); config in pyproject.toml
+ruff check . && ruff format --check .
+
 # dump every computed color per style as JSON
 nvim --headless -u NONE -i NONE -l scripts/export_colors.lua > colors.json
 ```
@@ -58,4 +61,7 @@ Lualine themes in `lua/lualine/themes/` are thin wrappers over `lua/kissaten/lua
 - stylua: 2 spaces, 120 columns, double quotes, call parentheses always. Aligned tables use `-- stylua: ignore`.
 - Type annotations live in `lua/kissaten/types.lua` and inline `---@` comments. Modules start with `---@mod`.
 - `doc/kissaten.nvim.txt` is hand-maintained vimdoc (no generator), so option changes need updating there as well as in the README.
-- Python scripts in `scripts/` (screenshots via pynvim, asset generation via Pillow, Blender scene) are only for README images and are not linted or tested in CI. `scripts/screenshots/run.sh` rebuilds every screenshot: its `init.lua` runs LazyVim offline from an existing plugin dir (lazy `dev` mode, empty root), `scenario.lua` drives each shot, `samples/` is the demo project. `zettlr-*.png` are app screenshots it can't make.
+- Never hand-edit versions or CHANGELOG headings. `.github/scripts/release.py` owns `M.version` in `config.lua`, `pyproject.toml` `version` and `extras/vscode/package.json` (see `VERSION_FILES`). `release.yml` opens a `chore(release): vX.Y.Z` PR (via a GitHub App token so its checks run) and tags the commit once it merges. A version without a matching `## vX.Y.Z` CHANGELOG heading is never tagged.
+- Conventional commits drive releases: `feat` minor, `fix`/`perf` patch, `!` or `BREAKING CHANGE:` major, anything else no release. Use `docs`/`chore` for README, site and CHANGELOG-only work, or it ships a plugin release.
+- Workflows stay zizmor-clean (`security.yml`, policy in `.github/zizmor.yml`): third-party actions hash-pinned, job-level `permissions`, `persist-credentials: false` unless the job pushes.
+- Python scripts in `scripts/` (screenshots via pynvim, asset generation via Pillow, Blender scene) are only for README images. ruff lints them in CI (120 columns like stylua); they are not tested. `scripts/screenshots/samples/` is excluded because it appears in the screenshots. `scripts/screenshots/run.sh` rebuilds every screenshot: its `init.lua` runs LazyVim offline from an existing plugin dir (lazy `dev` mode, empty root), `scenario.lua` drives each shot, `samples/` is the demo project. `zettlr-*.png` are app screenshots it can't make.

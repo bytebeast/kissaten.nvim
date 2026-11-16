@@ -9,9 +9,9 @@ emulator or display server needed, so it runs in CI.
 usage: screenshot.py --scenario scenario.lua --out DIR [--cols 160 --rows 44]
        [--font-dir DIR] [--size 15] [--frame] -- <extra nvim args>
 """
+
 import argparse
 import os
-import sys
 
 import pynvim
 from PIL import Image, ImageDraw, ImageFont
@@ -76,13 +76,35 @@ class Grid:
 # cells regardless of line spacing (as real terminals do).
 # segments: (up, down, left, right) with 0 = none, 1 = light, 2 = heavy, 3 = double
 BOX = {
-    "─": (0, 0, 1, 1), "━": (0, 0, 2, 2), "│": (1, 1, 0, 0), "┃": (2, 2, 0, 0),
-    "┌": (0, 1, 0, 1), "┐": (0, 1, 1, 0), "└": (1, 0, 0, 1), "┘": (1, 0, 1, 0),
-    "├": (1, 1, 0, 1), "┤": (1, 1, 1, 0), "┬": (0, 1, 1, 1), "┴": (1, 0, 1, 1), "┼": (1, 1, 1, 1),
-    "═": (0, 0, 3, 3), "║": (3, 3, 0, 0), "╔": (0, 3, 0, 3), "╗": (0, 3, 3, 0),
-    "╚": (3, 0, 0, 3), "╝": (3, 0, 3, 0), "╠": (3, 3, 0, 3), "╣": (3, 3, 3, 0),
-    "╭": (0, 1, 0, 1), "╮": (0, 1, 1, 0), "╰": (1, 0, 0, 1), "╯": (1, 0, 1, 0),
-    "╴": (0, 0, 1, 0), "╶": (0, 0, 0, 1), "╵": (1, 0, 0, 0), "╷": (0, 1, 0, 0),
+    "─": (0, 0, 1, 1),
+    "━": (0, 0, 2, 2),
+    "│": (1, 1, 0, 0),
+    "┃": (2, 2, 0, 0),
+    "┌": (0, 1, 0, 1),
+    "┐": (0, 1, 1, 0),
+    "└": (1, 0, 0, 1),
+    "┘": (1, 0, 1, 0),
+    "├": (1, 1, 0, 1),
+    "┤": (1, 1, 1, 0),
+    "┬": (0, 1, 1, 1),
+    "┴": (1, 0, 1, 1),
+    "┼": (1, 1, 1, 1),
+    "═": (0, 0, 3, 3),
+    "║": (3, 3, 0, 0),
+    "╔": (0, 3, 0, 3),
+    "╗": (0, 3, 3, 0),
+    "╚": (3, 0, 0, 3),
+    "╝": (3, 0, 3, 0),
+    "╠": (3, 3, 0, 3),
+    "╣": (3, 3, 3, 0),
+    "╭": (0, 1, 0, 1),
+    "╮": (0, 1, 1, 0),
+    "╰": (1, 0, 0, 1),
+    "╯": (1, 0, 1, 0),
+    "╴": (0, 0, 1, 0),
+    "╶": (0, 0, 0, 1),
+    "╵": (1, 0, 0, 0),
+    "╷": (0, 1, 0, 0),
 }
 BLOCKS = {"█": (0, 0, 1, 1), "▀": (0, 0, 1, 0.5), "▄": (0, 0.5, 1, 1), "▌": (0, 0, 0.5, 1), "▐": (0.5, 0, 1, 1)}
 
@@ -131,7 +153,12 @@ def hexrgb(n):
 class Renderer:
     def __init__(self, font_dir, size):
         f = lambda name: ImageFont.truetype(os.path.join(font_dir, f"JetBrainsMonoNerdFontMono-{name}.ttf"), size)
-        self.fonts = {(False, False): f("Regular"), (True, False): f("Bold"), (False, True): f("Italic"), (True, True): f("BoldItalic")}
+        self.fonts = {
+            (False, False): f("Regular"),
+            (True, False): f("Bold"),
+            (False, True): f("Italic"),
+            (True, True): f("BoldItalic"),
+        }
         reg = self.fonts[(False, False)]
         self.cw = round(reg.getlength("M"))
         asc, desc = reg.getmetrics()
@@ -183,7 +210,11 @@ class Renderer:
         out = Image.new("RGB", (W + pad * 2, H + pad * 2), outer_bg)
         win = Image.new("RGB", (W, H), hexrgb(bg))
         r, g, b = hexrgb(bg)
-        shade = (max(r - 8, 0), max(g - 8, 0), max(b - 8, 0)) if sum(hexrgb(bg)) < 380 else (max(r - 14, 0), max(g - 14, 0), max(b - 12, 0))
+        shade = (
+            (max(r - 8, 0), max(g - 8, 0), max(b - 8, 0))
+            if sum(hexrgb(bg)) < 380
+            else (max(r - 14, 0), max(g - 14, 0), max(b - 12, 0))
+        )
         wd = ImageDraw.Draw(win)
         wd.rectangle([0, 0, W, bar], fill=shade)
         for i, col in enumerate([(255, 95, 87), (254, 188, 46), (40, 200, 64)]):
@@ -201,7 +232,9 @@ class Renderer:
         # hairline outline so very dark windows stay distinct from the backdrop
         dark = sum(hexrgb(bg)) < 380
         edge = tuple(min(255, v + 28) for v in hexrgb(bg)) if dark else tuple(max(0, v - 40) for v in hexrgb(bg))
-        ImageDraw.Draw(out).rounded_rectangle([pad - 1, pad - 1, pad + W, pad + H], radius=radius + 1, outline=edge, width=1)
+        ImageDraw.Draw(out).rounded_rectangle(
+            [pad - 1, pad - 1, pad + W, pad + H], radius=radius + 1, outline=edge, width=1
+        )
         return out
 
 
@@ -212,8 +245,11 @@ def main():
     ap.add_argument("--cols", type=int, default=160)
     ap.add_argument("--rows", type=int, default=44)
     ap.add_argument("--size", type=int, default=15)
-    ap.add_argument("--font-dir", default=os.environ.get("KISSATEN_FONT_DIR"),
-                    help="folder with JetBrainsMonoNerdFontMono-*.ttf (or set KISSATEN_FONT_DIR)")
+    ap.add_argument(
+        "--font-dir",
+        default=os.environ.get("KISSATEN_FONT_DIR"),
+        help="folder with JetBrainsMonoNerdFontMono-*.ttf (or set KISSATEN_FONT_DIR)",
+    )
     ap.add_argument("--frame", action="store_true")
     ap.add_argument("nvim_args", nargs="*")
     a = ap.parse_args()
@@ -231,8 +267,13 @@ def main():
         elif name == "kissaten_snap":
             snap = args[0]
             opts = args[1] if len(args) > 1 else {}
-            renderer.render(grid, os.path.join(a.out, snap + ".png"), frame=opts.get("frame", a.frame),
-                            title=opts.get("title", ""), cursor=opts.get("cursor", True))
+            renderer.render(
+                grid,
+                os.path.join(a.out, snap + ".png"),
+                frame=opts.get("frame", a.frame),
+                title=opts.get("title", ""),
+                cursor=opts.get("cursor", True),
+            )
         elif name == "kissaten_done":
             nvim.stop_loop()
 

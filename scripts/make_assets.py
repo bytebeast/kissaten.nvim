@@ -12,10 +12,11 @@ Produces:
                                scripts/social_scene.py in Blender, then softened)
   assets/colorblind.png        default vs `colorblind`, as each deficiency sees them
 """
+
 import argparse
+import json
 import os
 import re
-import json
 import shutil
 import subprocess
 
@@ -159,7 +160,9 @@ def social_preview(shots, font, out):
         d.ellipse([x, y, x + 26, y + 26], fill=rgb(p[key]))
         x += 34
 
-    count = len([f for f in os.listdir(os.path.join(ROOT, "lua", "kissaten", "groups", "integrations")) if f.endswith(".lua")])
+    count = len(
+        [f for f in os.listdir(os.path.join(ROOT, "lua", "kissaten", "groups", "integrations")) if f.endswith(".lua")]
+    )
     d.text((x0 + 4, H - 70), f"WCAG-checked · {count} integrations · Neovim 0.9+", font=small, fill=rgb(p["comment"]))
     img.save(out, optimize=True)
     size = os.path.getsize(out)
@@ -172,7 +175,11 @@ def subtle_grid(shots, font, out):
     rows = [st for st in ("evening", "morning") if os.path.exists(os.path.join(shots, f"subtle-{st}-off.png"))]
     if not rows:
         return False
-    cols = [("off", "subtle_comments = false"), ("05", "subtle_comments = 0.5"), ("07", "subtle_comments = { fade = 0.7 }")]
+    cols = [
+        ("off", "subtle_comments = false"),
+        ("05", "subtle_comments = 0.5"),
+        ("07", "subtle_comments = { fade = 0.7 }"),
+    ]
     imgs = [[Image.open(os.path.join(shots, f"subtle-{st}-{c}.png")).convert("RGB") for c, _ in cols] for st in rows]
     scale = 0.6
     w, h = int(imgs[0][0].width * scale), int(imgs[0][0].height * scale)
@@ -199,7 +206,10 @@ def export_colors():
     """Computed colors for every style, straight from the plugin."""
     out = subprocess.run(
         ["nvim", "--headless", "-u", "NONE", "-i", "NONE", "-l", "scripts/export_colors.lua"],
-        cwd=ROOT, check=True, capture_output=True, text=True,
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
     ).stdout
     return json.loads(out)
 
@@ -214,21 +224,53 @@ STYLE_NOTES = {
 
 # (label, accessor, derived?) per section; accessor reads the exported data
 SECTIONS = [
-    ("BACKGROUNDS", [(k, ("palette", k), False) for k in ["crust", "mantle", "bg", "surface0", "surface1", "surface2", "overlay0"]]),
-    ("TEXT", [("comment", ("palette", "comment"), False), ("subtext", ("palette", "subtext"), False), ("fg", ("palette", "fg"), False),
-              ("comment 0.5", ("subtle", "0.5"), True), ("comment 0.7", ("subtle", "0.7"), True)]),
+    (
+        "BACKGROUNDS",
+        [(k, ("palette", k), False) for k in ["crust", "mantle", "bg", "surface0", "surface1", "surface2", "overlay0"]],
+    ),
+    (
+        "TEXT",
+        [
+            ("comment", ("palette", "comment"), False),
+            ("subtext", ("palette", "subtext"), False),
+            ("fg", ("palette", "fg"), False),
+            ("comment 0.5", ("subtle", "0.5"), True),
+            ("comment 0.7", ("subtle", "0.7"), True),
+        ],
+    ),
     ("COOL · STRUCTURE", [(k, ("palette", k), False) for k in ["purple", "blue", "cyan", "sky", "teal", "lavender"]]),
     ("WARM · DATA", [(k, ("palette", k), False) for k in ["red", "maroon", "orange", "yellow", "green", "pink"]]),
-    ("SELECTION & DIFF", [("visual", ("ui", "bg_visual"), True), ("search", ("ui", "bg_search"), True), ("diff add", ("diff", "add"), True),
-                          ("diff delete", ("diff", "delete"), True), ("diff change", ("diff", "change"), True), ("diff text", ("diff", "text"), True)]),
+    (
+        "SELECTION & DIFF",
+        [
+            ("visual", ("ui", "bg_visual"), True),
+            ("search", ("ui", "bg_search"), True),
+            ("diff add", ("diff", "add"), True),
+            ("diff delete", ("diff", "delete"), True),
+            ("diff change", ("diff", "change"), True),
+            ("diff text", ("diff", "text"), True),
+        ],
+    ),
 ]
 
 # (sample text, syn role, italic?) - italics follow the default `styles`
 SYNTAX = [
-    ("if return fn", "keyword", True), ("fetch_user()", "func", False), ("HashMap", "type", False), ('"hello"', "string", False),
-    ("1_024", "number", False), ("ttl_secs", "parameter", False), (".entries", "property", False), ("self", "variable_builtin", False),
-    ("@decorator", "attribute", False), ("\\n", "escape", False), ("std::io", "module", False), ("print()", "func_builtin", False),
-    ("=> += ==", "operator", False), ("/^\\d+$/", "regex", False), ("<div>", "tag", False), ("-- note", "comment", True),
+    ("if return fn", "keyword", True),
+    ("fetch_user()", "func", False),
+    ("HashMap", "type", False),
+    ('"hello"', "string", False),
+    ("1_024", "number", False),
+    ("ttl_secs", "parameter", False),
+    (".entries", "property", False),
+    ("self", "variable_builtin", False),
+    ("@decorator", "attribute", False),
+    ("\\n", "escape", False),
+    ("std::io", "module", False),
+    ("print()", "func_builtin", False),
+    ("=> += ==", "operator", False),
+    ("/^\\d+$/", "regex", False),
+    ("<div>", "tag", False),
+    ("-- note", "comment", True),
 ]
 
 
@@ -243,7 +285,7 @@ def palette_cards(data, font, out):
 
     def card(style):
         d_ = data[style]
-        pal, light = d_["palette"], d_["background"] == "light"
+        pal = d_["palette"]
         get = lambda acc: d_[acc[0]][acc[1]]
         sec_h = 30 + sh + 70
         tile_w = (card_w - pad * 2 - 3 * gx) // 4
@@ -336,7 +378,7 @@ def colorblind_card(data, font, out, style="evening"):
     d.text((pad, pad - 6), "colorblind - what each color vision type sees", font=head, fill=rgb(pal["fg"]))
     y = pad + 54
     for mode, kind, name in rows:
-        d.text((pad, y), f'{mode}  ·  simulated {name}', font=label, fill=rgb(pal["subtext"]))
+        d.text((pad, y), f"{mode}  ·  simulated {name}", font=label, fill=rgb(pal["subtext"]))
         y += 32
         for title, roles in (("default", d_), (f'colorblind = "{mode}"', d_["colorblind"][mode])):
             sim = lambda h: rgb(simulate(h, kind))
@@ -344,7 +386,9 @@ def colorblind_card(data, font, out, style="evening"):
             d.text((pad + 18, y + 10), title, font=small, fill=sim(pal["comment"]))
             # git signs + diff lines
             x0, ly = pad + 18, y + 36
-            for i, (key, sign, text) in enumerate((("add", "+", "added line"), ("change", "~", "changed line"), ("delete", "-", "deleted line"))):
+            for i, (key, sign, text) in enumerate(
+                (("add", "+", "added line"), ("change", "~", "changed line"), ("delete", "-", "deleted line"))
+            ):
                 yy = ly + i * 27
                 diff_key = {"add": "add", "change": "change", "delete": "delete"}[key]
                 d.rectangle([x0 + 24, yy - 2, x0 + 330, yy + 22], fill=sim(roles["diff"][diff_key]))
@@ -372,8 +416,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--shots", required=True)
     ap.add_argument("--out", default=os.path.join(ROOT, "assets"))
-    ap.add_argument("--font-dir", default=os.environ.get("KISSATEN_FONT_DIR"),
-                    help="folder with JetBrainsMonoNerdFontMono-*.ttf (or set KISSATEN_FONT_DIR)")
+    ap.add_argument(
+        "--font-dir",
+        default=os.environ.get("KISSATEN_FONT_DIR"),
+        help="folder with JetBrainsMonoNerdFontMono-*.ttf (or set KISSATEN_FONT_DIR)",
+    )
     a = ap.parse_args()
     font = fonts(a.font_dir)
     os.makedirs(os.path.join(a.out, "screenshots"), exist_ok=True)
