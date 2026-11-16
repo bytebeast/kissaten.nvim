@@ -16,6 +16,9 @@ nvim --headless -u NONE -i NONE -l scripts/build_extras.lua
 # format (CI runs this with --check)
 stylua lua plugin colors tests scripts/build_extras.lua
 
+# Lua lint: accidental globals, unused variables, shadowing (std in vim.toml)
+selene lua plugin colors tests scripts
+
 # Python lint, format and security (ruff "S" rules); config in pyproject.toml
 ruff check . && ruff format --check .
 

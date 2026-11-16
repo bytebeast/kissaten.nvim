@@ -1574,8 +1574,8 @@ test("options: every pair of options works together on every style", function()
             truthy(not seen[color], where .. ": modes " .. mode .. "/" .. tostring(seen[color]))
             seen[color] = mode
           end
-          for i, color in ipairs(c.variables or {}) do
-            truthy(Util.contrast(color, c.bg) >= 4.5, where .. ": variable color " .. i .. " below AA")
+          for n, color in ipairs(c.variables or {}) do
+            truthy(Util.contrast(color, c.bg) >= 4.5, where .. ": variable color " .. n .. " below AA")
           end
           if opts.colorblind then
             local kinds = opts.colorblind == "red-green" and { "protan", "deutan" } or { "tritan" }

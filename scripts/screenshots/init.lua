@@ -2,6 +2,9 @@
 -- offline from an existing plugin directory, with kissaten from this checkout.
 -- Nothing is installed or updated, and nothing is written outside the
 -- temporary XDG dirs run.sh sets up.
+
+-- lazy.nvim specs are mixed tables by design ({ "repo", opts = ... }).
+--# selene: allow(mixed_table)
 local plugins = vim.env.KISSATEN_PLUGIN_DIR or vim.fn.expand("~/.local/share/nvim/lazy")
 local repo = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h:h")
 
