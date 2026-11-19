@@ -1,0 +1,35 @@
+# name: 'Kissaten Afternoon'
+# url: 'https://github.com/bytebeast/kissaten.nvim'
+# preferred_background: 282b3e
+
+fish_color_normal cdd5f6
+fish_color_command 89aefe
+fish_color_builtin 7fd1f0
+fish_color_function 89aefe
+fish_color_keyword c6a0f6
+fish_color_param eca7a1
+fish_color_option f4b8e4
+fish_color_quote a9d881
+fish_color_escape f4b8e4
+fish_color_redirection abd6ee
+fish_color_operator abd6ee
+fish_color_end f4b8e4
+fish_color_comment 8890b6 --italics
+fish_color_error f690ac
+fish_color_valid_path --underline
+fish_color_autosuggestion 8890b6
+fish_color_selection --background=374260
+fish_color_search_match --background=524d4c
+fish_color_history_current 7fd3c4 --bold
+fish_color_cancel f690ac
+fish_color_cwd 7fd3c4
+fish_color_cwd_root f690ac
+fish_color_user a9d881
+fish_color_host 89aefe
+fish_color_host_remote e8c47e
+fish_color_status f690ac
+fish_pager_color_progress 8890b6
+fish_pager_color_prefix 89aefe --bold
+fish_pager_color_completion cdd5f6
+fish_pager_color_description 8890b6
+fish_pager_color_selected_background --background=3c4159

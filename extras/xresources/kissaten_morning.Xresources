@@ -1,0 +1,22 @@
+! Kissaten Morning for X terminals
+! upstream: https://github.com/bytebeast/kissaten.nvim
+
+*.foreground: #353a5c
+*.background: #eef0f6
+*.cursorColor: #353a5c
+*.color0: #4f5578
+*.color1: #b7002f
+*.color2: #24680c
+*.color3: #805000
+*.color4: #1d4fcf
+*.color5: #9c2d7a
+*.color6: #00656a
+*.color7: #c2c9dc
+*.color8: #686f8e
+*.color9: #980027
+*.color10: #1b4d09
+*.color11: #613d00
+*.color12: #1945b4
+*.color13: #631eca
+*.color14: #004b6d
+*.color15: #d4d8e4

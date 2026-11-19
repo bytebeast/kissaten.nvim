@@ -213,7 +213,8 @@ return {
 
       transparent = false, -- true: don't paint the background (terminal blur, tmux)
       terminal_colors = true, -- theme the colors of :terminal
-      dim_inactive = false, -- true: darken windows you're not working in
+      dim_inactive = false, -- true or 0..1: darken windows you're not working in
+      hide_inactive_statusline = false, -- true: inactive statuslines become a thin line
 
       -- "normal" | "high" (brighter comments, line numbers and UI hints)
       contrast = "normal",
@@ -338,7 +339,8 @@ require("kissaten").setup({
   light_style = "morning",    -- used when vim.o.background == "light"
   transparent = false,        -- don't paint the editor background
   terminal_colors = true,     -- set vim.g.terminal_color_0..15 for :terminal
-  dim_inactive = false,       -- darken non-current windows
+  dim_inactive = false,       -- darken non-current windows: true | 0..1 (1 = deepest shade)
+  hide_inactive_statusline = false, -- inactive statuslines become a thin line (not with laststatus=3)
   contrast = "normal",        -- "high" lifts comments, line numbers and UI hints
   subtle_comments = false,    -- fade comments behind code: true | 0..1 | { fade = 0.7, docstrings = true }
   colorblind = false,         -- false | "red-green" | "blue-yellow"
@@ -416,6 +418,8 @@ thing, this is who wins:
 | `borderless` + `bright_borders`                           | Pickers stay borderless. `bright_borders` still styles every other float (hover, completion docs, LSP info).                                                                                     |
 | `borderless` + `transparent`                              | Picker panels stay solid. Without lines, the shade is all that frames them.                                                                                                                      |
 | `rainbow_variables` + `colorblind`                        | Variables use 6 colors that type can tell apart (two hues, three lightness steps) instead of 12.                                                                                                 |
+| `hide_inactive_statusline` + `laststatus=3`               | No effect: a global statusline (LazyVim's default) has no inactive statuslines to hide.                                                                                                          |
+| `hide_inactive_statusline` + lualine                      | Inactive lualine statuslines go blank instead of becoming a line, because lualine themes can't set an underline color.                                                                           |
 | `rainbow_variables` + `saturation`                        | Like status colors, variable colors keep their hue, so they stay apart even at `0`.                                                                                                              |
 | `rainbow_variables` + `styles.readonly` / `mutable` / ... | They stack: a `const` local keeps its own color and gets the readonly style on top.                                                                                                              |
 | `contrast = "high"` + `subtle_comments`                   | They compose: comments fade starting from the lifted contrast (`0.5` gives about 3.8:1 instead of 3.1:1).                                                                                        |
@@ -924,7 +928,7 @@ ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and
 `:terminal` are always covered.
 
 <details>
-<summary><b>All 60 integrations</b></summary>
+<summary><b>All 62 integrations</b></summary>
 
 | Plugin                                                                                                                                                           | Module               |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
@@ -939,10 +943,11 @@ ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and
 | [dropbar.nvim](https://github.com/Bekaboo/dropbar.nvim)                                                                                                          | `dropbar`            |
 | [markview.nvim](https://github.com/OXY2DEV/markview.nvim)                                                                                                        | `markview`           |
 | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)                                                                                                                  | `cmp`                |
+| [coc.nvim](https://github.com/neoclide/coc.nvim)                                                                                                                 | `coc`                |
 | [codediff.nvim](https://github.com/esmuellert/codediff.nvim)                                                                                                     | `codediff`           |
 | [copilot.lua / copilot.vim](https://github.com/zbirenbaum/copilot.lua)                                                                                           | `copilot`            |
 | [nvim-cursorword](https://github.com/xiyaowong/nvim-cursorword)                                                                                                  | `cursorword`         |
-| [nvim-dap / nvim-dap-ui](https://github.com/mfussenegger/nvim-dap)                                                                                               | `dap`                |
+| [nvim-dap / nvim-dap-ui / nvim-dap-virtual-text](https://github.com/mfussenegger/nvim-dap)                                                                       | `dap`                |
 | [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim)                                                                                                      | `dashboard`          |
 | [diffview.nvim](https://github.com/sindrets/diffview.nvim)                                                                                                       | `diffview`           |
 | [fidget.nvim](https://github.com/j-hui/fidget.nvim)                                                                                                              | `fidget`             |
@@ -970,6 +975,7 @@ ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and
 | [nvim-notify](https://github.com/rcarriga/nvim-notify)                                                                                                           | `notify`             |
 | [octo.nvim](https://github.com/pwntester/octo.nvim)                                                                                                              | `octo`               |
 | [oil.nvim](https://github.com/stevearc/oil.nvim)                                                                                                                 | `oil`                |
+| [orgmode](https://github.com/nvim-orgmode/orgmode)                                                                                                               | `orgmode`            |
 | [outline.nvim](https://github.com/hedyhli/outline.nvim)                                                                                                          | `outline`            |
 | [overseer.nvim](https://github.com/stevearc/overseer.nvim)                                                                                                       | `overseer`           |
 | [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim)                                                                                    | `rainbow`            |
@@ -996,6 +1002,9 @@ box.
 Treesitter, built-in LSP
 ([nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) included) and
 lualine need no module: they're always covered.
+
+vim-matchup, nvim-lightbulb, lsp_signature.nvim and neorg link their colors to
+groups kissaten already themes, so they look right without a module.
 
 A few plugins draw some colors themselves; these work as-is, and one option
 hands them over to kissaten:
@@ -1026,6 +1035,7 @@ configuration format:
 | [btop](https://github.com/aristocratos/btop)              | `extras/btop/*.theme`                    | copy to `~/.config/btop/themes/`, then `color_theme = "kissaten_evening"`                                                          |
 | [delta](https://github.com/dandavison/delta)              | `extras/delta/*.gitconfig`               | `[include] path = …` then `features = kissaten-evening`                                                                            |
 | [eza](https://eza.rocks)                                  | `extras/eza/*.yml`                       | save as `~/.config/eza/theme.yml` ([setup](extras/eza/README.md))                                                                  |
+| [fish](https://fishshell.com)                             | `extras/fish/*.theme`                    | copy to `~/.config/fish/themes/`, then `fish_config theme choose kissaten_evening` (fish 3.4+)                                     |
 | [foot](https://codeberg.org/dnkl/foot)                    | `extras/foot/*.ini`                      | `include=~/…/kissaten_evening.ini` at the top of `foot.ini` (morning fills `[colors-light]`: add `initial-color-theme=light`)      |
 | [fzf](https://github.com/junegunn/fzf)                    | `extras/fzf/*.sh`                        | `source …/kissaten_evening.sh` in your shell rc                                                                                    |
 | [Ghostty](https://ghostty.org)                            | `extras/ghostty/*`                       | copy to `~/.config/ghostty/themes/`, then `theme = kissaten_evening`                                                               |
@@ -1034,12 +1044,19 @@ configuration format:
 | [k9s](https://k9scli.io)                                  | `extras/k9s/*.yaml`                      | copy to k9s's `skins/` dir, then `k9s.ui.skin: kissaten_evening` ([setup](extras/k9s/README.md))                                   |
 | [Kitty](https://sw.kovidgoyal.net/kitty/)                 | `extras/kitty/*.conf`                    | `include …/kissaten_evening.conf`                                                                                                  |
 | [lazygit](https://github.com/jesseduffield/lazygit)       | `extras/lazygit/*.yml`                   | merge into `config.yml`                                                                                                            |
+| [st](https://st.suckless.org)                             | `extras/st/*.h`                          | replace `colorname[]` and the `default*` lines in `config.h` with the file's contents, then rebuild                                |
+| [Sublime Text](https://www.sublimetext.com)               | `extras/bat/*.tmTheme`                   | copy to `Packages/User/`, then **UI: Select Color Scheme** → kissaten_evening (the bat theme is a Sublime color scheme)            |
+| [Termux](https://termux.dev)                              | `extras/termux/*.properties`             | save as `~/.termux/colors.properties`, then `termux-reload-settings`                                                               |
 | [tmux](https://github.com/tmux/tmux)                      | `extras/tmux/*.tmux`                     | `source-file …/kissaten_evening.tmux`                                                                                              |
+| [Vim](https://www.vim.org)                                | `extras/vim/colors/*.vim`                | add `extras/vim` to `runtimepath` (vim-plug: `{ 'rtp': 'extras/vim' }`), `set termguicolors`, then `colorscheme kissaten-evening`  |
 | [VS Code](https://code.visualstudio.com)                  | `extras/vscode/` (an extension folder)   | copy the folder to `~/.vscode/extensions/`, then pick **Kissaten Evening** in Color Theme ([setup](extras/vscode/README.md))       |
 | [WezTerm](https://wezterm.org)                            | `extras/wezterm/*.toml`                  | copy to `~/.config/wezterm/colors/`, then `color_scheme = "Kissaten Evening"`                                                      |
 | [Windows Terminal](https://github.com/microsoft/terminal) | `extras/windows-terminal/*.json`         | add the object to `"schemes"` in `settings.json`, then `"colorScheme": "Kissaten Evening"`                                         |
+| [Xresources](https://invisible-island.net/xterm/)         | `extras/xresources/*.Xresources`         | `xrdb -merge …/kissaten_evening.Xresources` (xterm, URxvt and other X terminals)                                                   |
 | [Yazi](https://yazi-rs.github.io)                         | `extras/yazi/kissaten-*.yazi/` (flavors) | copy the folder to `~/.config/yazi/flavors/`, then `[flavor] dark = "kissaten-evening"` in `theme.toml`                            |
+| [zathura](https://pwmt.org/projects/zathura/)             | `extras/zathura/*.zathurarc`             | `include …/kissaten_evening.zathurarc` in `zathurarc`                                                                              |
 | [Zed](https://zed.dev)                                    | `extras/zed/*.json`                      | copy to `~/.config/zed/themes/`, then pick **Kissaten Evening** in the theme selector                                              |
+| [Zellij](https://zellij.dev)                              | `extras/zellij/*.kdl`                    | copy to `~/.config/zellij/themes/`, then `theme "kissaten_evening"` (zellij 0.42+)                                                 |
 | [Zettlr](https://www.zettlr.com)                          | `extras/zettlr/*.css`                    | paste into Custom CSS ([setup](extras/zettlr/README.md))                                                                           |
 
 Looking for a font to go with the theme? See the
@@ -1047,8 +1064,8 @@ Looking for a font to go with the theme? See the
 
 Every file comes in all five styles (`kissaten_morning`, `kissaten_afternoon`,
 `kissaten_evening`, `kissaten_midnight`, `kissaten_graveyard`); the table uses
-`evening`. bat, eza, k9s and Zettlr have their own setup guides, linked in the
-table.
+`evening`. Vim names its colorschemes like Neovim does (`kissaten-evening`).
+bat, eza, k9s and Zettlr have their own setup guides, linked in the table.
 
 ## Commands, API and health
 
@@ -1109,11 +1126,12 @@ Kissaten stands on the shoulders of these projects. Thank you.
 
 - **[folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim)**
   (Apache-2.0). Background hues, the cool structural colors, auto-enabling
-  integrations through lazy.nvim, and the idea of generating terminal extras
-  from the palette.
+  integrations through lazy.nvim, the idea of generating terminal extras from
+  the palette, and `hide_inactive_statusline`.
 - **[catppuccin/nvim](https://github.com/catppuccin/nvim)** (MIT). The warm
   accents (peach, maroon, pink, lavender), the crust/mantle/base/surface/overlay
-  naming, and plugin detection through `vim.pack`.
+  naming, plugin detection through `vim.pack`, and an amount for
+  `dim_inactive`.
 - **[rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)** (MIT).
   The palette-to-semantic-roles layer that makes recoloring a single role
   possible.

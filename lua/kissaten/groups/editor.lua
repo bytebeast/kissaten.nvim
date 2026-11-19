@@ -78,7 +78,8 @@ function M.get(c, opts)
     WildMenu              = { bg = ui.bg_sel },
 
     StatusLine            = { fg = ui.fg_sidebar, bg = ui.bg_statusline },
-    StatusLineNC          = { fg = c.comment, bg = ui.bg_statusline },
+    StatusLineNC          = opts.hide_inactive_statusline and { fg = c.bg, bg = tbg, underline = true, sp = ui.border }
+                              or { fg = c.comment, bg = ui.bg_statusline },
     StatusLineTerm        = "StatusLine",
     StatusLineTermNC      = "StatusLineNC",
     TabLine               = { fg = c.comment, bg = c.mantle },

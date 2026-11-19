@@ -1,0 +1,139 @@
+// Kissaten Midnight for zellij
+// upstream: https://github.com/bytebeast/kissaten.nvim
+// Copy to ~/.config/zellij/themes/, then set `theme "kissaten_midnight"`
+themes {
+    kissaten_midnight {
+        text_unselected {
+            base 200 208 240
+            background 17 17 24
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        text_selected {
+            base 200 208 240
+            background 54 58 86
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        ribbon_unselected {
+            base 169 177 214
+            background 31 32 48
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        ribbon_selected {
+            base 12 12 18
+            background 122 162 247
+            emphasis_0 71 50 40
+            emphasis_1 43 53 62
+            emphasis_2 43 53 42
+            emphasis_3 59 48 61
+        }
+        ribbon_hover {
+            base 200 208 240
+            background 42 44 66
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        table_title {
+            base 122 162 247
+            background 17 17 24
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        table_cell_unselected {
+            base 200 208 240
+            background 17 17 24
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        table_cell_selected {
+            base 200 208 240
+            background 54 58 86
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        list_unselected {
+            base 200 208 240
+            background 17 17 24
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        list_selected {
+            base 200 208 240
+            background 54 58 86
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        frame_unselected {
+            base 51 54 76
+            background 22 22 31
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        frame_selected {
+            base 122 162 247
+            background 22 22 31
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        frame_highlight {
+            base 249 162 106
+            background 22 22 31
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        exit_code_success {
+            base 166 217 138
+            background 22 22 31
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        exit_code_error {
+            base 243 139 168
+            background 22 22 31
+            emphasis_0 249 162 106
+            emphasis_1 169 216 240
+            emphasis_2 166 217 138
+            emphasis_3 245 194 231
+        }
+        multiplayer_user_colors {
+            player_1 245 194 231
+            player_2 122 162 247
+            player_3 249 162 106
+            player_4 230 197 111
+            player_5 169 216 240
+            player_6 166 217 138
+            player_7 243 139 168
+            player_8 180 190 254
+            player_9 115 218 202
+            player_10 187 154 247
+        }
+    }
+}

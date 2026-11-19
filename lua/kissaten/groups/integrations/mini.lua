@@ -124,7 +124,7 @@ function M.get(c, opts)
     MiniStatuslineDevinfo     = { fg = c.subtext, bg = c.surface1 },
     MiniStatuslineFileinfo    = { fg = c.subtext, bg = c.surface1 },
     MiniStatuslineFilename    = { fg = c.subtext, bg = c.mantle },
-    MiniStatuslineInactive    = { fg = c.comment, bg = c.mantle },
+    MiniStatuslineInactive    = opts.hide_inactive_statusline and "StatusLineNC" or { fg = c.comment, bg = c.mantle },
     MiniStatuslineModeCommand = mode(c.ui.modes.command),
     MiniStatuslineModeInsert  = mode(c.ui.modes.insert),
     MiniStatuslineModeNormal  = mode(c.ui.modes.normal),

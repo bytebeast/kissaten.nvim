@@ -61,7 +61,8 @@ Defaults: >lua
     light_style = "morning",  -- used when background=light
     transparent = false,      -- don't paint the editor background
     terminal_colors = true,   -- set g:terminal_color_0..15
-    dim_inactive = false,     -- darken non-current windows
+    dim_inactive = false,     -- darken non-current windows: true | 0..1
+    hide_inactive_statusline = false, -- thin line instead (not laststatus=3)
     contrast = "normal",      -- "high": lift comments, line numbers, UI hints
     subtle_comments = false,  -- true | 0..1 | { fade, docstrings }
     colorblind = false,       -- false | "red-green" | "blue-yellow"
@@ -234,6 +235,10 @@ every style). Where two touch the same thing:
   rainbow_variables + colorblind  6 colors that type tells apart
   rainbow_variables + saturation  variable colors keep their hue
   rainbow_variables + modifiers   stack: own color plus the style
+  hide_inactive_statusline + laststatus=3  no effect: a global statusline
+                            has no inactive statuslines
+  hide_inactive_statusline + lualine  inactive lualine goes blank (its
+                            themes can't set an underline color)
 
 Invalid values never break your editor: kissaten reports them once with
 |vim.notify()| and falls back to the default for that option.
@@ -306,7 +311,7 @@ integration is loaded. Force one on or off by module or repo name: >lua
 <
 Run |:checkhealth| kissaten to see which integrations are active.
 
-60 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
+62 integrations, from aerial.nvim to yanky.nvim; the README lists them all.
 Treesitter, built-in LSP (nvim-lspconfig included) and lualine are always
 covered. Renamed and companion repos are recognized too (nvim-bufferline.lua,
 telescope-file-browser.nvim).
@@ -333,12 +338,14 @@ Lualine themes: `kissaten` (follows the active style) and
 ==============================================================================
 9. EXTRAS                                                     *kissaten-extras*
 
-Matching themes for Alacritty, bat, btop, delta, eza, foot, fzf, Ghostty,
-Helix, iTerm2, k9s, Kitty, lazygit, tmux, VS Code, WezTerm, Windows Terminal,
-Yazi, Zed and Zettlr live in `extras/`, in all five
-styles (k9s also has `_transparent` skins; `extras/vscode` is an installable
-VS Code extension). Install steps are in the README, with full guides for
-bat, eza, k9s, VS Code and Zettlr in `extras/<tool>/README.md`;
+Matching themes for Alacritty, bat, btop, delta, eza, fish, foot, fzf,
+Ghostty, Helix, iTerm2, k9s, Kitty, lazygit, st, Termux, tmux, Vim, VS Code,
+WezTerm, Windows Terminal, Xresources, Yazi, zathura, Zed, Zellij and Zettlr
+live in `extras/`, in all five styles (k9s also has `_transparent` skins;
+`extras/vscode` is an installable VS Code extension; `extras/vim` is a Vim
+runtimepath entry; Sublime Text reads the bat themes). Install steps are in
+the README, with full guides for bat, eza, k9s, VS Code and Zettlr in
+`extras/<tool>/README.md`;
 `extras/fonts/README.md` recommends coding fonts (the screenshots use
 JetBrains Mono Nerd Font) and shows how to set them up, including ligatures.
 Regenerate after changing a palette: >sh

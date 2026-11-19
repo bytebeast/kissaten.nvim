@@ -20,6 +20,7 @@ M.extras = {
   btop      = { ext = "theme", label = "btop" },
   delta     = { ext = "gitconfig", label = "delta (git pager)" },
   eza       = { ext = "yml", label = "eza" },
+  fish      = { ext = "theme", label = "fish" },
   foot      = { ext = "ini", label = "foot" },
   fzf       = { ext = "sh", label = "fzf" },
   ghostty   = { ext = "", label = "Ghostty" },
@@ -28,12 +29,18 @@ M.extras = {
   k9s       = { ext = "yaml", label = "k9s", variants = { [""] = "default", ["_transparent"] = "transparent" } },
   kitty     = { ext = "conf", label = "Kitty" },
   lazygit   = { ext = "yml", label = "lazygit" },
+  st        = { ext = "h", label = "st" },
+  termux    = { ext = "properties", label = "Termux" },
   tmux      = { ext = "tmux", label = "tmux" },
+  vim       = { ext = "vim", label = "Vim", per_style = false },
   vscode    = { ext = "json", label = "VS Code" },
   wezterm   = { ext = "toml", label = "WezTerm" },
   ["windows-terminal"] = { ext = "json", label = "Windows Terminal" },
+  xresources = { ext = "Xresources", label = "Xresources" },
   yazi      = { ext = "toml", label = "Yazi", per_style = false },
   zed       = { ext = "json", label = "Zed" },
+  zathura   = { ext = "zathurarc", label = "zathura" },
+  zellij    = { ext = "kdl", label = "zellij" },
   zettlr    = { ext = "css", label = "Zettlr" },
 }
 
@@ -62,6 +69,19 @@ end
 function M.path(name, style, suffix)
   local ext = M.extras[name].ext
   return ("extras/%s/kissaten_%s%s%s"):format(name, style, suffix or "", ext ~= "" and ("." .. ext) or "")
+end
+
+--- The 16 terminal colors in ANSI order (0-7 normal, 8-15 bright).
+---@param c kissaten.Colors
+---@return string[]
+function M.ansi(c)
+  local t = c.terminal
+  -- stylua: ignore
+  return {
+    t.black, t.red, t.green, t.yellow, t.blue, t.magenta, t.cyan, t.white,
+    t.black_bright, t.red_bright, t.green_bright, t.yellow_bright,
+    t.blue_bright, t.magenta_bright, t.cyan_bright, t.white_bright,
+  }
 end
 
 --- Replace ${path.to.key} with values from `tbl`.
