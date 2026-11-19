@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.1.0 (2026-11-19)
+
+### Features
+
+- **integrations**: add coc.nvim and orgmode
+- dim_inactive amount and hide_inactive_statusline
+- **extras**: add fish, zellij, zathura, Vim, st, Termux, Xresources
+
+### Documentation
+
+- list new extras on the site, credit, vimdoc caveats
+
+<!-- also in this release: ci, test -->
+
 ## v1.0.0 (2026-11-12)
 
 First release.
