@@ -25,7 +25,12 @@ function M.theme(style)
     replace = mode(c.ui.modes.replace),
     command = mode(c.ui.modes.command),
     terminal = mode(c.ui.modes.terminal),
-    inactive = {
+    inactive = opts.hide_inactive_statusline and {
+      -- lualine themes can't set an underline color, so this is a blank line
+      a = { fg = c.bg, bg = opts.transparent and "NONE" or c.bg },
+      b = { fg = c.bg, bg = opts.transparent and "NONE" or c.bg },
+      c = { fg = c.bg, bg = opts.transparent and "NONE" or c.bg },
+    } or {
       a = { fg = c.comment, bg = bg },
       b = { fg = c.comment, bg = bg },
       c = { fg = c.comment, bg = bg },

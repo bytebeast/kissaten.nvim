@@ -213,7 +213,8 @@ return {
 
       transparent = false, -- true: don't paint the background (terminal blur, tmux)
       terminal_colors = true, -- theme the colors of :terminal
-      dim_inactive = false, -- true: darken windows you're not working in
+      dim_inactive = false, -- true or 0..1: darken windows you're not working in
+      hide_inactive_statusline = false, -- true: inactive statuslines become a thin line
 
       -- "normal" | "high" (brighter comments, line numbers and UI hints)
       contrast = "normal",
@@ -338,7 +339,8 @@ require("kissaten").setup({
   light_style = "morning",    -- used when vim.o.background == "light"
   transparent = false,        -- don't paint the editor background
   terminal_colors = true,     -- set vim.g.terminal_color_0..15 for :terminal
-  dim_inactive = false,       -- darken non-current windows
+  dim_inactive = false,       -- darken non-current windows: true | 0..1 (1 = deepest shade)
+  hide_inactive_statusline = false, -- inactive statuslines become a thin line (not with laststatus=3)
   contrast = "normal",        -- "high" lifts comments, line numbers and UI hints
   subtle_comments = false,    -- fade comments behind code: true | 0..1 | { fade = 0.7, docstrings = true }
   colorblind = false,         -- false | "red-green" | "blue-yellow"
@@ -416,6 +418,8 @@ thing, this is who wins:
 | `borderless` + `bright_borders`                           | Pickers stay borderless. `bright_borders` still styles every other float (hover, completion docs, LSP info).                                                                                     |
 | `borderless` + `transparent`                              | Picker panels stay solid. Without lines, the shade is all that frames them.                                                                                                                      |
 | `rainbow_variables` + `colorblind`                        | Variables use 6 colors that type can tell apart (two hues, three lightness steps) instead of 12.                                                                                                 |
+| `hide_inactive_statusline` + `laststatus=3`               | No effect: a global statusline (LazyVim's default) has no inactive statuslines to hide.                                                                                                          |
+| `hide_inactive_statusline` + lualine                      | Inactive lualine statuslines go blank instead of becoming a line, because lualine themes can't set an underline color.                                                                           |
 | `rainbow_variables` + `saturation`                        | Like status colors, variable colors keep their hue, so they stay apart even at `0`.                                                                                                              |
 | `rainbow_variables` + `styles.readonly` / `mutable` / ... | They stack: a `const` local keeps its own color and gets the readonly style on top.                                                                                                              |
 | `contrast = "high"` + `subtle_comments`                   | They compose: comments fade starting from the lifted contrast (`0.5` gives about 3.8:1 instead of 3.1:1).                                                                                        |

@@ -276,7 +276,8 @@ function M.setup(opts)
   ---@class kissaten.UiColors
   c.ui = {
     bg = opts.transparent and c.none or c.bg,
-    bg_dim = c.mantle, -- inactive windows when dim_inactive = true
+    -- inactive windows: `true` keeps the tuned mantle, an amount blends toward crust
+    bg_dim = opts.dim_inactive == true and c.mantle or Util.blend(c.crust, c.bg, opts.dim_inactive or 0),
     -- sidebars stay below the editor: lifting them would hide their cursorline
     bg_sidebar = opts.transparent and c.none or bg_for(opts.styles.sidebars, c.mantle),
     bg_float = opts.transparent and opts.styles.floats ~= "normal" and c.none

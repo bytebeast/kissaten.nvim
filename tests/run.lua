@@ -256,6 +256,57 @@ test("dim_inactive darkens non-current windows", function()
   eq(hex(hl("NormalNC").bg), require("kissaten").colors("evening").mantle)
 end)
 
+test("dim_inactive: an amount from the editor background to crust, code stays AA", function()
+  for _, style in ipairs(styles) do
+    for _, amount in ipairs({ 0, 0.3, 1 }) do
+      reset()
+      require("kissaten").setup({ dim_inactive = amount })
+      vim.cmd.colorscheme("kissaten-" .. style)
+      local c = require("kissaten").colors(style)
+      local dim = hex(hl("NormalNC").bg)
+      eq(dim, Util.blend(c.crust, c.bg, amount), style .. " " .. amount)
+      eq(#warnings, 0, style .. " " .. amount .. ": warnings")
+      for role, color in pairs(c.syn) do
+        if not require("kissaten.colors").SOFT_ROLES[role] then
+          local r = Util.contrast(color, dim)
+          truthy(r >= 4.5, ("%s dim %s: syn.%s at %.2f:1"):format(style, amount, role, r))
+        end
+      end
+    end
+  end
+  for _, bad in ipairs({ 1.5, -0.1, "yes" }) do
+    reset()
+    warnings = {}
+    require("kissaten").setup({ dim_inactive = bad })
+    truthy(#warnings == 1 and warnings[1].msg:find("dim_inactive"), vim.inspect(bad) .. " warns")
+    eq(require("kissaten.config").options.dim_inactive, false, vim.inspect(bad) .. " falls back to off")
+  end
+  reset()
+end)
+
+test("hide_inactive_statusline: inactive statuslines become a separator line", function()
+  for _, style in ipairs(styles) do
+    reset()
+    require("kissaten").setup({ hide_inactive_statusline = true, plugins = { all = true } })
+    vim.cmd.colorscheme("kissaten-" .. style)
+    local c = require("kissaten").colors(style)
+    local nc = hl("StatusLineNC")
+    eq(hex(nc.fg), c.bg, style .. ": text hidden")
+    truthy(nc.underline, style .. ": underlined")
+    eq(hex(nc.sp), c.ui.border, style .. ": in the window separator color")
+    eq(hl("MiniStatuslineInactive"), nc, style .. ": mini.statusline too")
+    local t = require("kissaten.lualine").theme(style)
+    for _, section in ipairs({ "a", "b", "c" }) do
+      eq(t.inactive[section].fg, t.inactive[section].bg, style .. ": lualine inactive " .. section .. " hidden")
+    end
+  end
+  reset()
+  require("kissaten").setup({})
+  vim.cmd.colorscheme("kissaten-evening")
+  truthy(not hl("StatusLineNC").underline, "off by default")
+  reset()
+end)
+
 test("vim.pack is only queried when the user loaded it", function()
   -- run in a fresh Neovim: reading `vim.pack` anywhere imports the module
   local code = [[
@@ -1545,6 +1596,7 @@ test("options: every pair of options works together on every style", function()
     { bright_borders = true },
     { styles = { conditionals = { bold = true }, loops = { bold = true } } },
     { rainbow_variables = true },
+    { dim_inactive = 1, hide_inactive_statusline = true },
     { styles = { readonly = { italic = true }, statics = { bold = true }, globals = { underdotted = true } } },
   }
   local skip = { comment = true, deprecated = true, tag_delimiter = true, string_doc = true }

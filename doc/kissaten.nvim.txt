@@ -61,7 +61,8 @@ Defaults: >lua
     light_style = "morning",  -- used when background=light
     transparent = false,      -- don't paint the editor background
     terminal_colors = true,   -- set g:terminal_color_0..15
-    dim_inactive = false,     -- darken non-current windows
+    dim_inactive = false,     -- darken non-current windows: true | 0..1
+    hide_inactive_statusline = false, -- thin line instead (not laststatus=3)
     contrast = "normal",      -- "high": lift comments, line numbers, UI hints
     subtle_comments = false,  -- true | 0..1 | { fade, docstrings }
     colorblind = false,       -- false | "red-green" | "blue-yellow"

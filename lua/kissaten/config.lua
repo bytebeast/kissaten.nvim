@@ -19,7 +19,13 @@ M.defaults = {
 
   transparent = false, -- don't paint the editor background
   terminal_colors = true, -- set vim.g.terminal_color_0..15 for :terminal
-  dim_inactive = false, -- darken non-current windows
+  --- Darken non-current windows: true, or an amount from 0 (off) to 1 (the
+  --- deepest background shade). true is about 0.5.
+  ---@type boolean|number
+  dim_inactive = false,
+  --- Inactive statuslines become a thin line in the window separator color.
+  --- No effect with a global statusline (laststatus=3, LazyVim's default).
+  hide_inactive_statusline = false,
 
   --- "normal" keeps the tuned palette. "high" lifts comments, line numbers,
   --- punctuation and UI hints to stronger contrast (recommended for bright
@@ -188,6 +194,7 @@ local rules = {
   { "contrast", one_of({ "normal", "high" }), '"normal" or "high"' },
   { "subtle_comments", function(v) return v == false or v == nil or M.subtle_comments({ subtle_comments = v }) ~= nil end, "false, true, a number from 0 to 1, or { fade = 0..1, docstrings = boolean }" },
   { "colorblind", function(v) return v == false or v == "red-green" or v == "blue-yellow" end, 'false, "red-green" or "blue-yellow"' },
+  { "dim_inactive", function(v) return type(v) == "boolean" or (type(v) == "number" and v == v and v >= 0 and v <= 1) end, "a boolean or a number from 0 to 1" },
   { "saturation", function(v) return type(v) == "number" and v == v and v >= 0 and v <= 1 end, "a number from 0 to 1" },
   { "accent", one_of(M.accents), "a palette accent (" .. table.concat(M.accents, ", ") .. ")" },
   { "rainbow", one_of({ "vivid", "dimmed", "mono" }), '"vivid", "dimmed" or "mono"' },
@@ -205,7 +212,7 @@ local rules = {
 for _, k in ipairs({
   "transparent",
   "terminal_colors",
-  "dim_inactive",
+  "hide_inactive_statusline",
   "no_italic",
   "no_bold",
   "no_underline",
