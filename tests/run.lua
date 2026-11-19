@@ -1716,6 +1716,33 @@ local PLUGIN_GROUPS = {
     "AvanteLogoLine1",
   },
   ["codecompanion.nvim"] = { "CodeCompanionChatTokens", "CodeCompanionVirtualText", "CodeCompanionDiffTextDelete" },
+  ["nvim-dap-virtual-text"] = { "NvimDapVirtualText" },
+  -- coc.nvim plugin/coc.vim s:StaticHighlight() and s:Highlight(): the hardcoded hex ones
+  ["coc.nvim"] = {
+    "CocVirtualText",
+    "CocInlineVirtualText",
+    "CocSearch",
+    "CocSelectedText",
+    "CocCodeLens",
+    "CocDisabled",
+    "CocMarkdownLink",
+    "CocLink",
+    "CocNotificationProgress",
+    "CocNextEditInsert",
+    "CocNextEditDelete",
+    "CocInlayHint",
+    "CocMenuSel",
+  },
+  -- orgmode lua/orgmode/colors/highlights.lua define_agenda_colors()
+  ["orgmode"] = {
+    "@org.agenda.deadline",
+    "@org.agenda.deadline.upcoming",
+    "@org.agenda.scheduled",
+    "@org.agenda.scheduled_past",
+    "@org.agenda.time_grid",
+    "@org.keyword.todo",
+    "@org.keyword.done",
+  },
 }
 
 test("integrations: every supported plugin's groups are themed on every style", function()
@@ -1772,6 +1799,8 @@ test("integrations: plugin detection knows renamed and companion repos", functio
     ["hover.nvim"] = "hover",
     ["nvim-cursorword"] = "cursorword",
     ["virt-column.nvim"] = "virt-column",
+    ["coc.nvim"] = "coc",
+    ["orgmode"] = "orgmode",
   }) do
     package.loaded["lazy.core.config"] = { plugins = { [repo] = {} } }
     package.loaded["lazy"] = {}
@@ -1854,6 +1883,34 @@ test("integrations: new groups stay readable and distinct on every style", funct
         truthy(fg("Hlargs", c.bg) >= 4.5, tag .. ": hlargs parameters meet AA")
       end
     end
+  end
+  reset()
+end)
+
+test("integrations: coc and orgmode replace their hardcoded colors", function()
+  for _, style in ipairs(styles) do
+    load(style, { plugins = { all = true }, subtle_comments = 1 })
+    local c = require("kissaten").colors(style)
+    local function r(name, bg)
+      local h = hl(name)
+      return Util.contrast(hex(h.fg), hex(h.bg) or bg or c.bg)
+    end
+    -- coc's #504945 ghost text all but vanished on the dark styles
+    for _, name in ipairs({ "CocVirtualText", "CocInlineVirtualText", "CocCodeLens", "NvimDapVirtualText" }) do
+      truthy(r(name) >= 3, ("%s: %s at %.2f:1"):format(style, name, r(name)))
+    end
+    eq(hex(hl("CocInlayHint").bg), hex(hl("LspInlayHint").bg), style .. ": coc inlay hints = LSP inlay hints")
+    eq(hex(hl("CocHighlightWrite").bg), hex(hl("LspReferenceWrite").bg), style .. ": coc references = LSP references")
+    eq(hex(hl("CocPumMenu").bg), hex(hl("Pmenu").bg), style .. ": coc completion = Pmenu")
+    -- orgmode lightened Error/WarningMsg, which cost contrast on the light style
+    for _, name in ipairs({ "@org.agenda.deadline", "@org.agenda.scheduled", "@org.keyword.todo" }) do
+      truthy(r(name) >= 4.5, ("%s: %s at %.2f:1"):format(style, name, r(name)))
+    end
+    load(style, { plugins = { all = true }, colorblind = "red-green" })
+    c = require("kissaten").colors(style)
+    eq(hex(hl("@org.keyword.todo").fg), c.diag.error, style .. ": org TODO follows colorblind")
+    eq(hex(hl("@org.keyword.done").fg), c.diag.ok, style .. ": org DONE follows colorblind")
+    eq(hex(hl("CocNextEditInsert").fg), c.git.add, style .. ": coc next-edit insert follows colorblind")
   end
   reset()
 end)

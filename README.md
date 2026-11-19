@@ -924,7 +924,7 @@ ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and
 `:terminal` are always covered.
 
 <details>
-<summary><b>All 60 integrations</b></summary>
+<summary><b>All 62 integrations</b></summary>
 
 | Plugin                                                                                                                                                           | Module               |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
@@ -939,10 +939,11 @@ ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and
 | [dropbar.nvim](https://github.com/Bekaboo/dropbar.nvim)                                                                                                          | `dropbar`            |
 | [markview.nvim](https://github.com/OXY2DEV/markview.nvim)                                                                                                        | `markview`           |
 | [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)                                                                                                                  | `cmp`                |
+| [coc.nvim](https://github.com/neoclide/coc.nvim)                                                                                                                 | `coc`                |
 | [codediff.nvim](https://github.com/esmuellert/codediff.nvim)                                                                                                     | `codediff`           |
 | [copilot.lua / copilot.vim](https://github.com/zbirenbaum/copilot.lua)                                                                                           | `copilot`            |
 | [nvim-cursorword](https://github.com/xiyaowong/nvim-cursorword)                                                                                                  | `cursorword`         |
-| [nvim-dap / nvim-dap-ui](https://github.com/mfussenegger/nvim-dap)                                                                                               | `dap`                |
+| [nvim-dap / nvim-dap-ui / nvim-dap-virtual-text](https://github.com/mfussenegger/nvim-dap)                                                                       | `dap`                |
 | [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim)                                                                                                      | `dashboard`          |
 | [diffview.nvim](https://github.com/sindrets/diffview.nvim)                                                                                                       | `diffview`           |
 | [fidget.nvim](https://github.com/j-hui/fidget.nvim)                                                                                                              | `fidget`             |
@@ -970,6 +971,7 @@ ones are active. Built-in LSP, diagnostics, treesitter, semantic tokens and
 | [nvim-notify](https://github.com/rcarriga/nvim-notify)                                                                                                           | `notify`             |
 | [octo.nvim](https://github.com/pwntester/octo.nvim)                                                                                                              | `octo`               |
 | [oil.nvim](https://github.com/stevearc/oil.nvim)                                                                                                                 | `oil`                |
+| [orgmode](https://github.com/nvim-orgmode/orgmode)                                                                                                               | `orgmode`            |
 | [outline.nvim](https://github.com/hedyhli/outline.nvim)                                                                                                          | `outline`            |
 | [overseer.nvim](https://github.com/stevearc/overseer.nvim)                                                                                                       | `overseer`           |
 | [rainbow-delimiters.nvim](https://github.com/HiPhish/rainbow-delimiters.nvim)                                                                                    | `rainbow`            |
@@ -996,6 +998,9 @@ box.
 Treesitter, built-in LSP
 ([nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) included) and
 lualine need no module: they're always covered.
+
+vim-matchup, nvim-lightbulb, lsp_signature.nvim and neorg link their colors to
+groups kissaten already themes, so they look right without a module.
 
 A few plugins draw some colors themselves; these work as-is, and one option
 hands them over to kissaten:
