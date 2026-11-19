@@ -29,7 +29,7 @@ M.extras = {
   k9s       = { ext = "yaml", label = "k9s", variants = { [""] = "default", ["_transparent"] = "transparent" } },
   kitty     = { ext = "conf", label = "Kitty" },
   lazygit   = { ext = "yml", label = "lazygit" },
-  st        = { ext = "h", label = "st" },
+  st        = { ext = "txt", label = "st" },
   termux    = { ext = "properties", label = "Termux" },
   tmux      = { ext = "tmux", label = "tmux" },
   vim       = { ext = "vim", label = "Vim", per_style = false },
