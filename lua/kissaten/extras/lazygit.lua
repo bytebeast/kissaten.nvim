@@ -6,7 +6,8 @@ function M.generate(c)
     [[
 # ${_display} for lazygit
 # upstream: ${_upstream}
-# Merge into ~/.config/lazygit/config.yml (or point LG_CONFIG_FILE at both files)
+# Merge into lazygit's config.yml (~/.config/lazygit on Linux, ~/Library/Application Support/lazygit on macOS),
+# or point LG_CONFIG_FILE at both files
 
 gui:
   nerdFontsVersion: "3"
