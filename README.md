@@ -1126,11 +1126,12 @@ Kissaten stands on the shoulders of these projects. Thank you.
 
 - **[folke/tokyonight.nvim](https://github.com/folke/tokyonight.nvim)**
   (Apache-2.0). Background hues, the cool structural colors, auto-enabling
-  integrations through lazy.nvim, and the idea of generating terminal extras
-  from the palette.
+  integrations through lazy.nvim, the idea of generating terminal extras from
+  the palette, and `hide_inactive_statusline`.
 - **[catppuccin/nvim](https://github.com/catppuccin/nvim)** (MIT). The warm
   accents (peach, maroon, pink, lavender), the crust/mantle/base/surface/overlay
-  naming, and plugin detection through `vim.pack`.
+  naming, plugin detection through `vim.pack`, and an amount for
+  `dim_inactive`.
 - **[rebelot/kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim)** (MIT).
   The palette-to-semantic-roles layer that makes recoloring a single role
   possible.
