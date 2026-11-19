@@ -2,7 +2,7 @@
   "name": "kissaten",
   "displayName": "Kissaten",
   "description": "A coffee-house color theme in five styles, from paper-light to black. Every syntax color meets WCAG AA. Generated from kissaten.nvim.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "publisher": "bytebeast",
   "icon": "icon.png",
   "license": "MIT",
