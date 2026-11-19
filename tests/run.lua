@@ -1058,11 +1058,15 @@ test("xresources, termux and st: exactly the keys each reads, ANSI colors in ord
       vim.fn.writefile({
         "#include <stdio.h>",
         '#include "colors.h"',
-        'int main(void) { printf("%s %s", colorname[defaultfg], colorname[defaultbg]); return colorname[255] != 0; }',
+        -- read every default*: GCC's -Wall flags an unused static even in a header (st's x.c uses them all)
+        "int main(void) {",
+        '  printf("%s %s %s %s", colorname[defaultfg], colorname[defaultbg], colorname[defaultcs], colorname[defaultrcs]);',
+        "  return colorname[255] != 0;",
+        "}",
       }, dir .. "/main.c")
       local out = vim.fn.system({ "cc", "-Wall", "-Werror", "-o", dir .. "/main", dir .. "/main.c" })
       eq(vim.v.shell_error, 0, style .. ": st header compiles: " .. out)
-      eq(vim.fn.system({ dir .. "/main" }), c.fg .. " " .. c.bg, style .. ": st defaults point at fg and bg")
+      eq(vim.fn.system({ dir .. "/main" }), table.concat({ c.fg, c.bg, c.fg, c.bg }, " "), style .. ": st defaults")
     end
   end
 end)
