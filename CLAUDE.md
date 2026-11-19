@@ -45,7 +45,7 @@ Load path: `colors/kissaten-<style>.lua` calls `require("kissaten").load(nil, st
 
 Adding an integration: one file in `groups/integrations/` exporting `url` and `get(c, opts)`, plus one line in `M.plugins`. Also add a row to the README integration table.
 
-`extras/`: `lua/kissaten/extras/init.lua` registers each tool (extension, label, optional `variants` like k9s `_transparent`). Each generator exports `generate(colors, variant)` and optionally `static()` for non-per-style files (VS Code's `package.json` and `LICENSE`; `package.json` takes its version from `config.version`). `per_style = false` skips the flat `kissaten_<style>.<ext>` files for tools that only use `static()` (yazi writes `kissaten-<style>.yazi/` flavor folders, reusing the bat tmTheme). Files under `extras/` are build output; edit the generator, not the output. Hand-written exceptions are the per-tool `README.md` files, `extras/fonts/` and `extras/vscode/icon.png`.
+`extras/`: `lua/kissaten/extras/init.lua` registers each tool (extension, label, optional `variants` like k9s `_transparent`). Each generator exports `generate(colors, variant)` and optionally `static()` for non-per-style files (VS Code's `package.json` and `LICENSE`; `package.json` takes its version from `config.version`). `per_style = false` skips the flat `kissaten_<style>.<ext>` files for tools that only use `static()` (yazi writes `kissaten-<style>.yazi/` flavor folders, reusing the bat tmTheme; vim writes `colors/kissaten-<style>.vim` from the core highlight groups). Files under `extras/` are build output; edit the generator, not the output. Hand-written exceptions are the per-tool `README.md` files, `extras/fonts/` and `extras/vscode/icon.png`.
 
 Lualine themes in `lua/lualine/themes/` are thin wrappers over `lua/kissaten/lualine.lua`.
 
@@ -55,7 +55,7 @@ Lualine themes in `lua/lualine/themes/` are thin wrappers over `lua/kissaten/lua
 - WCAG contrast: syntax roles at 4.5:1, comments at 4:1, badge text at 4.5:1, in every style and option combination. Code also stays at 4.5:1 on the cursorline, selection and diff backgrounds: `colors.lua` caps those tints by the weakest syntax role, so a palette ink near 4.5 forces faint tints (raise the ink instead).
 - Colorblind separation via a CVD simulation (Machado 2009) and OKLab distance.
 - Every highlight link resolves; every integration's groups are themed.
-- Extras validated against each tool's real schema: key lists inline in the test for small formats (eza, k9s, Windows Terminal, iTerm2, foot, btop), fixtures in `tests/fixtures/` for large ones (VS Code, Helix, Zed, Yazi). Each fixture header names the upstream commit it came from; regenerate from that tool's source when updating.
+- Extras validated against each tool's real schema: key lists inline in the test for small formats (eza, k9s, Windows Terminal, iTerm2, foot, btop, fish, zellij, zathura, Xresources, Termux, st), fixtures in `tests/fixtures/` for large ones (VS Code, Helix, Zed, Yazi). Each fixture header names the upstream commit it came from; regenerate from that tool's source when updating. The st header is compiled with `cc` and the Vim colorschemes are loaded in `vim` when those are on PATH.
 
 `:checkhealth kissaten` (`lua/kissaten/health.lua`) reports active integrations and warns when user `on_colors` overrides push syntax roles below 4.5:1.
 

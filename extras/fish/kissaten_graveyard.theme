@@ -1,0 +1,35 @@
+# name: 'Kissaten Graveyard'
+# url: 'https://github.com/bytebeast/kissaten.nvim'
+# preferred_background: 0a0a0d
+
+fish_color_normal bfc7e6
+fish_color_command 739aee
+fish_color_builtin 74c6f5
+fish_color_function 739aee
+fish_color_keyword b392ee
+fish_color_param e7a09a
+fish_color_option ebb9dd
+fish_color_quote 9dd081
+fish_color_escape ebb9dd
+fish_color_redirection a0cfe6
+fish_color_operator a0cfe6
+fish_color_end ebb9dd
+fish_color_comment 7479a1 --italics
+fish_color_error ea83a0
+fish_color_valid_path --underline
+fish_color_autosuggestion 7479a1
+fish_color_selection --background=252e46
+fish_color_search_match --background=3f3724
+fish_color_history_current 69d1c1 --bold
+fish_color_cancel ea83a0
+fish_color_cwd 69d1c1
+fish_color_cwd_root ea83a0
+fish_color_user 9dd081
+fish_color_host 739aee
+fish_color_host_remote ddbc66
+fish_color_status ea83a0
+fish_pager_color_progress 7479a1
+fish_pager_color_prefix 739aee --bold
+fish_pager_color_completion bfc7e6
+fish_pager_color_description 7479a1
+fish_pager_color_selected_background --background=30344f

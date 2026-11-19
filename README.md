@@ -1035,6 +1035,7 @@ configuration format:
 | [btop](https://github.com/aristocratos/btop)              | `extras/btop/*.theme`                    | copy to `~/.config/btop/themes/`, then `color_theme = "kissaten_evening"`                                                          |
 | [delta](https://github.com/dandavison/delta)              | `extras/delta/*.gitconfig`               | `[include] path = …` then `features = kissaten-evening`                                                                            |
 | [eza](https://eza.rocks)                                  | `extras/eza/*.yml`                       | save as `~/.config/eza/theme.yml` ([setup](extras/eza/README.md))                                                                  |
+| [fish](https://fishshell.com)                             | `extras/fish/*.theme`                    | copy to `~/.config/fish/themes/`, then `fish_config theme choose kissaten_evening` (fish 3.4+)                                     |
 | [foot](https://codeberg.org/dnkl/foot)                    | `extras/foot/*.ini`                      | `include=~/…/kissaten_evening.ini` at the top of `foot.ini` (morning fills `[colors-light]`: add `initial-color-theme=light`)      |
 | [fzf](https://github.com/junegunn/fzf)                    | `extras/fzf/*.sh`                        | `source …/kissaten_evening.sh` in your shell rc                                                                                    |
 | [Ghostty](https://ghostty.org)                            | `extras/ghostty/*`                       | copy to `~/.config/ghostty/themes/`, then `theme = kissaten_evening`                                                               |
@@ -1043,12 +1044,19 @@ configuration format:
 | [k9s](https://k9scli.io)                                  | `extras/k9s/*.yaml`                      | copy to k9s's `skins/` dir, then `k9s.ui.skin: kissaten_evening` ([setup](extras/k9s/README.md))                                   |
 | [Kitty](https://sw.kovidgoyal.net/kitty/)                 | `extras/kitty/*.conf`                    | `include …/kissaten_evening.conf`                                                                                                  |
 | [lazygit](https://github.com/jesseduffield/lazygit)       | `extras/lazygit/*.yml`                   | merge into `config.yml`                                                                                                            |
+| [st](https://st.suckless.org)                             | `extras/st/*.h`                          | replace `colorname[]` and the `default*` lines in `config.h` with the file's contents, then rebuild                                |
+| [Sublime Text](https://www.sublimetext.com)               | `extras/bat/*.tmTheme`                   | copy to `Packages/User/`, then **UI: Select Color Scheme** → kissaten_evening (the bat theme is a Sublime color scheme)            |
+| [Termux](https://termux.dev)                              | `extras/termux/*.properties`             | save as `~/.termux/colors.properties`, then `termux-reload-settings`                                                               |
 | [tmux](https://github.com/tmux/tmux)                      | `extras/tmux/*.tmux`                     | `source-file …/kissaten_evening.tmux`                                                                                              |
+| [Vim](https://www.vim.org)                                | `extras/vim/colors/*.vim`                | add `extras/vim` to `runtimepath` (vim-plug: `{ 'rtp': 'extras/vim' }`), `set termguicolors`, then `colorscheme kissaten-evening`  |
 | [VS Code](https://code.visualstudio.com)                  | `extras/vscode/` (an extension folder)   | copy the folder to `~/.vscode/extensions/`, then pick **Kissaten Evening** in Color Theme ([setup](extras/vscode/README.md))       |
 | [WezTerm](https://wezterm.org)                            | `extras/wezterm/*.toml`                  | copy to `~/.config/wezterm/colors/`, then `color_scheme = "Kissaten Evening"`                                                      |
 | [Windows Terminal](https://github.com/microsoft/terminal) | `extras/windows-terminal/*.json`         | add the object to `"schemes"` in `settings.json`, then `"colorScheme": "Kissaten Evening"`                                         |
+| [Xresources](https://invisible-island.net/xterm/)         | `extras/xresources/*.Xresources`         | `xrdb -merge …/kissaten_evening.Xresources` (xterm, URxvt and other X terminals)                                                   |
 | [Yazi](https://yazi-rs.github.io)                         | `extras/yazi/kissaten-*.yazi/` (flavors) | copy the folder to `~/.config/yazi/flavors/`, then `[flavor] dark = "kissaten-evening"` in `theme.toml`                            |
+| [zathura](https://pwmt.org/projects/zathura/)             | `extras/zathura/*.zathurarc`             | `include …/kissaten_evening.zathurarc` in `zathurarc`                                                                              |
 | [Zed](https://zed.dev)                                    | `extras/zed/*.json`                      | copy to `~/.config/zed/themes/`, then pick **Kissaten Evening** in the theme selector                                              |
+| [Zellij](https://zellij.dev)                              | `extras/zellij/*.kdl`                    | copy to `~/.config/zellij/themes/`, then `theme "kissaten_evening"` (zellij 0.42+)                                                 |
 | [Zettlr](https://www.zettlr.com)                          | `extras/zettlr/*.css`                    | paste into Custom CSS ([setup](extras/zettlr/README.md))                                                                           |
 
 Looking for a font to go with the theme? See the
@@ -1056,8 +1064,8 @@ Looking for a font to go with the theme? See the
 
 Every file comes in all five styles (`kissaten_morning`, `kissaten_afternoon`,
 `kissaten_evening`, `kissaten_midnight`, `kissaten_graveyard`); the table uses
-`evening`. bat, eza, k9s and Zettlr have their own setup guides, linked in the
-table.
+`evening`. Vim names its colorschemes like Neovim does (`kissaten-evening`).
+bat, eza, k9s and Zettlr have their own setup guides, linked in the table.
 
 ## Commands, API and health
 

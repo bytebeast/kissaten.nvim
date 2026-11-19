@@ -902,6 +902,243 @@ local CVD = {
   deutan = { { 0.367322, 0.860646, -0.227968 }, { 0.280085, 0.672501, 0.047413 }, { -0.011820, 0.042940, 0.968881 } },
   tritan = { { 1.255528, -0.076749, -0.178779 }, { -0.078411, 0.930809, 0.147602 }, { 0.004733, 0.691367, 0.303900 } },
 }
+test("fish: documented color variables only, values fish's set_color accepts", function()
+  -- fish-shell doc_src/interactive.rst (syntax highlighting and pager variables)
+  local keys = {}
+  for k in
+    (
+      "normal command keyword quote redirection end error param valid_path option comment selection operator "
+      .. "escape autosuggestion cwd cwd_root user host host_remote status cancel search_match history_current "
+      .. "builtin function"
+    ):gmatch("%S+")
+  do
+    keys["fish_color_" .. k] = true
+  end
+  for k in
+    (
+      "progress background prefix completion description selected_background selected_prefix "
+      .. "selected_completion selected_description secondary_background secondary_prefix "
+      .. "secondary_completion secondary_description"
+    ):gmatch("%S+")
+  do
+    keys["fish_pager_color_" .. k] = true
+  end
+  local flags = { ["--bold"] = true, ["--italics"] = true, ["--underline"] = true }
+  for _, style in ipairs(styles) do
+    local text = require("kissaten.extras").render("fish", style)
+    local seen = {}
+    for line in text:gmatch("[^\n]+") do
+      if not line:find("^#") then
+        local k, v = line:match("^(%S+) (.+)$")
+        truthy(keys[k], style .. ": unknown variable " .. tostring(k))
+        for word in v:gmatch("%S+") do
+          truthy(
+            word:match("^%x%x%x%x%x%x$") or word:match("^%-%-background=%x%x%x%x%x%x$") or flags[word],
+            style .. ": " .. line
+          )
+        end
+        seen[k] = v
+      end
+    end
+    eq(seen.fish_color_normal, colors(style).fg:sub(2), style .. ": normal text")
+    truthy(seen.fish_color_comment:find("--italics", 1, true), style .. ": comments italic like Neovim")
+  end
+end)
+
+test("zellij: every style and component, RGB triplets, readable ribbons", function()
+  -- zellij-utils/src/kdl/mod.rs Themes::from_kdl: named styles and multiplayer colors
+  local Zellij = require("kissaten.extras.zellij")
+  for _, style in ipairs(styles) do
+    local text = require("kissaten.extras").render("zellij", style)
+    local c = colors(style)
+    local defs, current = {}, nil
+    for line in text:gmatch("[^\n]+") do
+      local block = line:match("^        ([%w_]+) {$")
+      if block then
+        current, defs[block] = block, {}
+      end
+      local k, r, g, b = line:match("^            ([%w_]+) (%d+) (%d+) (%d+)$")
+      if k then
+        for _, n in ipairs({ r, g, b }) do
+          truthy(tonumber(n) <= 255, style .. ": " .. line)
+        end
+        defs[current][k] = Util.hex(tonumber(r), tonumber(g), tonumber(b))
+      end
+    end
+    eq(select(2, text:gsub("{", "")), select(2, text:gsub("}", "")), style .. ": balanced braces")
+    truthy(text:find("    kissaten_" .. style .. " {", 1, true), style .. ": theme named after the file")
+    for _, name in ipairs(Zellij.styles) do
+      eq(vim.tbl_count(defs[name] or {}), 6, style .. ": " .. name .. " components")
+    end
+    eq(vim.tbl_count(defs.multiplayer_user_colors), 10, style .. ": player colors")
+    eq(vim.tbl_count(defs), #Zellij.styles + 1, style .. ": no unknown blocks")
+    eq(defs.ribbon_selected.background, c.ui.accent, style .. ": selected tab in the accent, like TabLineSel")
+    for _, name in ipairs({ "text_unselected", "text_selected", "ribbon_unselected", "ribbon_selected", "ribbon_hover" }) do
+      local d = defs[name]
+      for _, k in ipairs({ "base", "emphasis_0", "emphasis_1", "emphasis_2", "emphasis_3" }) do
+        local ratio = Util.contrast(d[k], d.background)
+        truthy(ratio >= 4.5, ("%s: %s.%s at %.2f:1"):format(style, name, k, ratio))
+      end
+    end
+  end
+end)
+
+test("zathura: option names from zathura's config.c, quoted colors", function()
+  -- pwmt/zathura zathura/config.c, every setting registered with cb_color / cb_color_change
+  local keys = {}
+  for k in
+    (
+      "default-fg default-bg inputbar-fg inputbar-bg statusbar-fg statusbar-bg completion-fg completion-bg "
+      .. "completion-group-fg completion-group-bg completion-highlight-fg completion-highlight-bg "
+      .. "notification-error-fg notification-error-bg notification-warning-fg notification-warning-bg "
+      .. "notification-fg notification-bg index-fg index-bg index-active-fg index-active-bg scrollbar-fg "
+      .. "scrollbar-bg recolor-darkcolor recolor-lightcolor highlight-color highlight-fg highlight-active-color "
+      .. "visual-caret-color render-loading-bg render-loading-fg signature-success-color "
+      .. "signature-warning-color signature-error-color"
+    ):gmatch("%S+")
+  do
+    keys[k] = true
+  end
+  for _, style in ipairs(styles) do
+    local seen = {}
+    for k, v in require("kissaten.extras").render("zathura", style):gmatch('\nset ([%w-]+) "([^"]+)"') do
+      truthy(keys[k], style .. ": unknown option " .. k)
+      truthy(is_color(v) or v:match("^rgba%(%d+,%d+,%d+,[%d.]+%)$"), ("%s: %s %s"):format(style, k, v))
+      seen[k] = v
+    end
+    local c = colors(style)
+    eq(seen["default-bg"], c.bg, style .. ": page background")
+    eq(seen["recolor-lightcolor"], c.bg, style .. ": recolored pages match the editor")
+    for _, kind in ipairs({ "error", "warning" }) do
+      local fg, bg = seen["notification-" .. kind .. "-fg"], seen["notification-" .. kind .. "-bg"]
+      truthy(Util.contrast(fg, bg) >= 4.5, style .. ": " .. kind .. " notification readable")
+    end
+  end
+end)
+
+test("xresources, termux and st: exactly the keys each reads, ANSI colors in order", function()
+  local Extras = require("kissaten.extras")
+  for _, style in ipairs(styles) do
+    local c = colors(style)
+    local ansi = Extras.ansi(c)
+    -- X resources every X terminal reads
+    local x = {}
+    for k, v in Extras.render("xresources", style):gmatch("\n%*%.(%w+): (%S+)") do
+      x[k] = v
+    end
+    eq(vim.tbl_count(x), 19, style .. ": xresources keys")
+    eq({ x.foreground, x.background, x.color0, x.color15 }, { c.fg, c.bg, ansi[1], ansi[16] }, style .. ": xresources")
+    -- termux-app TerminalColorScheme.updateWith(): anything else throws
+    local t = {}
+    for line in Extras.render("termux", style):gmatch("[^\n]+") do
+      if not line:find("^#") then
+        local k, v = line:match("^([%w]+)=(#%x+)$")
+        truthy(
+          k and (k == "foreground" or k == "background" or k == "cursor" or k:match("^color%d+$")),
+          style .. ": " .. line
+        )
+        t[k] = v
+      end
+    end
+    eq(vim.tbl_count(t), 19, style .. ": termux keys")
+    eq({ t.background, t.color1 }, { c.bg, ansi[2] }, style .. ": termux")
+    -- st config.def.h: 16 colors, then cursor, reverse cursor, fg, bg at 256..259
+    local st = Extras.render("st", style)
+    local list = {}
+    for v in st:gmatch('\t"(#%x+)",') do
+      list[#list + 1] = v
+    end
+    eq(#list, 20, style .. ": st colors")
+    eq({ list[1], list[16], list[19], list[20] }, { ansi[1], ansi[16], c.fg, c.bg }, style .. ": st order")
+    truthy(st:find("unsigned int defaultfg = 258;", 1, true) and st:find("unsigned int defaultbg = 259;", 1, true))
+    if vim.fn.executable("cc") == 1 then
+      local dir = vim.fn.tempname()
+      vim.fn.mkdir(dir, "p")
+      vim.fn.writefile(vim.split(st, "\n"), dir .. "/colors.h")
+      vim.fn.writefile({
+        "#include <stdio.h>",
+        '#include "colors.h"',
+        'int main(void) { printf("%s %s", colorname[defaultfg], colorname[defaultbg]); return colorname[255] != 0; }',
+      }, dir .. "/main.c")
+      local out = vim.fn.system({ "cc", "-Wall", "-Werror", "-o", dir .. "/main", dir .. "/main.c" })
+      eq(vim.v.shell_error, 0, style .. ": st header compiles: " .. out)
+      eq(vim.fn.system({ dir .. "/main" }), c.fg .. " " .. c.bg, style .. ": st defaults point at fg and bg")
+    end
+  end
+end)
+
+test("vim: valid :highlight lines, same colors as Neovim, loads cleanly in Vim", function()
+  local files = require("kissaten.extras").static("vim")
+  eq(vim.tbl_count(files), #styles, "one colorscheme per style")
+  local words = {}
+  for w in ("bold italic underline undercurl strikethrough reverse standout nocombine NONE"):gmatch("%S+") do
+    words[w] = true
+  end
+  for _, style in ipairs(styles) do
+    local text = files["colors/kissaten-" .. style .. ".vim"]
+    truthy(text:find('let g:colors_name = "kissaten-' .. style .. '"', 1, true), style .. ": colors_name")
+    local defined, links = {}, {}
+    for line in text:gmatch("[^\n]+") do
+      local from, to = line:match("^hi! link (%S+) (%S+)$")
+      if from then
+        links[from] = to
+      elseif line:match("^hi [%w_]+ ") then
+        local name = line:match("^hi ([%w_]+)")
+        defined[name] = line
+        for k, v in line:gmatch("gui(%a*)=(%S+)") do
+          if k == "" then
+            for w in v:gmatch("[^,]+") do
+              truthy(words[w], style .. ": attribute " .. w .. " in " .. line)
+            end
+          else
+            truthy(v == "NONE" or is_color(v), style .. ": " .. line)
+          end
+        end
+      end
+    end
+    for from, to in pairs(links) do
+      truthy(to:match("^[%w_]+$"), style .. ": link to a name Vim accepts: " .. from .. " -> " .. to)
+    end
+    load(style)
+    for _, name in ipairs({ "Normal", "Comment", "Function", "DiffAdd", "Visual" }) do
+      local h = hl(name)
+      local line = defined[name] or ""
+      if h.fg then
+        truthy(line:find("guifg=" .. hex(h.fg), 1, true), style .. ": " .. name .. " fg as in Neovim")
+      end
+      if h.bg then
+        truthy(line:find("guibg=" .. hex(h.bg), 1, true), style .. ": " .. name .. " bg as in Neovim")
+      end
+    end
+  end
+  if vim.fn.executable("vim") == 1 then
+    local dir = vim.fn.tempname()
+    for path, content in pairs(files) do
+      vim.fn.mkdir(vim.fs.dirname(dir .. "/" .. path), "p")
+      vim.fn.writefile(vim.split(content, "\n"), dir .. "/" .. path)
+    end
+    local script, out = dir .. "/check.vim", dir .. "/check.out"
+    vim.fn.writefile({
+      "set termguicolors",
+      "let s:out = []",
+      "for s in " .. vim.json.encode(styles),
+      "  let v:errmsg = ''",
+      "  try | execute 'colorscheme kissaten-' . s | catch | let v:errmsg = v:exception | endtry",
+      "  call add(s:out, s . '|' . v:errmsg . '|' . synIDattr(synIDtrans(hlID('Normal')), 'bg#'))",
+      "endfor",
+      "call writefile(s:out, " .. vim.fn.string(out) .. ")",
+      "qa!",
+    }, script)
+    vim.fn.system({ "vim", "-Nu", "NONE", "-i", "NONE", "-es", "--cmd", "set rtp^=" .. dir, "-S", script })
+    local lines = vim.fn.readfile(out)
+    eq(#lines, #styles, "vim ran every colorscheme")
+    for i, style in ipairs(styles) do
+      eq(lines[i], ("%s||%s"):format(style, colors(style).bg), style .. ": loads in Vim without errors")
+    end
+  end
+  reset()
+end)
+
 local function simulate(color, kind)
   if kind == "normal" then
     return color

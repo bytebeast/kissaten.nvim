@@ -1,0 +1,22 @@
+! Kissaten Graveyard for X terminals
+! upstream: https://github.com/bytebeast/kissaten.nvim
+
+*.foreground: #bfc7e6
+*.background: #0a0a0d
+*.cursorColor: #bfc7e6
+*.color0: #23253b
+*.color1: #ea83a0
+*.color2: #9dd081
+*.color3: #ddbc66
+*.color4: #739aee
+*.color5: #ebb9dd
+*.color6: #69d1c1
+*.color7: #a1a9cd
+*.color8: #51577b
+*.color9: #f196af
+*.color10: #aadb90
+*.color11: #e6c777
+*.color12: #86a9f4
+*.color13: #c2a6f4
+*.color14: #89d1fa
+*.color15: #bfc7e6
