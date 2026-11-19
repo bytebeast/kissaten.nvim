@@ -24,3 +24,7 @@ Then in bat's config file (`bat --config-file` prints where it is):
 ```
 
 bat 0.25+ can switch with your terminal's light/dark mode instead: download `kissaten_morning.tmTheme` too, then use `--theme-light="kissaten_morning"` and `--theme-dark="kissaten_evening"` in place of `--theme`.
+
+## Sublime Text
+
+The same `.tmTheme` files are Sublime Text color schemes. Copy one into Sublime's `Packages/User` folder (**Preferences → Browse Packages…** opens it), then pick it with **UI: Select Color Scheme** in the command palette.

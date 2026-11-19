@@ -451,6 +451,15 @@ test("extras generate for every style and variant", function()
   end
 end)
 
+test("extras: every tool has a setup guide", function()
+  for name in pairs(require("kissaten.extras").extras) do
+    local path = ("extras/%s/README.md"):format(name)
+    truthy(vim.fn.filereadable(path) == 1, path .. " is missing")
+    local text = table.concat(vim.fn.readfile(path), "\n")
+    truthy(text:find("## Install", 1, true), path .. " has no Install section")
+  end
+end)
+
 -- Minimal YAML reader for the flat, two-space-indented files the eza/k9s
 -- generators emit: returns { ["a.b.c"] = "value" } for every leaf.
 local function yaml_leaves(text)
