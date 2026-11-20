@@ -7,9 +7,7 @@
 **A coffee-house colorscheme for Neovim and LazyVim.**
 
 Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color
-checked for contrast.
-
-<br>
+checked for contrast.<br>
 
 ### [Try every style live on the website](https://bytebeast.github.io/kissaten.nvim/)
 
