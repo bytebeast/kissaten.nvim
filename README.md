@@ -9,7 +9,11 @@
 Tokyonight's crisp structure, Catppuccin's warm accents, and every syntax color
 checked for contrast.
 
+<br>
+
 ### [Try every style live on the website](https://bytebeast.github.io/kissaten.nvim/)
+
+<br>
 
 [![CI](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml)
 [![Security](https://github.com/bytebeast/kissaten.nvim/actions/workflows/security.yml/badge.svg)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/security.yml)
