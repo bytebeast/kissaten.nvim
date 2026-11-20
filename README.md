@@ -11,16 +11,15 @@ checked for contrast.
 
 **[Try every style live on the website](https://bytebeast.github.io/kissaten.nvim/)**
 
-[![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-57A143?style=for-the-badge&logo=neovim&logoColor=white&labelColor=1f2133)](https://neovim.io)
-[![LazyVim](https://img.shields.io/badge/LazyVim-ready-82aaff?style=for-the-badge&labelColor=1f2133)](https://www.lazyvim.org)
-[![Lua](https://img.shields.io/badge/Made%20with-Lua-c3a6ff?style=for-the-badge&logo=lua&logoColor=white&labelColor=1f2133)](https://www.lua.org)
-[![WCAG AA](https://img.shields.io/badge/syntax%20contrast-WCAG%20AA-b5e08d?style=for-the-badge&labelColor=1f2133)](#why-kissaten)
-<br>
-[![Tests](https://img.shields.io/github/actions/workflow/status/bytebeast/kissaten.nvim/ci.yml?branch=main&style=for-the-badge&label=tests&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml)
-[![Security](https://img.shields.io/github/actions/workflow/status/bytebeast/kissaten.nvim/security.yml?branch=main&style=for-the-badge&label=security&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/security.yml)
-[![Release](https://img.shields.io/github/v/release/bytebeast/kissaten.nvim?style=for-the-badge&color=8bd5ca&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/releases)
-[![Stars](https://img.shields.io/github/stars/bytebeast/kissaten.nvim?style=for-the-badge&color=ebcf8c&labelColor=1f2133)](https://github.com/bytebeast/kissaten.nvim/stargazers)
-[![License](https://img.shields.io/github/license/bytebeast/kissaten.nvim?style=for-the-badge&color=f5bde6&labelColor=1f2133)](LICENSE)
+[![CI](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/ci.yml)
+[![Security](https://github.com/bytebeast/kissaten.nvim/actions/workflows/security.yml/badge.svg)](https://github.com/bytebeast/kissaten.nvim/actions/workflows/security.yml)
+[![Release](https://img.shields.io/github/v/release/bytebeast/kissaten.nvim?label=release&color=8bd5ca)](https://github.com/bytebeast/kissaten.nvim/releases)
+[![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-57A143?logo=neovim&logoColor=white)](https://neovim.io)
+[![LazyVim](https://img.shields.io/badge/LazyVim-ready-82aaff)](https://www.lazyvim.org)
+[![Lua](https://img.shields.io/badge/Lua-2C2D72?logo=lua&logoColor=white)](https://www.lua.org)
+[![WCAG AA](https://img.shields.io/badge/syntax%20contrast-WCAG%20AA-b5e08d)](#why-kissaten)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f5bde6.svg)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/bytebeast/kissaten.nvim?style=flat&color=ebcf8c)](https://github.com/bytebeast/kissaten.nvim/stargazers)
 
 <sub><i>kissaten (喫茶店): a traditional Japanese coffee house. Dim, cozy, a
 little retro.</i></sub>
