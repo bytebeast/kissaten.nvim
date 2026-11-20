@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.1.1 (2026-11-19)
+
+### Bug Fixes
+
+- **extras**: ship st colors as .txt so CodeQL skips them
+
+### Documentation
+
+- **extras**: a setup guide for every tool
+
 ## v1.1.0 (2026-11-19)
 
 ### Features
