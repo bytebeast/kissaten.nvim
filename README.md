@@ -16,6 +16,7 @@ checked for contrast.
 [![Release](https://img.shields.io/github/v/release/bytebeast/kissaten.nvim?label=release&color=8bd5ca)](https://github.com/bytebeast/kissaten.nvim/releases)
 [![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-57A143?logo=neovim&logoColor=white)](https://neovim.io)
 [![LazyVim](https://img.shields.io/badge/LazyVim-ready-82aaff)](https://www.lazyvim.org)
+[![Dotfyle](https://img.shields.io/badge/dotfyle-listed-c3a6ff?logo=neovim&logoColor=white)](https://dotfyle.com/plugins/bytebeast/kissaten.nvim)
 [![Lua](https://img.shields.io/badge/Lua-2C2D72?logo=lua&logoColor=white)](https://www.lua.org)
 [![WCAG AA](https://img.shields.io/badge/syntax%20contrast-WCAG%20AA-b5e08d)](#why-kissaten)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f5bde6.svg)](LICENSE)
