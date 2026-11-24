@@ -125,6 +125,9 @@ If you prefer that, set `contrast = "high"`, which lifts kissaten's comments to
 
 </details>
 
+See [comparison.md](comparison.md) for a feature-by-feature comparison with
+Tokyonight and Catppuccin.
+
 ## Styles
 
 ![The five kissaten styles](assets/styles.png)
