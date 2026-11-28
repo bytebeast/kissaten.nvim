@@ -41,7 +41,7 @@ progress_error = { fg = "#ea83a0", bg = "#23253b" }
 
 [which]
 border = { fg = "#445989" }
-mask = { bg = "#171827" }
+mask = { bg = "#16161f" }
 cand = { fg = "#69d1c1" }
 rest = { fg = "#51577b" }
 desc = { fg = "#b392ee" }

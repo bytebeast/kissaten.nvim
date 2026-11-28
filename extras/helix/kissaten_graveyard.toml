@@ -80,11 +80,11 @@
 "ui.bufferline" = { fg = "#7479a1", bg = "#050507" }
 "ui.bufferline.active" = { fg = "#000000", bg = "#739aee", modifiers = ["bold"] }
 "ui.bufferline.background" = { bg = "#000000" }
-"ui.popup" = { fg = "#bfc7e6", bg = "#171827" }
-"ui.popup.info" = { fg = "#bfc7e6", bg = "#171827" }
+"ui.popup" = { fg = "#bfc7e6", bg = "#16161f" }
+"ui.popup.info" = { fg = "#bfc7e6", bg = "#16161f" }
 "ui.picker.header.column.active" = { fg = "#739aee", modifiers = ["bold"] }
 "ui.window" = "#2a2d3f"
-"ui.help" = { fg = "#bfc7e6", bg = "#171827" }
+"ui.help" = { fg = "#bfc7e6", bg = "#16161f" }
 "ui.text" = "#bfc7e6"
 "ui.text.focus" = { fg = "#bfc7e6", bg = "#30344f", modifiers = ["bold"] }
 "ui.text.inactive" = "#7479a1"
@@ -97,7 +97,7 @@
 "ui.virtual.inlay-hint" = { fg = "#7479a1", bg = "#12121d" }
 "ui.virtual.wrap" = "#464b6b"
 "ui.virtual.jump-label" = { fg = "#000000", bg = "#ebb9dd", modifiers = ["bold"] }
-"ui.menu" = { fg = "#bfc7e6", bg = "#171827" }
+"ui.menu" = { fg = "#bfc7e6", bg = "#16161f" }
 "ui.menu.selected" = { bg = "#30344f", modifiers = ["bold"] }
 "ui.menu.scroll" = { fg = "#30344f", bg = "#171827" }
 "ui.selection" = { bg = "#252e46" }

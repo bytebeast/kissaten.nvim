@@ -71,11 +71,11 @@ hi Error guifg=#ea83a0 gui=NONE cterm=NONE
 hi ErrorMsg guifg=#ea83a0 gui=NONE cterm=NONE
 hi Exception guifg=#ea83a0 gui=italic cterm=NONE
 hi! link Float Number
-hi FloatBorder guifg=#445989 guibg=#171827 gui=NONE cterm=NONE
-hi FloatFooter guifg=#a1a9cd guibg=#171827 gui=NONE cterm=NONE
+hi FloatBorder guifg=#445989 guibg=#16161f gui=NONE cterm=NONE
+hi FloatFooter guifg=#a1a9cd guibg=#16161f gui=NONE cterm=NONE
 hi FloatShadow guibg=#000000 gui=NONE cterm=NONE
 hi FloatShadowThrough guibg=#000000 gui=NONE cterm=NONE
-hi FloatTitle guifg=#739aee guibg=#171827 gui=bold cterm=NONE
+hi FloatTitle guifg=#739aee guibg=#16161f gui=bold cterm=NONE
 hi FoldColumn guifg=#7479a1 guibg=#0a0a0d gui=NONE cterm=NONE
 hi Folded guifg=#739aee guibg=#000000 gui=NONE cterm=NONE
 hi Function guifg=#739aee gui=NONE cterm=NONE
@@ -141,19 +141,19 @@ hi MsgArea guifg=#a1a9cd gui=NONE cterm=NONE
 hi MsgSeparator guifg=#2a2d3f guibg=#050507 gui=NONE cterm=NONE
 hi NonText guifg=#464b6b gui=NONE cterm=NONE
 hi Normal guifg=#bfc7e6 guibg=#0a0a0d gui=NONE cterm=NONE
-hi NormalFloat guifg=#bfc7e6 guibg=#171827 gui=NONE cterm=NONE
+hi NormalFloat guifg=#bfc7e6 guibg=#16161f gui=NONE cterm=NONE
 hi NormalNC guifg=#bfc7e6 guibg=#0a0a0d gui=NONE cterm=NONE
 hi NormalSB guifg=#a1a9cd guibg=#050507 gui=NONE cterm=NONE
 hi Number guifg=#f09a62 gui=NONE cterm=NONE
 hi OkMsg guifg=#9dd081 gui=NONE cterm=NONE
 hi Operator guifg=#a0cfe6 gui=NONE cterm=NONE
-hi Pmenu guifg=#bfc7e6 guibg=#171827 gui=NONE cterm=NONE
-hi PmenuBorder guifg=#445989 guibg=#171827 gui=NONE cterm=NONE
-hi PmenuExtra guifg=#7479a1 guibg=#171827 gui=NONE cterm=NONE
+hi Pmenu guifg=#bfc7e6 guibg=#16161f gui=NONE cterm=NONE
+hi PmenuBorder guifg=#445989 guibg=#16161f gui=NONE cterm=NONE
+hi PmenuExtra guifg=#7479a1 guibg=#16161f gui=NONE cterm=NONE
 hi PmenuExtraSel guifg=#7479a1 guibg=#30344f gui=NONE cterm=NONE
-hi PmenuKind guifg=#acb5f5 guibg=#171827 gui=NONE cterm=NONE
+hi PmenuKind guifg=#acb5f5 guibg=#16161f gui=NONE cterm=NONE
 hi PmenuKindSel guifg=#acb5f5 guibg=#30344f gui=NONE cterm=NONE
-hi PmenuMatch guifg=#739aee guibg=#171827 gui=bold cterm=NONE
+hi PmenuMatch guifg=#739aee guibg=#16161f gui=bold cterm=NONE
 hi PmenuMatchSel guifg=#739aee guibg=#30344f gui=bold cterm=NONE
 hi PmenuSbar guibg=#171827 gui=NONE cterm=NONE
 hi PmenuSel guibg=#30344f gui=bold cterm=NONE

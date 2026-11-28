@@ -267,7 +267,7 @@ function M.setup(opts)
   -- float: mantle sits within ~1.05:1 of the editor, so popups would bleed
   -- into it. There, floats and popups sit a step *above* the editor instead.
   local near_black = not light and Util.contrast(c.mantle, c.bg) < 1.06
-  local float_shade = near_black and c.surface0 or c.mantle
+  local float_shade = p.float or near_black and c.surface0 or c.mantle
 
   local function bg_for(kind, dark)
     return kind == "transparent" and c.none or kind == "dark" and dark or c.bg
