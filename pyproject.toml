@@ -4,7 +4,7 @@
 [project]
 name = "kissaten-nvim"
 # Owned by .github/scripts/release.py, like M.version in lua/kissaten/config.lua.
-version = "1.1.1"
+version = "1.1.2"
 # No [tool.ruff] target-version: ruff takes the lower bound of this range, so
 # the two can never disagree.
 requires-python = ">=3.10"
