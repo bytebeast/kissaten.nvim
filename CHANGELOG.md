@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.1.2 (2026-11-28)
+
+### Bug Fixes
+
+- **graveyard**: lift floats to midnight's bg instead of surface0
+
+### Documentation
+
+- **readme**: switch to flat badges like winteriscoming.nvim
+- **readme**: add dotfyle badge
+- **readme**: make live website link a heading
+- add theme comparison with tokyonight and catppuccin
+
 ## v1.1.1 (2026-11-19)
 
 ### Bug Fixes
