@@ -8,6 +8,9 @@ return {
   -- diff and diagnostic backgrounds mix in 15% more color to stay as visible
   -- as they are in midnight.
   _tint = 1.15,
+  -- Floats and popups lift to midnight's editor bg. surface0 (the usual lift
+  -- on near-black styles) is navy enough here to read as evening.
+  float = "#16161f",
   crust = "#000000", -- deepest background: borders, tabline fill
   mantle = "#050507", -- sidebars, floats, statusline
   bg = "#0a0a0d", -- editor background

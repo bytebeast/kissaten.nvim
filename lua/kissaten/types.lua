@@ -5,6 +5,7 @@
 ---@field _name kissaten.Style
 ---@field _background "dark"|"light"
 ---@field _tint? number how strongly accents tint backgrounds (selection, diff, badges); default 1
+---@field float? string float and popup background; default surface0 on near-black styles, else mantle
 ---@field crust string deepest background: borders, tabline fill
 ---@field mantle string sidebars, floats, statusline
 ---@field bg string editor background
